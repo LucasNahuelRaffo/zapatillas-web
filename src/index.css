@@ -1,0 +1,88 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg: #f9f9f9;
+  --color-text: #050505;
+  --color-text-muted: #666666;
+  --color-accent: #000000;
+  --color-border: #e0e0e0;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Premium Utilities */
+.text-balance {
+  text-wrap: balance;
+}
+
+/* Integrated Image Backgrounds */
+.blend-multiply {
+  mix-blend-mode: multiply;
+}
+
+/* Sophisticated Animations */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-up {
+  animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.delay-100 { animation-delay: 100ms; opacity: 0; }
+.delay-200 { animation-delay: 200ms; opacity: 0; }
+.delay-300 { animation-delay: 300ms; opacity: 0; }
+
+/* Subtle Hover States */
+.card-premium {
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.card-premium:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+}
+
+.btn-black {
+  background: #000;
+  color: #fff;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.btn-black:hover {
+  opacity: 0.85;
+  transform: translateY(-1px);
+}
+
+.btn-outline {
+  border: 1px solid #000;
+  color: #000;
+  transition: all 0.3s ease;
+}
+
+.btn-outline:hover {
+  background: #000;
+  color: #fff;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #aaa;
+}
