@@ -25,7 +25,7 @@ export default function ProductSelectors({ product, onColorChange, selectedColor
     if (!selectedSize) return;
     
     setIsAdding(true);
-    addItem(product, selectedSize, selectedColor);
+    addItem(product, selectedSize, selectedColor || '');
     
     setTimeout(() => {
       setIsAdding(false);

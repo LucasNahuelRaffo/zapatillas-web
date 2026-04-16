@@ -420,10 +420,10 @@ export default function AdminDashboard() {
                               <div className="flex gap-2 overflow-x-auto pb-1 custom-scrollbar">
                                 {currentProduct.images.map((img, idx) => {
                                   // Compatibility check: handle both string and array for images
-                                  const currentImages = Array.isArray(colorData.images) 
+                                  const colorImages = Array.isArray(colorData.images) 
                                     ? colorData.images 
-                                    : (colorData.image ? [colorData.image] : []);
-                                  const isSelectedImg = currentImages.includes(img);
+                                    : [];
+                                  const isSelectedImg = colorImages.includes(img);
 
                                   return (
                                     <button
@@ -431,8 +431,8 @@ export default function AdminDashboard() {
                                       type="button"
                                       onClick={() => {
                                         const newImagesList = isSelectedImg
-                                          ? currentImages.filter(i => i !== img)
-                                          : [...currentImages, img];
+                                          ? colorImages.filter(i => i !== img)
+                                          : [...colorImages, img];
                                         
                                         const newColors = currentProduct.colors?.map(c => 
                                           c.name === color.name ? { ...c, images: newImagesList } : c
@@ -451,7 +451,7 @@ export default function AdminDashboard() {
                             ) : (
                               <p className="text-[9px] text-gray-400 italic">Subí imágenes primero</p>
                             )}
-                            {(!colorData.images || colorData.images.length === 0) && (!colorData.image) && currentProduct.images?.length > 0 && (
+                            {(!colorData.images || colorData.images.length === 0) && (currentProduct.images?.length || 0) > 0 && (
                               <p className="text-[8px] text-red-400 font-bold uppercase mt-1">⚠️ Sin vincular</p>
                             )}
                           </div>
