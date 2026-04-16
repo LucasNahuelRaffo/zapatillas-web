@@ -1,48 +1,25 @@
-import { useRef } from 'react'
+import { useRef, useEffect, useState } from 'react'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-
-import productPegasus from '../img/product_pegasus.png'
-import productJordan from '../img/product_jordan.png'
-import productUltraboost from '../img/product_ultraboost.png'
+import { Link } from 'react-router-dom'
+import { supabase } from '../lib/supabase'
+import { Product } from '../data/products'
 
 gsap.registerPlugin(ScrollTrigger)
 
-interface Product {
-  name: string
-  model: string
-  price: string
-  image: string
-}
-
-const products: Product[] = [
-  {
-    name: 'AIR ZOOM',
-    model: 'Pegasus 39',
-    price: '$89.990',
-    image: productPegasus,
-  },
-  {
-    name: 'RETRO HIGH',
-    model: 'Air Jordan 1',
-    price: '$124.990',
-    image: productJordan,
-  },
-  {
-    name: 'ULTRABOOST',
-    model: 'DNA Core Black',
-    price: '$94.990',
-    image: productUltraboost,
-  },
-]
-
 function ProductCard({ product }: { product: Product }) {
+  const formattedPrice = new Intl.NumberFormat('es-AR', {
+    style: 'currency',
+    currency: 'ARS',
+    minimumFractionDigits: 0,
+  }).format(product.price).replace('ARS', '$');
+
   return (
-    <div className="group cursor-pointer flex flex-col h-full w-full">
+    <Link to={`/product/${product.id}`} className="group cursor-pointer flex flex-col h-full w-full">
       <div className="relative aspect-[4/3] bg-[#f0f0f0] mb-6 overflow-hidden flex items-center justify-center p-8 transition-colors duration-500 hover:bg-[#ebebeb] rounded-sm">
         <img
-          src={product.image}
+          src={product.images[0]}
           alt={product.name}
           className="w-full mix-blend-multiply drop-shadow-2xl group-hover:scale-105 transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"
         />
@@ -54,18 +31,34 @@ function ProductCard({ product }: { product: Product }) {
       <div className="flex justify-between items-start mt-auto">
         <div>
           <h3 className="text-[14px] font-black tracking-widest text-black mb-1.5 uppercase">{product.name}</h3>
-          <p className="text-[12px] text-gray-500 font-medium">{product.model}</p>
+          <p className="text-[12px] text-gray-500 font-medium">{product.brand}</p>
         </div>
-        <p className="text-[14px] font-bold tracking-widest text-black">{product.price}</p>
+        <p className="text-[14px] font-bold tracking-widest text-black">{formattedPrice}</p>
       </div>
-    </div>
+    </Link>
   )
 }
 
 export default function ProductCarousel() {
+  const [products, setProducts] = useState<Product[]>([])
   const containerRef = useRef<HTMLElement>(null)
 
+  useEffect(() => {
+    async function fetchProducts() {
+      const { data } = await supabase
+        .from('products')
+        .select('*')
+        .limit(3)
+        .order('id', { ascending: true })
+      
+      if (data) setProducts(data)
+    }
+    fetchProducts()
+  }, [])
+
   useGSAP(() => {
+    if (products.length === 0) return
+    
     // Título Superior animado
     gsap.fromTo('.novedades-header',
       { opacity: 0, x: -50, filter: 'blur(10px)' },
@@ -98,7 +91,7 @@ export default function ProductCarousel() {
         }
       }
     )
-  }, { scope: containerRef })
+  }, { scope: containerRef, dependencies: [products] })
 
   return (
     <section ref={containerRef} id="productos" className="bg-white py-24 lg:py-32 border-t border-black/5 overflow-hidden perspective-[1000px]">
@@ -109,21 +102,27 @@ export default function ProductCarousel() {
               Novedades <span className="text-gray-200">///</span>
             </h2>
           </div>
-          <a
-            href="#"
+          <Link
+            to="/shop"
             className="catalogo-link group inline-flex items-center gap-3 text-[11px] font-bold tracking-[0.2em] uppercase text-black hover:text-gray-600 transition-colors"
           >
             Ver Catálogo
             <span className="w-12 h-px bg-black group-hover:w-16 group-hover:bg-gray-600 transition-all duration-300" />
-          </a>
+          </Link>
         </div>
 
         <div className="product-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16">
-          {products.map((product, i) => (
-            <div key={i} className="product-card origin-bottom">
-              <ProductCard product={product} />
-            </div>
-          ))}
+          {products.length > 0 ? (
+            products.map((product, i) => (
+              <div key={i} className="product-card origin-bottom">
+                <ProductCard product={product} />
+              </div>
+            ))
+          ) : (
+            Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="h-96 bg-gray-50 animate-pulse rounded-sm" />
+            ))
+          )}
         </div>
       </div>
     </section>

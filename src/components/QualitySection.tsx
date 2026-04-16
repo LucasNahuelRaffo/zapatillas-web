@@ -59,9 +59,9 @@ export default function QualitySection() {
     <section id="calidad" className="bg-[#f9f9f9] py-24 lg:py-32 overflow-hidden">
       <div className="max-w-[1400px] mx-auto px-6 lg:px-12">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-8 items-center">
-          
+
           {/* Left Content */}
-          <motion.div 
+          <motion.div
             variants={containerVariants}
             initial="hidden"
             whileInView="show"
@@ -71,20 +71,20 @@ export default function QualitySection() {
             <motion.span variants={fadeUpVariants} className="block text-[11px] font-bold tracking-[0.25em] uppercase text-gray-400 mb-5">
               Materiales & Confección
             </motion.span>
-            
+
             <h2 className="text-5xl sm:text-6xl lg:text-7xl font-black tracking-tighter leading-[1.05] mb-12 text-balance overflow-hidden py-2 cursor-default">
               <AnimatedLetters text="¿Qué es la" delayOffset={0} />
               <br />
               <AnimatedLetters text="Calidad AAA?" delayOffset={0.3} className="text-gray-300" />
             </h2>
-            
+
             <div className="space-y-6 text-[15px] lg:text-[16px] text-gray-500 leading-relaxed max-w-md">
               <motion.p variants={fadeUpVariants}>
-                No vendemos réplicas convencionales. La categoría AAA exige precisión milimétrica en cada 
+                No vendemos réplicas convencionales. La categoría AAA exige precisión milimétrica en cada
                 milímetro cuadrado del calzado deportivo.
               </motion.p>
               <motion.p variants={fadeUpVariants}>
-                Desde el termosellado de las cápsulas de aire hasta la densidad de la espuma en la mediasuela, 
+                Desde el termosellado de las cápsulas de aire hasta la densidad de la espuma en la mediasuela,
                 utilizamos los mismos proveedores y materiales brutos para asegurar que el peso y la pisada sean idénticos.
               </motion.p>
             </div>
@@ -93,7 +93,7 @@ export default function QualitySection() {
               <motion.div variants={fadeUpVariants}>
                 <p className="text-5xl font-black tracking-tighter mb-1 flex items-baseline">
                   <AnimatedNumber value={99} />
-                  <motion.span 
+                  <motion.span
                     initial={{ scale: 0, opacity: 0 }}
                     whileInView={{ scale: 1, opacity: 1 }}
                     viewport={{ once: true }}
@@ -107,15 +107,15 @@ export default function QualitySection() {
                   Fidelidad Visual
                 </p>
               </motion.div>
-              
-              <motion.div 
+
+              <motion.div
                 initial={{ height: 0 }}
                 whileInView={{ height: 64 }} /* h-16 = 64px */
                 viewport={{ once: true }}
                 transition={{ duration: 0.8, delay: 0.4, ease: "easeInOut" }}
-                className="w-px bg-gray-300 relative top-2" 
+                className="w-px bg-gray-300 relative top-2"
               />
-              
+
               <motion.div variants={fadeUpVariants}>
                 <p className="text-5xl font-black tracking-tighter mb-1 overflow-hidden">
                   <AnimatedLetters text="1:1" delayOffset={0.5} />
@@ -128,7 +128,7 @@ export default function QualitySection() {
           </motion.div>
 
           {/* Right Image - 3D Falling Effect */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: -200, rotate: -15, scale: 0.8, filter: "blur(10px)" }}
             whileInView={{ opacity: 1, y: 0, rotate: 0, scale: 1, filter: "blur(0px)" }}
             viewport={{ once: true, margin: "-100px" }}
@@ -136,15 +136,15 @@ export default function QualitySection() {
             className="lg:col-span-7 order-1 lg:order-2 flex justify-center lg:justify-end perspective-[2000px]"
           >
             <motion.div
-              animate={{ 
+              animate={{
                 y: [0, -15, 0],
                 rotateZ: [0, 2, 0],
                 rotateY: [0, -5, 0]
               }}
-              transition={{ 
-                duration: 6, 
-                repeat: Infinity, 
-                ease: "easeInOut" 
+              transition={{
+                duration: 6,
+                repeat: Infinity,
+                ease: "easeInOut"
               }}
               style={{ transformStyle: "preserve-3d" }}
               className="relative w-[90%] lg:w-full max-w-[700px] cursor-pointer"

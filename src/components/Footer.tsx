@@ -1,8 +1,10 @@
+import { Link } from 'react-router-dom';
+
 export default function Footer() {
   const sections = [
     {
       title: 'Help',
-      links: ['Contacto', 'Preguntas Frecuentes', 'Cambios y Devoluciones', 'Seguimiento de Envío']
+      links: ['Contacto', 'Cambios y Devoluciones']
     },
     {
       title: 'Shop',
@@ -62,13 +64,19 @@ export default function Footer() {
                 {section.title}
               </h4>
               <ul className="space-y-4">
-                {section.links.map(l => (
-                  <li key={l}>
-                    <a href="#" className="text-[13px] text-gray-400 font-medium hover:text-white transition-colors">
-                      {l}
-                    </a>
-                  </li>
-                ))}
+                {section.links.map(l => {
+                  let path = '#';
+                  if (section.title === 'Help') path = '/';
+                  if (section.title === 'Shop') path = '/shop';
+
+                  return (
+                    <li key={l}>
+                      <Link to={path} className="text-[13px] text-gray-400 font-medium hover:text-white transition-colors">
+                        {l}
+                      </Link>
+                    </li>
+                  );
+                })}
               </ul>
             </div>
           ))}

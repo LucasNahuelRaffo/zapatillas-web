@@ -1,10 +1,14 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Search, ShoppingBag, Menu, X } from 'lucide-react'
+import { Link, useLocation } from 'react-router-dom'
+import { useCart } from '../context/CartContext'
+import CartDrawer from './Cart/CartDrawer'
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  const { getItemCount, setIsCartOpen } = useCart()
 
   // Effect to handle scroll state for navbar border/shadow
   useEffect(() => {
@@ -27,10 +31,11 @@ export default function Navbar() {
     }
   }, [isOpen])
 
+  const location = useLocation()
+
   const navLinks = [
-    { name: 'Home', href: '#' },
-    { name: 'Shop', href: '#productos' },
-    { name: 'About', href: '#calidad' },
+    { name: 'Home', href: '/', isRoute: true },
+    { name: 'Shop', href: '/shop', isRoute: true },
   ]
 
   return (
@@ -62,38 +67,57 @@ export default function Navbar() {
 
             {/* Desktop Nav */}
             <div className="hidden md:flex items-center gap-14 absolute left-1/2 -translate-x-1/2">
-              {navLinks.map((link) => (
-                <a 
-                  key={link.name} 
-                  href={link.href} 
-                  className="group relative text-[11px] font-bold tracking-[0.2em] uppercase text-black"
-                >
-                  {link.name}
-                  <span className="absolute -bottom-1 left-0 w-0 h-[1.5px] bg-black transition-all duration-300 ease-out group-hover:w-full" />
-                </a>
-              ))}
+              {navLinks.map((link) => {
+                const isActive = link.isRoute
+                  ? location.pathname === link.href
+                  : false
+                return link.isRoute ? (
+                  <Link
+                    key={link.name}
+                    to={link.href}
+                    className="group relative text-[11px] font-bold tracking-[0.2em] uppercase text-black"
+                  >
+                    {link.name}
+                    <span className={`absolute -bottom-1 left-0 h-[1.5px] bg-black transition-all duration-300 ease-out ${
+                      isActive ? 'w-full' : 'w-0 group-hover:w-full'
+                    }`} />
+                  </Link>
+                ) : (
+                  <a
+                    key={link.name}
+                    href={link.href}
+                    className="group relative text-[11px] font-bold tracking-[0.2em] uppercase text-black"
+                  >
+                    {link.name}
+                    <span className="absolute -bottom-1 left-0 w-0 h-[1.5px] bg-black transition-all duration-300 ease-out group-hover:w-full" />
+                  </a>
+                )
+              })}
             </div>
 
             {/* Icons */}
             <div className="flex items-center gap-6 z-50 relative">
+              {location.pathname === '/shop' && (
+                <motion.button 
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => document.getElementById('shop-search')?.focus()}
+                  className="text-black hover:opacity-60 transition-opacity" 
+                  aria-label="Buscar"
+                >
+                  <Search size={20} strokeWidth={2} />
+                </motion.button>
+              )}
               <motion.button 
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="text-black hover:opacity-60 transition-opacity" 
-                aria-label="Buscar"
-              >
-                <Search size={20} strokeWidth={2} />
-              </motion.button>
-              
-              <motion.button 
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                onClick={() => setIsCartOpen(true)}
                 className="relative text-black hover:opacity-60 transition-opacity" 
                 aria-label="Carrito"
               >
                 <ShoppingBag size={20} strokeWidth={2} />
                 <span className="absolute -top-1.5 -right-2 text-[9px] font-bold bg-black text-white w-4 h-4 flex items-center justify-center rounded-full">
-                  0
+                  {getItemCount()}
                 </span>
               </motion.button>
               
@@ -146,20 +170,38 @@ export default function Navbar() {
             className="fixed top-0 right-0 h-full w-[85vw] max-w-sm bg-white z-50 p-8 shadow-2xl md:hidden overflow-y-auto"
           >
             <div className="flex flex-col gap-8 mt-20">
-              {navLinks.map((link, i) => (
-                <motion.a
-                  key={link.name}
-                  href={link.href}
-                  onClick={() => setIsOpen(false)}
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: i * 0.1 + 0.1 }}
-                  className="text-4xl font-black tracking-tighter uppercase border-b border-gray-100 pb-4 flex justify-between items-center group"
-                >
-                  {link.name}
-                  <span className="text-gray-300 group-hover:text-black transition-colors transform group-hover:translate-x-2">→</span>
-                </motion.a>
-              ))}
+              {navLinks.map((link, i) =>
+                link.isRoute ? (
+                  <motion.div
+                    key={link.name}
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: i * 0.1 + 0.1 }}
+                  >
+                    <Link
+                      to={link.href}
+                      onClick={() => setIsOpen(false)}
+                      className="text-4xl font-black tracking-tighter uppercase border-b border-gray-100 pb-4 flex justify-between items-center group"
+                    >
+                      {link.name}
+                      <span className="text-gray-300 group-hover:text-black transition-colors transform group-hover:translate-x-2">→</span>
+                    </Link>
+                  </motion.div>
+                ) : (
+                  <motion.a
+                    key={link.name}
+                    href={link.href}
+                    onClick={() => setIsOpen(false)}
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: i * 0.1 + 0.1 }}
+                    className="text-4xl font-black tracking-tighter uppercase border-b border-gray-100 pb-4 flex justify-between items-center group"
+                  >
+                    {link.name}
+                    <span className="text-gray-300 group-hover:text-black transition-colors transform group-hover:translate-x-2">→</span>
+                  </motion.a>
+                )
+              )}
               
               {/* Additional Mobile Elements */}
               <motion.div 
@@ -176,6 +218,8 @@ export default function Navbar() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <CartDrawer />
     </>
   )
 }
