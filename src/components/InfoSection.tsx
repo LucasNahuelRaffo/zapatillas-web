@@ -77,7 +77,7 @@ export default function InfoSection() {
           
           {/* Left Column - Size Guide Table */}
           <div className="lg:col-span-7 flex flex-col">
-            <h3 className="section-title text-[15px] font-bold tracking-[0.2em] uppercase mb-6 text-gray-800">
+            <h3 className="section-title font-skylight text-2xl mb-6 text-gray-800">
               GUÍA DE TALLES
             </h3>
             
@@ -105,7 +105,7 @@ export default function InfoSection() {
 
           {/* Right Column - Logistics & Warranty Cards */}
           <div className="lg:col-span-5 flex flex-col">
-            <h3 className="section-title text-[15px] font-bold tracking-[0.2em] uppercase mb-6 text-gray-800">
+            <h3 className="section-title font-skylight text-2xl mb-6 text-gray-800">
               LOGÍSTICA & GARANTÍA
             </h3>
 

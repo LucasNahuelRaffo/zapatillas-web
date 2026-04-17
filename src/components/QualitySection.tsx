@@ -72,7 +72,7 @@ export default function QualitySection() {
               Materiales & Confección
             </motion.span>
 
-            <h2 className="text-5xl sm:text-6xl lg:text-7xl font-black tracking-tighter leading-[1.05] mb-12 text-balance overflow-hidden py-2 cursor-default">
+            <h2 className="font-skylight text-5xl sm:text-6xl lg:text-7xl leading-[1.05] mb-12 text-balance overflow-hidden py-2 cursor-default">
               <AnimatedLetters text="¿Qué es la" delayOffset={0} />
               <br />
               <AnimatedLetters text="Calidad AAA?" delayOffset={0.3} className="text-gray-300" />

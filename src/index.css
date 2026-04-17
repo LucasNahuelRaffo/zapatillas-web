@@ -37,9 +37,11 @@ body {
 /* Clase utilitaria para la tipografía Skylight */
 .font-skylight {
   font-family: 'Skylight', cursive;
+  letter-spacing: 0.04em;
 }
 .font-skylight-swash {
   font-family: 'SkylightSwash', cursive;
+  letter-spacing: 0.04em;
 }
 
 

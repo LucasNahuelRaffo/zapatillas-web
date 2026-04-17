@@ -13,11 +13,11 @@ export default function Hero() {
               Triple A Premium
             </span>
             <h1 className="animate-fade-up delay-100 font-skylight text-6xl sm:text-7xl lg:text-8xl xl:text-[7.5rem] leading-[0.9] tracking-tight mb-8 text-balance">
-              PURA<br />
-              <span className="text-gray-300">ESENCIA.</span>
+              LAS MÁS<br />
+              <span className="text-gray-300">CAÑERAS.</span>
             </h1>
             <p className="animate-fade-up delay-200 text-[15px] lg:text-[17px] text-gray-500 max-w-md mb-12 leading-[1.6] font-medium text-balance">
-              Redefiniendo el estándar de las réplicas. Calidad AAA que se siente, se ve y se vive como el auténtico.
+              Zapatillas de primera, precio de barrio. Calidad AAA que se nota a una cuadra, máquina.
             </p>
 
             <div className="animate-fade-up delay-300 flex flex-col sm:flex-row gap-5 w-full sm:w-auto overflow-hidden">

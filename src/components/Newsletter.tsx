@@ -99,12 +99,12 @@ export default function Newsletter() {
             </h2>
           </div>
           
-          <h2 className="nl-title text-5xl sm:text-6xl lg:text-[72px] font-black tracking-tighter uppercase leading-[0.9] mb-8 text-black">
-            Access The<br />Archive.
+          <h2 className="nl-title font-skylight text-5xl sm:text-6xl lg:text-[72px] leading-[0.95] mb-8 text-black">
+            Entérate<br />Primero.
           </h2>
           
           <p className="nl-fade-right text-[12px] sm:text-[13px] text-gray-500 mb-12 font-medium leading-[1.8] max-w-[400px]">
-            Recibí acceso prioritario a drops exclusivos y catálogo secreto antes que nadie.
+            Sumáte al club y serás el primero en saber de los drops, los precios locos y las zapatillas truchas de la temporada.
           </p>
 
           <form onSubmit={handleSubmit} className="nl-form flex flex-col gap-4 w-full">
