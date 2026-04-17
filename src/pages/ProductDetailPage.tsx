@@ -2,8 +2,8 @@ import { useParams, Link, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ChevronLeft, Loader2 } from 'lucide-react';
 import { useState, useEffect } from 'react';
-import { supabase } from '../lib/supabase';
-import { Product } from '../data/products';
+import { supabase, hasSupabaseCredentials } from '../lib/supabase';
+import { Product, PRODUCTS } from '../data/products';
 import ImageGallery from '../components/Product/ImageGallery';
 import ProductInfo from '../components/Product/ProductInfo';
 import ProductSelectors from '../components/Product/ProductSelectors';
@@ -12,13 +12,22 @@ import ProductAccordions from '../components/Product/ProductAccordions';
 export default function ProductDetailPage() {
   const { id } = useParams<{ id: string }>();
   const [product, setProduct] = useState<Product | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(hasSupabaseCredentials);
   const [searchParams] = useSearchParams();
   const colorFromUrl = searchParams.get('color');
   const [selectedColor, setSelectedColor] = useState<string>('');
   const [galleryIndex, setGalleryIndex] = useState(-1);
 
   useEffect(() => {
+    if (!id) return;
+
+    // Sin credenciales de Supabase → buscar directamente en los datos locales
+    if (!hasSupabaseCredentials) {
+      const local = PRODUCTS.find(p => p.id === Number(id)) ?? null;
+      setProduct(local);
+      return;
+    }
+
     async function fetchProduct() {
       try {
         const { data, error } = await supabase
@@ -42,11 +51,14 @@ export default function ProductDetailPage() {
         }
       } catch (err) {
         console.error('Error fetching product:', err);
+        // Fallback a datos locales si Supabase falla
+        const local = PRODUCTS.find(p => p.id === Number(id)) ?? null;
+        setProduct(local);
       } finally {
         setLoading(false);
       }
     }
-    if (id) fetchProduct();
+    fetchProduct();
   }, [id]);
 
   const handleColorChange = (colorName: string) => {
