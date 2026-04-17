@@ -44,7 +44,7 @@ export default function PromoStrip() {
               <span className="font-skylight text-8xl sm:text-[110px] lg:text-[130px] leading-none drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]">10%</span>
               <span className="font-skylight text-6xl sm:text-[70px] lg:text-[80px] leading-none text-white/90">OFF</span>
             </motion.div>
-            <motion.p variants={itemVariants} className="text-[17px] sm:text-[20px] lg:text-[24px] font-medium tracking-wide text-gray-400 uppercase mb-10">
+            <motion.p variants={itemVariants} className="text-[17px] sm:text-[20px] lg:text-[24px] font-medium tracking-wide text-gray-400 uppercase mb-10" id='espacio'>
               Pagando con transferencia bancaria
             </motion.p>
             <motion.div variants={itemVariants}>

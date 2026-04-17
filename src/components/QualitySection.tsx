@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { motion, useInView, useMotionValue, useTransform, animate } from 'framer-motion'
 import qualitySneaker from '../img/quality_sneaker.png'
+import SneakerCanvas from './SneakerCanvas'
 
 // Componente para animar números progresivamente
 function AnimatedNumber({ value }: { value: number }) {
@@ -135,26 +136,11 @@ export default function QualitySection() {
             transition={{ duration: 1.2, type: "spring", bounce: 0.4 }}
             className="lg:col-span-7 order-1 lg:order-2 flex justify-center lg:justify-end perspective-[2000px]"
           >
-            <motion.div
-              animate={{
-                y: [0, -15, 0],
-                rotateZ: [0, 2, 0],
-                rotateY: [0, -5, 0]
-              }}
-              transition={{
-                duration: 6,
-                repeat: Infinity,
-                ease: "easeInOut"
-              }}
-              style={{ transformStyle: "preserve-3d" }}
-              className="relative w-[90%] lg:w-full max-w-[700px] cursor-pointer"
+            <div
+              className="relative w-full h-[400px] lg:h-[600px] flex justify-center items-center"
             >
-              <img
-                src={qualitySneaker}
-                alt="AAA Quality Detail"
-                className="w-full mix-blend-multiply drop-shadow-2xl saturate-[0.8] rounded-3xl"
-              />
-            </motion.div>
+              <SneakerCanvas />
+            </div>
           </motion.div>
         </div>
       </div>

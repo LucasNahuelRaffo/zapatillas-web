@@ -40,16 +40,20 @@ body {
   letter-spacing: 0.04em;
   word-spacing: 0.2em;
 }
+
 .font-skylight-swash {
   font-family: 'SkylightSwash', cursive;
   letter-spacing: 0.04em;
   word-spacing: 0.2em;
 }
 
-
 /* Premium Utilities */
 .text-balance {
   text-wrap: balance;
+}
+
+#espacio {
+  margin-top: 20px;
 }
 
 /* Integrated Image Backgrounds */
@@ -59,17 +63,35 @@ body {
 
 /* Sophisticated Animations */
 @keyframes fadeUp {
-  from { opacity: 0; transform: translateY(15px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .animate-fade-up {
   animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-.delay-100 { animation-delay: 100ms; opacity: 0; }
-.delay-200 { animation-delay: 200ms; opacity: 0; }
-.delay-300 { animation-delay: 300ms; opacity: 0; }
+.delay-100 {
+  animation-delay: 100ms;
+  opacity: 0;
+}
+
+.delay-200 {
+  animation-delay: 200ms;
+  opacity: 0;
+}
+
+.delay-300 {
+  animation-delay: 300ms;
+  opacity: 0;
+}
 
 /* Subtle Hover States */
 .card-premium {
@@ -107,13 +129,16 @@ body {
 ::-webkit-scrollbar {
   width: 6px;
 }
+
 ::-webkit-scrollbar-track {
   background: #f1f1f1;
 }
+
 ::-webkit-scrollbar-thumb {
   background: #ccc;
   border-radius: 10px;
 }
+
 ::-webkit-scrollbar-thumb:hover {
   background: #aaa;
 }
