@@ -4,7 +4,7 @@ import { useGSAP } from '@gsap/react'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
-import { Product } from '../data/products'
+import { Product, PRODUCTS } from '../data/products'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -45,13 +45,23 @@ export default function ProductCarousel() {
 
   useEffect(() => {
     async function fetchProducts() {
-      const { data } = await supabase
-        .from('products')
-        .select('*')
-        .limit(3)
-        .order('id', { ascending: true })
-      
-      if (data) setProducts(data)
+      try {
+        const { data, error } = await supabase
+          .from('products')
+          .select('*')
+          .limit(3)
+          .order('id', { ascending: true })
+        
+        if (error) throw error;
+        if (data && data.length > 0) {
+          setProducts(data)
+        } else {
+          setProducts(PRODUCTS.slice(0, 3))
+        }
+      } catch (err) {
+        console.error('Carousel fetch error:', err);
+        setProducts(PRODUCTS.slice(0, 3))
+      }
     }
     fetchProducts()
   }, [])

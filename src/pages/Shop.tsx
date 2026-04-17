@@ -3,7 +3,7 @@ import { motion } from 'framer-motion'
 import { ArrowRight, Loader2 } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
-import { Product } from '../data/products'
+import { Product, PRODUCTS } from '../data/products'
 
 /* ───────────────────────────────────────────────
    DATA
@@ -201,9 +201,14 @@ export default function Shop() {
           .order('id', { ascending: true })
 
         if (error) throw error
-        if (data) setProducts(data)
+        if (data && data.length > 0) {
+          setProducts(data)
+        } else {
+          setProducts(PRODUCTS)
+        }
       } catch (err) {
         console.error('Error fetching products:', err)
+        setProducts(PRODUCTS)
       } finally {
         setLoading(false)
       }

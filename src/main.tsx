@@ -5,6 +5,10 @@ import { CartProvider } from './context/CartContext'
 import './index.css'
 import App from './App'
 
+console.log('🚀 Za-pass initializing...');
+console.log('Environment:', import.meta.env.MODE);
+console.log('Supabase URL Configured:', !!import.meta.env.VITE_SUPABASE_URL);
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <CartProvider>
