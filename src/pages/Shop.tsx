@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { ArrowRight, Loader2 } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import { supabase } from '../lib/supabase'
+import { supabase, hasSupabaseCredentials } from '../lib/supabase'
 import { Product, PRODUCTS } from '../data/products'
 
 /* ───────────────────────────────────────────────
@@ -184,8 +184,11 @@ function SidebarLabel({ children }: { children: React.ReactNode }) {
    SHOP PAGE
 ─────────────────────────────────────────────── */
 export default function Shop() {
-  const [products, setProducts]       = useState<Product[]>([])
-  const [loading, setLoading]         = useState(true)
+  // Si no hay credenciales de Supabase, cargar datos locales instantáneamente
+  const [products, setProducts]       = useState<Product[]>(
+    hasSupabaseCredentials ? [] : PRODUCTS
+  )
+  const [loading, setLoading]         = useState(hasSupabaseCredentials)
   const [activeCategory, setActiveCategory] = useState('All Sneakers')
   const [priceRange, setPriceRange]         = useState<[number, number]>([0, 300])
   const [activeSizes, setActiveSizes]       = useState<number[]>([])
@@ -193,6 +196,9 @@ export default function Shop() {
   const [searchQuery, setSearchQuery]       = useState('')
 
   useEffect(() => {
+    // Saltar el fetch si no hay credenciales reales de Supabase
+    if (!hasSupabaseCredentials) return
+
     async function fetchProducts() {
       try {
         const { data, error } = await supabase

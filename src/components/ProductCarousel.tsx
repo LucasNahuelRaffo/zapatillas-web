@@ -3,7 +3,7 @@ import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { Link } from 'react-router-dom'
-import { supabase } from '../lib/supabase'
+import { supabase, hasSupabaseCredentials } from '../lib/supabase'
 import { Product, PRODUCTS } from '../data/products'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -40,10 +40,16 @@ function ProductCard({ product }: { product: Product }) {
 }
 
 export default function ProductCarousel() {
-  const [products, setProducts] = useState<Product[]>([])
+  // Si no hay credenciales de Supabase, cargar datos locales de forma instantánea
+  const [products, setProducts] = useState<Product[]>(
+    hasSupabaseCredentials ? [] : PRODUCTS.slice(0, 3)
+  )
   const containerRef = useRef<HTMLElement>(null)
 
   useEffect(() => {
+    // Saltar el fetch si no hay credenciales reales configuradas
+    if (!hasSupabaseCredentials) return
+
     async function fetchProducts() {
       try {
         const { data, error } = await supabase
