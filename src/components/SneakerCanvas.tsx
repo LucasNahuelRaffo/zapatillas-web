@@ -1,8 +1,20 @@
 import React, { Suspense, Component, ErrorInfo, ReactNode } from 'react'
 import { Canvas } from '@react-three/fiber'
-import { OrbitControls, Environment, ContactShadows, PerspectiveCamera } from '@react-three/drei'
+import { OrbitControls, Environment, Html, useProgress, Center } from '@react-three/drei'
 import SneakerModel from './SneakerModel'
 import qualitySneaker from '../img/quality_sneaker.png'
+
+function Loader() {
+  const { progress } = useProgress()
+  return (
+    <Html center>
+      <div className="text-black font-skylight text-2xl tracking-tighter w-48 text-center flex flex-col items-center">
+        {progress.toFixed(0)}%
+        <span className="text-xs uppercase tracking-widest text-gray-400 mt-2 block">Cargando 3D</span>
+      </div>
+    </Html>
+  )
+}
 
 interface Props {
   children: ReactNode
@@ -38,7 +50,7 @@ class ErrorBoundary extends Component<Props, State> {
       )
     }
 
-    return this.children
+    return this.props.children
   }
 }
 
@@ -79,20 +91,21 @@ export default function SneakerCanvas() {
           shadows 
           dpr={[1, 2]}
           onError={(e) => console.error("Canvas onError:", e)}
+          camera={{ position: [0, 0, 20], fov: 50 }}
         >
-          <PerspectiveCamera makeDefault position={[0, 0, 5]} fov={50} />
-          
           <ambientLight intensity={0.5} />
           <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={1} castShadow />
           
-          <Suspense fallback={null}>
-            <SneakerModel />
+          <Suspense fallback={<Loader />}>
+            <Center scale={0.2}>
+              <SneakerModel />
+            </Center>
             <ContactShadows 
-              position={[0, -1.5, 0]} 
+              position={[0, -2, 0]} 
               opacity={0.4} 
-              scale={10} 
+              scale={20} 
               blur={2} 
-              far={4.5} 
+              far={10} 
             />
             <Environment preset="city" />
           </Suspense>
@@ -101,6 +114,7 @@ export default function SneakerCanvas() {
             enableZoom={false} 
             minPolarAngle={Math.PI / 2.5} 
             maxPolarAngle={Math.PI / 1.5} 
+            makeDefault
           />
         </Canvas>
       </div>
