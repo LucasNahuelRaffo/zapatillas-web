@@ -34,6 +34,7 @@ function emptyProduct(): Omit<Product, 'id'> {
 
 export default function AdminDashboard() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [loginError, setLoginError] = useState(false)
   const [password, setPassword] = useState('')
   const [products, setProducts] = useState<Product[]>([])
   const [isEditing, setIsEditing] = useState(false)
@@ -47,8 +48,12 @@ export default function AdminDashboard() {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault()
-    if (password === ADMIN_PASSWORD) setIsLoggedIn(true)
-    else alert('Contraseña incorrecta')
+    if (password === ADMIN_PASSWORD) {
+      setLoginError(false)
+      setIsLoggedIn(true)
+    } else {
+      setLoginError(true)
+    }
   }
 
   const openNew = () => {
@@ -129,14 +134,23 @@ export default function AdminDashboard() {
           <h2 className="text-2xl font-black text-center uppercase tracking-tight mb-2">Panel de Control</h2>
           <p className="text-center text-gray-500 text-[11px] uppercase tracking-widest mb-8">Acceso Restringido</p>
           <form onSubmit={handleLogin} className="space-y-6">
-            <input
-              type="password"
-              placeholder="Contraseña"
-              autoComplete="current-password"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              className="w-full bg-gray-50 border border-gray-200 h-14 px-6 text-[13px] font-medium tracking-wide focus:outline-none focus:border-black transition-colors rounded-sm"
-            />
+            <div>
+              <input
+                type="password"
+                placeholder="Contraseña"
+                autoComplete="current-password"
+                value={password}
+                onChange={e => { setPassword(e.target.value); setLoginError(false) }}
+                className={`w-full bg-gray-50 h-14 px-6 text-[13px] font-medium tracking-wide focus:outline-none transition-colors rounded-sm border ${
+                  loginError
+                    ? 'border-red-500 bg-red-50 focus:border-red-500'
+                    : 'border-gray-200 focus:border-black'
+                }`}
+              />
+              {loginError && (
+                <p className="mt-2 text-[12px] font-semibold text-red-500">Contraseña incorrecta</p>
+              )}
+            </div>
             <button
               type="submit"
               className="w-full bg-black text-white h-14 text-[11px] font-bold uppercase tracking-[0.2em] hover:bg-gray-900 transition-colors rounded-sm"
