@@ -254,7 +254,7 @@ export default function Shop() {
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="text-5xl md:text-6xl font-black uppercase leading-[1.05] tracking-tight max-w-xl"
+            className="font-skylight text-5xl md:text-7xl leading-[1] tracking-tight max-w-xl"
           >
             Find Your<br />Perfect Sneakers
           </motion.h1>

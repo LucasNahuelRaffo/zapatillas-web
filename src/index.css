@@ -1,11 +1,29 @@
 @import "tailwindcss";
 
+/* ─── TIPOGRAFÍA CUSTOM: Skylight Graffiti ─────────────────────── */
+@font-face {
+  font-family: 'Skylight';
+  src: url('./tipografias/skylight-graffiti-2026-04-07-06-22-11-utc/Skylight Grafitti.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'SkylightSwash';
+  src: url('./tipografias/skylight-graffiti-2026-04-07-06-22-11-utc/skylight  swash and ornament.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 @theme {
   --color-bg: #f9f9f9;
   --color-text: #050505;
   --color-text-muted: #666666;
   --color-accent: #000000;
   --color-border: #e0e0e0;
+  --font-skylight: 'Skylight', cursive;
 }
 
 body {
@@ -15,6 +33,15 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+/* Clase utilitaria para la tipografía Skylight */
+.font-skylight {
+  font-family: 'Skylight', cursive;
+}
+.font-skylight-swash {
+  font-family: 'SkylightSwash', cursive;
+}
+
 
 /* Premium Utilities */
 .text-balance {

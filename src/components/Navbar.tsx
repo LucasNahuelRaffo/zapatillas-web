@@ -60,7 +60,7 @@ export default function Navbar() {
               href="#" 
               animate={{ scale: scrolled ? 0.85 : 1, y: scrolled ? 1 : 0 }}
               transition={{ duration: 0.3 }}
-              className="flex-shrink-0 text-2xl font-black tracking-tighter uppercase transition-opacity hover:opacity-70 z-50 relative origin-left"
+              className="flex-shrink-0 font-skylight text-3xl tracking-tight transition-opacity hover:opacity-70 z-50 relative origin-left"
             >
               Za-pass
             </motion.a>
@@ -181,7 +181,7 @@ export default function Navbar() {
                     <Link
                       to={link.href}
                       onClick={() => setIsOpen(false)}
-                      className="text-4xl font-black tracking-tighter uppercase border-b border-gray-100 pb-4 flex justify-between items-center group"
+                    className="font-skylight text-4xl tracking-tight border-b border-gray-100 pb-4 flex justify-between items-center group"
                     >
                       {link.name}
                       <span className="text-gray-300 group-hover:text-black transition-colors transform group-hover:translate-x-2">→</span>

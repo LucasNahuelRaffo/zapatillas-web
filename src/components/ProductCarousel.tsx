@@ -110,7 +110,7 @@ export default function ProductCarousel() {
       <div className="max-w-[1400px] mx-auto px-6 lg:px-12">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-16 gap-6 overflow-hidden">
           <div className="novedades-header">
-            <h2 className="text-4xl sm:text-5xl font-black tracking-tighter uppercase leading-none text-black">
+            <h2 className="font-skylight text-5xl sm:text-6xl tracking-tight leading-none text-black">
               Novedades <span className="text-gray-200">///</span>
             </h2>
           </div>

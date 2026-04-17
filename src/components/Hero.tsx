@@ -12,7 +12,7 @@ export default function Hero() {
             <span className="animate-fade-up inline-flex text-[10px] font-bold tracking-[0.25em] uppercase text-black mb-6 px-3 py-1 bg-gray-200/50 rounded-sm">
               Triple A Premium
             </span>
-            <h1 className="animate-fade-up delay-100 text-6xl sm:text-7xl lg:text-8xl xl:text-[7.5rem] font-black leading-[0.85] tracking-tighter mb-8 text-balance">
+            <h1 className="animate-fade-up delay-100 font-skylight text-6xl sm:text-7xl lg:text-8xl xl:text-[7.5rem] leading-[0.9] tracking-tight mb-8 text-balance">
               PURA<br />
               <span className="text-gray-300">ESENCIA.</span>
             </h1>
