@@ -3,7 +3,8 @@ import { motion } from 'framer-motion'
 import { ArrowRight, Loader2 } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { supabase, hasSupabaseCredentials } from '../lib/supabase'
-import { Product, PRODUCTS } from '../data/products'
+import { Product } from '../data/products'
+import { getLocalProducts } from '../lib/productStore'
 
 /* ───────────────────────────────────────────────
    DATA
@@ -184,11 +185,9 @@ function SidebarLabel({ children }: { children: React.ReactNode }) {
    SHOP PAGE
 ─────────────────────────────────────────────── */
 export default function Shop() {
-  // Si no hay credenciales de Supabase, cargar datos locales instantáneamente
-  const [products, setProducts]       = useState<Product[]>(
-    hasSupabaseCredentials ? [] : PRODUCTS
-  )
-  const [loading, setLoading]         = useState(hasSupabaseCredentials)
+  // Cargar desde localStorage (productStore) instantáneamente
+  const [products, setProducts]       = useState<Product[]>(() => getLocalProducts())
+  const [loading, setLoading]         = useState(false)
   const [activeCategory, setActiveCategory] = useState('All Sneakers')
   const [priceRange, setPriceRange]         = useState<[number, number]>([0, 300])
   const [activeSizes, setActiveSizes]       = useState<number[]>([])
@@ -196,7 +195,7 @@ export default function Shop() {
   const [searchQuery, setSearchQuery]       = useState('')
 
   useEffect(() => {
-    // Saltar el fetch si no hay credenciales reales de Supabase
+    // Si hay Supabase real, intentar sincronizar desde la DB
     if (!hasSupabaseCredentials) return
 
     async function fetchProducts() {
@@ -207,16 +206,9 @@ export default function Shop() {
           .order('id', { ascending: true })
 
         if (error) throw error
-        if (data && data.length > 0) {
-          setProducts(data)
-        } else {
-          setProducts(PRODUCTS)
-        }
+        if (data && data.length > 0) setProducts(data)
       } catch (err) {
         console.error('Error fetching products:', err)
-        setProducts(PRODUCTS)
-      } finally {
-        setLoading(false)
       }
     }
 

@@ -3,7 +3,8 @@ import { motion } from 'framer-motion';
 import { ChevronLeft, Loader2 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { supabase, hasSupabaseCredentials } from '../lib/supabase';
-import { Product, PRODUCTS } from '../data/products';
+import { Product } from '../data/products';
+import { getLocalProducts } from '../lib/productStore';
 import ImageGallery from '../components/Product/ImageGallery';
 import ProductInfo from '../components/Product/ProductInfo';
 import ProductSelectors from '../components/Product/ProductSelectors';
@@ -21,9 +22,9 @@ export default function ProductDetailPage() {
   useEffect(() => {
     if (!id) return;
 
-    // Sin credenciales de Supabase → buscar directamente en los datos locales
+    // Sin credenciales de Supabase → buscar en el productStore (localStorage)
     if (!hasSupabaseCredentials) {
-      const local = PRODUCTS.find(p => p.id === Number(id)) ?? null;
+      const local = getLocalProducts().find(p => p.id === Number(id)) ?? null;
       setProduct(local);
       return;
     }
@@ -51,8 +52,8 @@ export default function ProductDetailPage() {
         }
       } catch (err) {
         console.error('Error fetching product:', err);
-        // Fallback a datos locales si Supabase falla
-        const local = PRODUCTS.find(p => p.id === Number(id)) ?? null;
+        // Fallback a productStore si Supabase falla
+        const local = getLocalProducts().find(p => p.id === Number(id)) ?? null;
         setProduct(local);
       } finally {
         setLoading(false);
