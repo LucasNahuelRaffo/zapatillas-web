@@ -28,7 +28,7 @@ export default function ProductInfo({ brand, name, subtitle, price }: ProductInf
         </span>
       </div>
 
-      <h1 className="text-4xl md:text-5xl font-black uppercase tracking-tight leading-[1.1] mb-2">
+      <h1 className="font-skylight text-4xl md:text-5xl leading-[1.1] mb-2">
         {name}
       </h1>
       <p className="text-gray-400 text-sm font-medium mb-8">

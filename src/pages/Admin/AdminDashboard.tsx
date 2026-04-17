@@ -131,7 +131,7 @@ export default function AdminDashboard() {
               <Package size={32} />
             </div>
           </div>
-          <h2 className="text-2xl font-black text-center uppercase tracking-tight mb-2">Panel de Control</h2>
+          <h2 className="font-skylight text-4xl text-center mb-4">Panel de Control</h2>
           <p className="text-center text-gray-500 text-[11px] uppercase tracking-widest mb-8">Acceso Restringido</p>
           <form onSubmit={handleLogin} className="space-y-6">
             <div>
@@ -169,7 +169,7 @@ export default function AdminDashboard() {
       {/* Header */}
       <header className="bg-white border-b border-black/5 py-6 px-6 lg:px-12 sticky top-0 z-40">
         <div className="max-w-[1400px] mx-auto flex justify-between items-center">
-          <h1 className="text-xl font-black uppercase tracking-tight">Admin <span className="text-gray-400">/</span> Za-pass</h1>
+          <h1 className="font-skylight text-2xl text-black">Admin <span className="text-gray-400">/</span> Za-pass</h1>
           <div className="flex items-center gap-6">
             <Link to="/shop" className="group flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 hover:text-black transition-all">
               <ShoppingBag size={18} /> Ver Tienda

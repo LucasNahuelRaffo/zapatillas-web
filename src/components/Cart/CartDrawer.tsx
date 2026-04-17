@@ -30,7 +30,7 @@ export default function CartDrawer() {
             <div className="flex items-center justify-between p-6 border-b border-gray-100">
               <div className="flex items-center gap-3">
                 <ShoppingBag size={20} />
-                <h2 className="text-[12px] font-bold uppercase tracking-[0.2em]">Tu Carrito</h2>
+                <h2 className="font-skylight text-2xl">Tu Carrito</h2>
                 <span className="text-[10px] bg-black text-white px-2 py-0.5 rounded-full">
                   {cart.length}
                 </span>

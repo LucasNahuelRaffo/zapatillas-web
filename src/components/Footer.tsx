@@ -25,7 +25,7 @@ export default function Footer() {
           
           {/* Brand Col */}
           <div className="col-span-2 md:col-span-5 pr-10">
-            <h2 className="text-3xl font-black tracking-tighter uppercase mb-6 flex items-center gap-3">
+            <h2 className="font-skylight text-4xl mb-6 flex items-center gap-3">
               <svg className="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                 <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
               </svg>

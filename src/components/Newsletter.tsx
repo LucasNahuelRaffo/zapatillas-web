@@ -100,7 +100,7 @@ export default function Newsletter() {
           </div>
           
           <h2 className="nl-title font-skylight text-5xl sm:text-6xl lg:text-[72px] leading-[0.95] mb-8 text-black">
-            Entérate<br />Primero.
+            Agarrá la<br />Primicia.
           </h2>
           
           <p className="nl-fade-right text-[12px] sm:text-[13px] text-gray-500 mb-12 font-medium leading-[1.8] max-w-[400px]">

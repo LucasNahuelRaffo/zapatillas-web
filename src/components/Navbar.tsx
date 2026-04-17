@@ -195,7 +195,7 @@ export default function Navbar() {
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: i * 0.1 + 0.1 }}
-                    className="text-4xl font-black tracking-tighter uppercase border-b border-gray-100 pb-4 flex justify-between items-center group"
+                    className="font-skylight text-4xl tracking-tight border-b border-gray-100 pb-4 flex justify-between items-center group"
                   >
                     {link.name}
                     <span className="text-gray-300 group-hover:text-black transition-colors transform group-hover:translate-x-2">→</span>

@@ -136,7 +136,7 @@ function ProductCard({ product, activeColors }: { product: Product, activeColors
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
         </div>
-        <p className="text-[13px] font-medium text-black leading-snug">{product.name}</p>
+        <p className="font-skylight text-lg text-black leading-tight">{product.name}</p>
         <p className="text-[13px] text-black mt-0.5">${(product.price).toLocaleString('es-AR')}</p>
       </Link>
     </motion.div>
@@ -156,9 +156,9 @@ function BrandSection({
     <section className="mb-12">
       {/* Section header */}
       <div className="flex items-center justify-between mb-5">
-        <h2 className="text-2xl font-black tracking-tight uppercase">{label}</h2>
-        <button className="flex items-center gap-1 text-[11px] font-bold uppercase tracking-widest text-black hover:opacity-60 transition-opacity">
-          See All <ArrowRight size={12} strokeWidth={2.5} />
+        <h2 className="font-skylight text-3xl leading-none text-black">{label}</h2>
+        <button className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest text-gray-400 hover:text-black transition-all">
+          Mirá todo <ArrowRight size={12} strokeWidth={2.5} />
         </button>
       </div>
 
@@ -175,7 +175,7 @@ function BrandSection({
 ─────────────────────────────────────────────── */
 function SidebarLabel({ children }: { children: React.ReactNode }) {
   return (
-    <p className="text-[9px] font-bold tracking-[0.18em] uppercase text-gray-400 mb-3">
+    <p className="font-skylight text-xl text-black mb-4">
       {children}
     </p>
   )
@@ -256,7 +256,7 @@ export default function Shop() {
             transition={{ duration: 0.6 }}
             className="font-skylight text-5xl md:text-7xl leading-[1] tracking-tight max-w-xl"
           >
-            Find Your<br />Perfect Sneakers
+            Buscá tus<br />Mejores Llantas
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 16 }}
@@ -371,8 +371,8 @@ export default function Shop() {
             /* Single category: flat grid */
             <>
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-black uppercase tracking-tight">
-                  {activeCategory.toUpperCase()}
+                <h2 className="font-skylight text-4xl text-black">
+                  {activeCategory === 'All Sneakers' ? 'TODA LA DATA' : activeCategory.toUpperCase()}
                 </h2>
                 <span className="text-sm text-gray-400">{filteredProducts.length} productos</span>
               </div>
