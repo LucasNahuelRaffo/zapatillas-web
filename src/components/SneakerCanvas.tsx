@@ -1,6 +1,6 @@
 import React, { Suspense, Component, ErrorInfo, ReactNode } from 'react'
 import { Canvas } from '@react-three/fiber'
-import { OrbitControls, Environment, Html, useProgress, Center } from '@react-three/drei'
+import { OrbitControls, Environment, ContactShadows, Html, useProgress, Center } from '@react-three/drei'
 import SneakerModel from './SneakerModel'
 import qualitySneaker from '../img/quality_sneaker.png'
 
