@@ -1,7 +1,9 @@
 import { useEffect, useRef } from 'react'
 import { motion, useInView, useMotionValue, useTransform, animate } from 'framer-motion'
+import { lazy, Suspense } from 'react'
 import qualitySneaker from '../img/quality_sneaker.png'
-import SneakerCanvas from './SneakerCanvas'
+
+const SneakerCanvas = lazy(() => import('./SneakerCanvas'))
 
 // Componente para animar números progresivamente
 function AnimatedNumber({ value }: { value: number }) {
@@ -139,7 +141,13 @@ export default function QualitySection() {
             <div
               className="relative w-full h-[400px] lg:h-[600px] flex justify-center items-center"
             >
-              <SneakerCanvas />
+              <Suspense fallback={
+                <div className="w-full h-full flex justify-center items-center">
+                  <div className="text-black font-skylight text-2xl animate-pulse">Cargando 3D...</div>
+                </div>
+              }>
+                <SneakerCanvas />
+              </Suspense>
             </div>
           </motion.div>
         </div>
