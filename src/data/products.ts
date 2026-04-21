@@ -218,8 +218,8 @@ export const PRODUCTS: Product[] = [
     colors: [
       { name: '72-10 Negro', hex: '#111111', images: ['/sneakers/Nike Air Jordan 11 72-10 Negro.jpeg'] },
       { name: 'Bred', hex: '#E53935', images: ['/sneakers/Nike Air Jordan 11 Bred.jpeg'] },
-      { name: 'Concord Blanco Negro', hex: '#9C27B0', images: ['/sneakers/Nike Air Jordan 11 Concord Blanco Negro.jpeg'] },
-      { name: 'Concord', hex: '#7B1FA2', images: ['/sneakers/Nike Air Jordan 11 Concord.jpeg'] },
+      { name: 'Concord Blanco Negro', hex: '#111111', images: ['/sneakers/Nike Air Jordan 11 Concord Blanco Negro.jpeg'] },
+      { name: 'Concord', hex: '#FFFFFF', images: ['/sneakers/Nike Air Jordan 11 Concord.jpeg'] },
       { name: 'Cool Grey', hex: '#9E9E9E', images: ['/sneakers/Nike Air Jordan 11 Cool Grey.jpeg'] },
       { name: 'Gamma Blue', hex: '#1565C0', images: ['/sneakers/Nike Air Jordan 11 Gamma Blue.jpeg'] },
       { name: 'Gratitude DMP', hex: '#C19A6B', images: ['/sneakers/Nike Air Jordan 11 Gratitude DMP.jpeg'] },
@@ -423,7 +423,7 @@ export const PRODUCTS: Product[] = [
     sizes: SIZES_DEFAULT,
     colors: [
       { name: 'Blanco Celeste', hex: '#00B0FF', images: ['/sneakers/Nike Air More Uptempo Blanco Celeste.jpeg'] },
-      { name: 'Blanco Negro Naranja', hex: '#FF6F00', images: ['/sneakers/Nike Air More Uptempo Blanco Negro Naranja.jpeg'] },
+      { name: 'Blanco Negro Naranja', hex: '#FFFFFF', images: ['/sneakers/Nike Air More Uptempo Blanco Negro Naranja.jpeg'] },
       { name: 'Gris Rojo', hex: '#E53935', images: ['/sneakers/Nike Air More Uptempo Gris Rojo.jpeg'] },
       { name: 'Italy Negro', hex: '#111111', images: ['/sneakers/Nike Air More Uptempo Italy Negro.jpeg'] },
       { name: 'Negro Morado', hex: '#6A1B9A', images: ['/sneakers/Nike Air More Uptempo Negro Morado.jpeg'] },

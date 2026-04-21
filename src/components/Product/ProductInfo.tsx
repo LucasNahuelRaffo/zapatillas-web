@@ -38,9 +38,7 @@ export default function ProductInfo({ brand, name, subtitle, price }: ProductInf
       <div className="space-y-1">
         <p className="text-3xl font-black tracking-tight">{formattedPrice}</p>
         <div className="flex items-center gap-2 text-sm">
-          <span className="w-5 h-5 flex items-center justify-center bg-gray-100 rounded">
-            💳
-          </span>
+          <span className="w-5 h-3 flex-shrink-0 rounded-sm overflow-hidden border border-gray-200" style={{background:'linear-gradient(180deg,#74ACDF 33%,#fff 33%,#fff 66%,#74ACDF 66%)'}}/>
           <p className="text-gray-600 font-medium">
             3 cuotas sin interés de <span className="font-bold text-black">${installmentPrice}</span>
           </p>
