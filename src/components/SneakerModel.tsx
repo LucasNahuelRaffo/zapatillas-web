@@ -1,22 +1,24 @@
 import { useRef, useEffect } from 'react'
-import { useGLTF, useTexture } from '@react-three/drei'
+import { useLoader } from '@react-three/fiber'
+import { useTexture } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
+import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js'
+import { useMemo } from 'react'
 
-export default function SneakerModel() {
+export default function SneakerModel({ color = '#ffffff' }: { color?: string }) {
   const group = useRef<THREE.Group>(null)
   
-  // Cargar GLB optimizado
-  const { scene } = useGLTF('/models/sneaker/Womens_Sneakers_7.glb')
+  // Cargar geometría original OBJ y texturas optimizadas (para evitar la memoria de VRAM del GLB)
+  const obj = useLoader(OBJLoader, '/models/sneaker/Womens_Sneakers_7.obj')
 
-  // Cargar texturas originales desde la carpeta public explícitamente para evitar problemas de obj2gltf
   const props = useTexture({
-    map: '/models/sneaker/textures/Womens_Sneakers_7_Diffuse.png',
-    normalMap: '/models/sneaker/textures/Womens_Sneakers_7_Normal.png',
+    map: '/models/sneaker/textures/Womens_Sneakers_7_Diffuse.jpg',
+    normalMap: '/models/sneaker/textures/Womens_Sneakers_7_Normal.jpg',
   })
 
-  useEffect(() => {
-    // Aplicar las texturas
+  // Material único para toda la zapatilla
+  const material = useMemo(() => {
     if (props.map) {
       props.map.colorSpace = THREE.SRGBColorSpace;
       props.map.flipY = false;
@@ -24,41 +26,47 @@ export default function SneakerModel() {
     if (props.normalMap) {
       props.normalMap.flipY = false;
     }
+    return new THREE.MeshStandardMaterial({
+      map: props.map,
+      normalMap: props.normalMap,
+      color: new THREE.Color('#ffffff'), // Inicial
+      roughness: 0.5,
+      metalness: 0.1
+    });
+  }, [props.map, props.normalMap]);
 
-    scene.traverse((child) => {
+  useEffect(() => {
+    obj.traverse((child) => {
       if ((child as THREE.Mesh).isMesh) {
-        const material = (child as THREE.Mesh).material as THREE.MeshStandardMaterial
-        if (material) {
-          // Asignar texturas directamente
-          material.map = props.map
-          material.normalMap = props.normalMap
-          material.color = new THREE.Color(0xffffff)
-          material.roughness = 0.5
-          material.metalness = 0.1
-          material.needsUpdate = true
-        }
+        const mesh = child as THREE.Mesh;
+        mesh.material = material;
       }
     })
-  }, [scene, props])
+  }, [obj, material])
+
+  const targetColor = useMemo(() => new THREE.Color(color), [color]);
 
   // Animación de flotado suave
-  useFrame((state) => {
+  useFrame((state, delta) => {
     if (group.current) {
       const t = state.clock.getElapsedTime()
       group.current.position.y = Math.sin(t / 1.5) / 10
       group.current.rotation.y = Math.sin(t / 2) / 8
       group.current.rotation.z = Math.cos(t / 4) / 10
     }
+    
+    // Transición suave de color
+    material.color.lerp(targetColor, 5 * delta);
   })
 
+  // Usar primitivo clonado o original
   return (
     <group ref={group} dispose={null}>
-      <primitive object={scene} />
+      <primitive object={obj} />
     </group>
   )
 }
 
-// Pre-cargar el modelo
-useGLTF.preload('/models/sneaker/Womens_Sneakers_7.glb')
-useTexture.preload('/models/sneaker/textures/Womens_Sneakers_7_Diffuse.png')
-useTexture.preload('/models/sneaker/textures/Womens_Sneakers_7_Normal.png')
+// Pre-cargar texturas
+useTexture.preload('/models/sneaker/textures/Womens_Sneakers_7_Diffuse.jpg')
+useTexture.preload('/models/sneaker/textures/Womens_Sneakers_7_Normal.jpg')

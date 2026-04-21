@@ -63,7 +63,11 @@ function isWebGLAvailable() {
   }
 }
 
-export default function SneakerCanvas() {
+interface SneakerCanvasProps {
+  color?: string;
+}
+
+export default function SneakerCanvas({ color = '#ffffff' }: SneakerCanvasProps) {
   const [webGLAvailable, setWebGLAvailable] = React.useState(true);
 
   React.useEffect(() => {
@@ -97,13 +101,13 @@ export default function SneakerCanvas() {
           <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={1} castShadow />
           
           <Suspense fallback={<Loader />}>
-            <Center scale={0.2}>
-              <SneakerModel />
+            <Center scale={0.4}>
+              <SneakerModel color={color} />
             </Center>
             <ContactShadows 
-              position={[0, -2, 0]} 
+              position={[0, -2.5, 0]} 
               opacity={0.4} 
-              scale={20} 
+              scale={30} 
               blur={2} 
               far={10} 
             />
@@ -121,3 +125,4 @@ export default function SneakerCanvas() {
     </ErrorBoundary>
   )
 }
+

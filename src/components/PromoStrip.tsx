@@ -40,9 +40,9 @@ export default function PromoStrip() {
             viewport={{ once: true, margin: "-100px" }}
             className="flex flex-col items-start"
           >
-            <motion.div variants={itemVariants} className="flex items-baseline gap-3 mb-2">
-              <span className="font-skylight text-8xl sm:text-[110px] lg:text-[130px] leading-none drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]">10%</span>
-              <span className="font-skylight text-6xl sm:text-[70px] lg:text-[80px] leading-none text-white/90">OFF</span>
+            <motion.div variants={itemVariants} className="flex items-baseline gap-4 mb-2">
+              <span className="font-skylight text-9xl sm:text-[150px] lg:text-[180px] leading-none drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]">10%</span>
+              <span className="font-skylight text-7xl sm:text-[90px] lg:text-[110px] leading-none text-white/90">OFF</span>
             </motion.div>
             <motion.p variants={itemVariants} className="text-[17px] sm:text-[20px] lg:text-[24px] font-medium tracking-wide text-gray-400 uppercase mb-10" id='espacio'>
               Pagando con transferencia bancaria

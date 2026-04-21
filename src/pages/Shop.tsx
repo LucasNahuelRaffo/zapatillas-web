@@ -12,27 +12,27 @@ import { getLocalProducts } from '../lib/productStore'
    but PRODUCTS will be fetched from DB.
 ─────────────────────────────────────────────── */
 
-const CATEGORIES = ['All Sneakers', 'Adidas', 'Nike', 'Jordan', 'Travis Scott', 'Puma', 'Topper', 'John Foos', 'Vicus', 'Jaguar', 'Kioshi', 'Vans', 'Converse', 'Fila', 'DC Shoes', 'New Balance', 'Asics', 'Salomon', 'Olympikus', 'Under Armour', 'Skechers', 'Reebok', 'On']
+const CATEGORIES = ['All Sneakers', 'Nike', 'Jordan', 'Adidas', 'Amiri', 'Valentino', 'Puma', 'Vans', 'Converse', 'New Balance', 'Reebok', 'Fila', 'DC Shoes', 'Asics', 'Salomon', 'Under Armour', 'Skechers', 'On']
 
 const SIZES = [38, 39, 40, 41, 42, 43, 44, 45]
 
 const COLORS = [
-  { name: 'Black',  hex: '#111111' },
-  { name: 'White',  hex: '#FFFFFF' },
-  { name: 'Red',    hex: '#E53935' },
-  { name: 'Blue',   hex: '#1565C0' },
-  { name: 'Gray',   hex: '#9E9E9E' },
-  { name: 'Brown',  hex: '#8B4513' },
+  { name: 'Black', hex: '#111111' },
+  { name: 'White', hex: '#FFFFFF' },
+  { name: 'Red', hex: '#E53935' },
+  { name: 'Blue', hex: '#1565C0' },
+  { name: 'Gray', hex: '#9E9E9E' },
+  { name: 'Brown', hex: '#8B4513' },
 ]
 
 
 const BRAND_SECTIONS = [
-  { key: 'Adidas',       label: 'ADIDAS' },
-  { key: 'Nike',         label: 'NIKE' },
-  { key: 'Jordan',       label: 'JORDAN' },
-  { key: 'New Balance',  label: 'NEW BALANCE & CLASSICS' },
-  { key: 'Puma',         label: 'PUMA' },
-  { key: 'Topper',       label: 'TOPPER & NACIONALES' },
+  { key: 'Adidas', label: 'ADIDAS' },
+  { key: 'Nike', label: 'NIKE' },
+  { key: 'Jordan', label: 'JORDAN' },
+  { key: 'New Balance', label: 'NEW BALANCE & CLASSICS' },
+  { key: 'Puma', label: 'PUMA' },
+  { key: 'Topper', label: 'TOPPER & NACIONALES' },
 ]
 
 /* ───────────────────────────────────────────────
@@ -60,7 +60,7 @@ function PriceSlider({
       const clamped = Math.max(min, Math.min(max, raw))
       const next: [number, number] = [...value] as [number, number]
       if (thumb === 0) next[0] = Math.min(clamped, value[1] - 1)
-      else             next[1] = Math.max(clamped, value[0] + 1)
+      else next[1] = Math.max(clamped, value[0] + 1)
       onChange(next)
     }
     const up = () => {
@@ -111,13 +111,13 @@ function PriceSlider({
 ─────────────────────────────────────────────── */
 function ProductCard({ product, activeColors }: { product: Product, activeColors?: string[] }) {
   // Encontrar si algún color activo en los filtros coincide con un color del producto que tenga imagen
-  const matchingColor = product.colors.find(c => 
-    activeColors?.some(ac => c.name.toLowerCase().includes(ac.toLowerCase())) && 
+  const matchingColor = product.colors.find(c =>
+    activeColors?.some(ac => c.name.toLowerCase().includes(ac.toLowerCase())) &&
     ((Array.isArray(c.images) && c.images.length > 0) || (c as any).image)
   );
 
-  const displayImage = matchingColor 
-    ? (Array.isArray(matchingColor.images) ? matchingColor.images[0] : (matchingColor as any).image) 
+  const displayImage = matchingColor
+    ? (Array.isArray(matchingColor.images) ? matchingColor.images[0] : (matchingColor as any).image)
     : product.images[0];
 
   return (
@@ -186,13 +186,13 @@ function SidebarLabel({ children }: { children: React.ReactNode }) {
 ─────────────────────────────────────────────── */
 export default function Shop() {
   // Cargar desde localStorage (productStore) instantáneamente
-  const [products, setProducts]       = useState<Product[]>(() => getLocalProducts())
-  const [loading, setLoading]         = useState(false)
+  const [products, setProducts] = useState<Product[]>(() => getLocalProducts())
+  const [loading, setLoading] = useState(false)
   const [activeCategory, setActiveCategory] = useState('All Sneakers')
-  const [priceRange, setPriceRange]         = useState<[number, number]>([0, 300])
-  const [activeSizes, setActiveSizes]       = useState<number[]>([])
-  const [activeColors, setActiveColors]     = useState<string[]>([])
-  const [searchQuery, setSearchQuery]       = useState('')
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 300])
+  const [activeSizes, setActiveSizes] = useState<number[]>([])
+  const [activeColors, setActiveColors] = useState<string[]>([])
+  const [searchQuery, setSearchQuery] = useState('')
 
   useEffect(() => {
     // Si hay Supabase real, intentar sincronizar desde la DB
@@ -223,16 +223,16 @@ export default function Shop() {
 
   /* Filter products */
   const filteredProducts = products.filter(p => {
-    const catOk   = activeCategory === 'All Sneakers' || p.category === activeCategory
-    const priceOk = p.price/1000 >= priceRange[0] && p.price/1000 <= priceRange[1]
-    const sizeOk  = activeSizes.length === 0 || activeSizes.some(s => p.sizes.some((ps: any) => ps.size === s.toString() && ps.stock))
-    const colorOk = activeColors.length === 0 || activeColors.some(c => 
+    const catOk = activeCategory === 'All Sneakers' || p.category === activeCategory
+    const priceOk = p.price / 1000 >= priceRange[0] && p.price / 1000 <= priceRange[1]
+    const sizeOk = activeSizes.length === 0 || activeSizes.some(s => p.sizes.some((ps: any) => ps.size === s.toString() && ps.stock))
+    const colorOk = activeColors.length === 0 || activeColors.some(c =>
       p.colors.some((pc: any) => pc.name.toLowerCase().includes(c.toLowerCase()))
     )
-    const searchMatch = searchQuery.trim() === '' || 
+    const searchMatch = searchQuery.trim() === '' ||
       p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       p.brand.toLowerCase().includes(searchQuery.toLowerCase())
-    
+
     return catOk && priceOk && sizeOk && colorOk && searchMatch
   })
 
@@ -256,7 +256,7 @@ export default function Shop() {
             transition={{ duration: 0.6 }}
             className="font-skylight text-5xl md:text-7xl leading-[1] tracking-tight max-w-xl"
           >
-            Buscá tus<br />Mejores Llantas
+            Buscá tus<br />Mejores LLantas
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 16 }}
@@ -282,11 +282,10 @@ export default function Shop() {
               <li key={cat}>
                 <button
                   onClick={() => setActiveCategory(cat)}
-                  className={`text-[13px] leading-snug transition-colors ${
-                    activeCategory === cat
+                  className={`text-[13px] leading-snug transition-colors ${activeCategory === cat
                       ? 'font-bold text-black'
                       : 'text-gray-500 hover:text-black'
-                  }`}
+                    }`}
                 >
                   {cat}
                 </button>
@@ -307,11 +306,10 @@ export default function Shop() {
               <button
                 key={s}
                 onClick={() => toggleSize(s)}
-                className={`h-8 text-[11px] font-semibold border transition-all ${
-                  activeSizes.includes(s)
+                className={`h-8 text-[11px] font-semibold border transition-all ${activeSizes.includes(s)
                     ? 'bg-black text-white border-black'
                     : 'bg-white text-black border-gray-200 hover:border-black'
-                }`}
+                  }`}
               >
                 {s}
               </button>
@@ -327,11 +325,10 @@ export default function Shop() {
                 title={c.name}
                 onClick={() => toggleColor(c.name)}
                 style={{ backgroundColor: c.hex }}
-                className={`w-5 h-5 rounded-full border-[1.5px] transition-all ${
-                  activeColors.includes(c.name)
+                className={`w-5 h-5 rounded-full border-[1.5px] transition-all ${activeColors.includes(c.name)
                     ? 'border-black scale-110 ring-2 ring-black ring-offset-1'
                     : 'border-gray-300 hover:border-black'
-                }`}
+                  }`}
               />
             ))}
           </div>
@@ -339,7 +336,7 @@ export default function Shop() {
 
         {/* ── PRODUCT GRID ───────────────────────── */}
         <main className="flex-1 min-w-0">
-          
+
           {/* Search Bar */}
           <div className="mb-10 relative">
             <input

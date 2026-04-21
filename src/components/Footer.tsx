@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import logoImg from '../img/LOGO.png';
 
 export default function Footer() {
   const sections = [
@@ -25,11 +26,8 @@ export default function Footer() {
           
           {/* Brand Col */}
           <div className="col-span-2 md:col-span-5 pr-10">
-            <h2 className="font-skylight text-4xl mb-6 flex items-center gap-3">
-              <svg className="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
-              </svg>
-              Za-pass
+            <h2 className="mb-6 flex items-center gap-3">
+              <img src={logoImg} alt="Za-pass Logo" className="h-10 object-contain invert" />
             </h2>
             <p className="text-[13px] text-gray-500 leading-relaxed font-medium mb-10 max-w-sm">
               Confección de nivel premium AAA. Redefiniendo el estándar con calidad que se siente como el original, directo desde las mismas fábricas productoras.

@@ -99,7 +99,7 @@ export default function Newsletter() {
             </h2>
           </div>
           
-          <h2 className="nl-title font-skylight text-5xl sm:text-6xl lg:text-[72px] leading-[0.95] mb-8 text-black">
+          <h2 className="nl-title font-skylight text-6xl sm:text-7xl lg:text-[84px] leading-[0.85] mb-8 text-black">
             Agarrá la<br />Primicia.
           </h2>
           

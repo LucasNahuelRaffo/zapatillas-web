@@ -4,6 +4,7 @@ import { Search, ShoppingBag, Menu, X } from 'lucide-react'
 import { Link, useLocation } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
 import CartDrawer from './Cart/CartDrawer'
+import logoImg from '../img/LOGO.png'
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
@@ -50,7 +51,7 @@ export default function Navbar() {
       >
         <div className="max-w-[1400px] mx-auto px-6 lg:px-12">
           <motion.div 
-            animate={{ height: scrolled ? 60 : 120 }}
+            animate={{ height: scrolled ? 60 : 90 }}
             transition={{ duration: 0.3, ease: 'easeOut' }}
             className="flex items-center justify-between"
           >
@@ -60,9 +61,9 @@ export default function Navbar() {
               href="#" 
               animate={{ scale: scrolled ? 0.85 : 1, y: scrolled ? 1 : 0 }}
               transition={{ duration: 0.3 }}
-              className="flex-shrink-0 font-skylight text-3xl tracking-tight transition-opacity hover:opacity-70 z-50 relative origin-left"
+              className="flex-shrink-0 transition-opacity hover:opacity-70 z-50 relative origin-left"
             >
-              Za-pass
+              <img src={logoImg} alt="Za-pass" className="h-8 md:h-10 object-contain" />
             </motion.a>
 
             {/* Desktop Nav */}
