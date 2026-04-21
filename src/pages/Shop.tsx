@@ -136,7 +136,7 @@ function ProductCard({ product, activeColors }: { product: Product, activeColors
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
         </div>
-        <p className="font-skylight text-lg text-black leading-tight">{product.name}</p>
+        <p className="font-skylight text-2xl text-black leading-tight">{product.name}</p>
         <p className="text-[13px] text-black mt-0.5">${(product.price).toLocaleString('es-AR')}</p>
       </Link>
     </motion.div>
