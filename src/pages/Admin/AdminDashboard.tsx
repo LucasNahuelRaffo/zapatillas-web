@@ -9,6 +9,39 @@ import {
   updateLocalProduct,
   deleteLocalProduct,
 } from '../../lib/productStore'
+import { supabase } from '../../lib/supabase'
+
+// Sincroniza un producto con stock_zapatillas: borra filas viejas y re-inserta
+async function syncStockZapatillas(product: Partial<Product>, oldName?: string) {
+  const modeloToDelete = oldName ?? product.name
+  if (!modeloToDelete) return
+
+  // 1. Eliminar filas existentes del modelo
+  await supabase.from('stock_zapatillas').delete().eq('modelo', modeloToDelete)
+
+  if (!product.name || !product.colors?.length || !product.sizes?.length) return
+
+  // 2. Insertar una fila por cada combinación color × talle
+  const rows = product.colors.flatMap(color =>
+    product.sizes!
+      .filter(s => s.stock)
+      .map(s => ({
+        modelo: product.name!,
+        color: color.name,
+        talle: s.size,
+        precio: product.price ?? 120000,
+        stock: 5,
+      }))
+  )
+
+  if (rows.length > 0) {
+    await supabase.from('stock_zapatillas').insert(rows)
+  }
+}
+
+async function removeStockZapatillas(productName: string) {
+  await supabase.from('stock_zapatillas').delete().eq('modelo', productName)
+}
 
 const ADMIN_PASSWORD = 'zapas2024'
 
@@ -68,18 +101,25 @@ export default function AdminDashboard() {
     setIsEditing(true)
   }
 
-  const handleDelete = (id: number) => {
+  const handleDelete = async (id: number) => {
     if (!confirm('¿Eliminar este producto?')) return
+    const product = products.find(p => p.id === id)
     deleteLocalProduct(id)
     setProducts(getLocalProducts())
+    if (product) await removeStockZapatillas(product.name)
   }
 
-  const handleSave = (e: React.FormEvent) => {
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault()
     if ((currentProduct.images?.length ?? 0) === 0) {
       alert('Agregá al menos una imagen (URL).')
       return
     }
+    // Guardar el nombre original antes de editar (por si cambió)
+    const originalName = currentProduct.id
+      ? products.find(p => p.id === currentProduct.id)?.name
+      : undefined
+
     if (currentProduct.id) {
       updateLocalProduct(currentProduct as Product)
     } else {
@@ -87,6 +127,9 @@ export default function AdminDashboard() {
     }
     setProducts(getLocalProducts())
     setIsEditing(false)
+
+    // Sincronizar con Supabase stock_zapatillas
+    await syncStockZapatillas(currentProduct, originalName)
   }
 
   const addImageUrl = () => {
