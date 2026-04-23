@@ -1,5 +1,6 @@
 import heroSneaker from '../img/hero_sneaker-removebg-preview.png'
 import { motion } from 'framer-motion'
+import { Link } from 'react-router-dom'
 
 export default function Hero() {
   return (
@@ -10,7 +11,7 @@ export default function Hero() {
           {/* Left Content */}
           <div className="order-2 lg:order-1 lg:col-span-7 flex flex-col items-center lg:items-start text-center lg:text-left pt-8 lg:pt-0">
             <span className="animate-fade-up inline-flex text-[10px] font-bold tracking-[0.25em] uppercase text-black mb-6 px-3 py-1 bg-gray-200/50 rounded-sm">
-              Triple A Premium
+              Calidad Premium
             </span>
             <h1 className="animate-fade-up delay-100 font-skylight text-7xl sm:text-8xl lg:text-9xl xl:text-[8.5rem] leading-[0.8] tracking-tight mb-8 text-balance">
               <span className="block lg:inline whitespace-nowrap">LAS MEJORES</span><br />
@@ -21,15 +22,15 @@ export default function Hero() {
             </p>
 
             <div className="animate-fade-up delay-300 flex flex-col sm:flex-row gap-5 w-full sm:w-auto overflow-hidden">
-              <a
-                href="#productos"
+              <Link
+                to="/shop"
                 className="btn-black inline-flex items-center justify-center gap-3 text-[13px] font-bold tracking-[0.15em] uppercase px-12 py-5 rounded-full"
               >
                 Ver Catálogo
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
                   <path d="M5 12h14M12 5l7 7-7 7" />
                 </svg>
-              </a>
+              </Link>
             </div>
           </div>
 
