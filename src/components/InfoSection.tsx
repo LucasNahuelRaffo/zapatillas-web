@@ -46,9 +46,9 @@ export default function InfoSection() {
     {
       icon: <Truck className="w-5 h-5 text-white" strokeWidth={2} />,
       label: 'ENVÍOS NACIONALES',
-      data: 'Andreani Express',
+      data: 'Mensajería Privada',
       sub: 'Despacho en 24hs hábiles',
-      description: 'Todos nuestros envíos se despachan a través de la red prioritaria de Andreani, garantizando una entrega rápida, segura y con seguimiento en tiempo real directo hasta tu casa.'
+      description: 'Todos nuestros envíos se despachan a través de nuestra mensajería privada, garantizando una entrega rápida, segura y directa hasta tu casa.'
     },
     {
       icon: <Camera className="w-5 h-5 text-white" strokeWidth={2} />,
