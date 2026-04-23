@@ -17,7 +17,7 @@ export default function Hero() {
               <span className="text-gray-300">ZAPAS.</span>
             </h1>
             <p className="animate-fade-up delay-200 text-[15px] lg:text-[17px] text-gray-500 max-w-md mb-12 leading-[1.6] font-medium text-balance">
-              Zapatillas de primera, precio de barrio. Calidad AAA que se nota a una cuadra, máquina.
+              Zapatillas de primera, precio de barrio. Calidad Premium que se nota a una cuadra, máquina.
             </p>
 
             <div className="animate-fade-up delay-300 flex flex-col sm:flex-row gap-5 w-full sm:w-auto overflow-hidden">

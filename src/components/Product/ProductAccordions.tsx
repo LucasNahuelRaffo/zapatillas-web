@@ -46,11 +46,11 @@ function AccordionItem({ title, children }: AccordionItemProps) {
 export default function ProductAccordions() {
   return (
     <div className="mt-12 border-y border-gray-100">
-      <AccordionItem title="¿Qué es Calidad AAA?">
-        Se denomina Calidad AAA a la máxima categoría en réplicas de calzado. 
-        Utilizan los mismos materiales que los modelos originales (cuero genuino, gamuza, tecnología de amortiguación) 
-        y mantienen una fidelidad del 99% en costuras, peso y etiquetas. Es la opción ideal para quienes buscan 
-        la estética y comodidad de un par de alta gama sin pagar el sobrecosto de reventa.
+      <AccordionItem title="Calidad Premium">
+        Nuestros productos cumplen con los más altos estándares de calidad. 
+        Utilizamos materiales seleccionados (cuero genuino, gamuza, tecnología de amortiguación) 
+        y garantizamos una fidelidad excepcional en cada detalle, costura y terminación. Es la opción ideal para quienes buscan 
+        máxima comodidad y el mejor estilo en calzado importado.
       </AccordionItem>
       <AccordionItem title="Envíos y Garantía">
         Ofrecemos envío gratuito a todo el país. Para CABA y GBA, contamos con entrega en 24hs si compras antes de las 14:00. 

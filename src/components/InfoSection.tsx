@@ -55,7 +55,7 @@ export default function InfoSection() {
       label: 'CONTROL DE CALIDAD',
       data: 'QC Photos',
       sub: 'Fotos previas al despacho',
-      description: 'Antes de empaquetar el pedido, le tomamos fotografías en alta resolución para que verifiques todos los detalles y la calidad AAA+ del par específico que vas a recibir.'
+      description: 'Antes de empaquetar el pedido, le tomamos fotografías en alta resolución para que verifiques todos los detalles y la calidad Premium del par específico que vas a recibir.'
     },
     {
       icon: <ShieldCheck className="w-5 h-5 text-white" strokeWidth={2} />,

@@ -43,7 +43,7 @@ class ErrorBoundary extends Component<Props, State> {
         <div className="w-full h-full flex justify-center items-center">
           <img
             src={qualitySneaker}
-            alt="AAA Quality Detail Fallback"
+            alt="Premium Quality Detail Fallback"
             className="w-full mix-blend-multiply drop-shadow-2xl saturate-[0.8] rounded-3xl"
           />
         </div>
@@ -81,7 +81,7 @@ export default function SneakerCanvas({ color = '#ffffff' }: SneakerCanvasProps)
       <div className="w-full h-full flex justify-center items-center">
         <img
           src={qualitySneaker}
-          alt="AAA Quality Detail Fallback"
+          alt="Premium Quality Detail Fallback"
           className="w-full mix-blend-multiply drop-shadow-2xl saturate-[0.8] rounded-3xl"
         />
       </div>

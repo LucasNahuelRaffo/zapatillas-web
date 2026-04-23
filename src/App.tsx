@@ -32,9 +32,8 @@ function HomePage() {
   return (
     <main>
       <Hero />
-      <PromoStrip />
-      <QualitySection />
       <InfoSection />
+      <QualitySection />
       <ProductCarousel />
       <Newsletter />
     </main>

@@ -87,17 +87,17 @@ export default function QualitySection() {
             <h2 className="font-skylight text-6xl sm:text-7xl lg:text-8xl leading-[0.95] mb-6 text-balance overflow-hidden py-2 cursor-default">
               <AnimatedLetters text="¿Qué es la" delayOffset={0} />
               <br />
-              <AnimatedLetters text="Calidad AAA?" delayOffset={0.3} className="text-gray-300" />
+              <AnimatedLetters text="Calidad Premium?" delayOffset={0.3} className="text-gray-300" />
             </h2>
 
             <div className="space-y-6 text-[15px] lg:text-[16px] text-gray-500 leading-relaxed max-w-md">
               <motion.p variants={fadeUpVariants}>
-                No vendemos réplicas convencionales. La categoría AAA exige precisión milimétrica en cada
-                milímetro cuadrado del calzado deportivo.
+                Nuestros productos son seleccionados cuidadosamente. La categoría Premium exige precisión milimétrica en cada
+                detalle del calzado.
               </motion.p>
               <motion.p variants={fadeUpVariants}>
                 Desde el termosellado de las cápsulas de aire hasta la densidad de la espuma en la mediasuela,
-                utilizamos los mismos proveedores y materiales brutos para asegurar que el peso y la pisada sean idénticos.
+                aseguramos que los materiales y la construcción ofrezcan una experiencia superior.
               </motion.p>
             </div>
 

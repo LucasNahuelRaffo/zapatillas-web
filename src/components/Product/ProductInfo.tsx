@@ -21,7 +21,7 @@ export default function ProductInfo({ brand, name, subtitle, price }: ProductInf
       {/* Badges */}
       <div className="flex gap-2 mb-6">
         <span className="px-3 py-1 bg-gray-100 text-[10px] font-bold uppercase tracking-widest text-gray-500 rounded-sm">
-          PREMIUM REPLICA
+          CALIDAD PREMIUM
         </span>
         <span className="px-3 py-1 bg-green-50 text-[10px] font-bold uppercase tracking-widest text-green-600 rounded-sm">
           IN STOCK

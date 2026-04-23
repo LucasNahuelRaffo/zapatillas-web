@@ -30,7 +30,7 @@ export default function Footer() {
               <img src={logoImg} alt="Za-pass Logo" className="h-10 object-contain invert" />
             </h2>
             <p className="text-[13px] text-gray-500 leading-relaxed font-medium mb-10 max-w-sm">
-              Confección de nivel premium AAA. Redefiniendo el estándar con calidad que se siente como el original, directo desde las mismas fábricas productoras.
+              Confección de nivel Premium Edition. Redefiniendo el estándar con calidad superior en cada detalle, directo hasta tu puerta.
             </p>
             
             <div className="flex gap-4">
