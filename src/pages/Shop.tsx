@@ -23,8 +23,26 @@ const COLORS = [
   { name: 'Blue', hex: '#1565C0' },
   { name: 'Gray', hex: '#9E9E9E' },
   { name: 'Brown', hex: '#8B4513' },
+  { name: 'Green', hex: '#2E7D32' },
+  { name: 'Purple', hex: '#7B1FA2' },
+  { name: 'Orange', hex: '#FF6F00' },
+  { name: 'Pink', hex: '#E91E63' },
+  { name: 'Yellow', hex: '#FDD835' },
 ]
 
+const COLOR_SYNONYMS: Record<string, string[]> = {
+  'Red': ['red', 'rojo', 'burdeos', 'burgundy', 'crimson', 'fire'],
+  'Blue': ['blue', 'azul', 'celeste', 'turquesa', 'navy', 'royal', 'aqua', 'hyper', 'university', 'cyan'],
+  'White': ['white', 'blanco', 'sail', 'cream', 'crema', 'bone', 'total white'],
+  'Black': ['black', 'negro', 'anthracite', 'charcoal', 'total black'],
+  'Gray': ['gray', 'grey', 'gris', 'silver', 'plateado', 'cement', 'wolf', 'cool grey', 'frozen'],
+  'Brown': ['brown', 'marron', 'marrón', 'beige', 'clay', 'tan', 'khaki', 'safari', 'earth', 'mocha', 'dusted'],
+  'Green': ['green', 'verde', 'oliva', 'neon', 'olive', 'mint', 'menta'],
+  'Purple': ['purple', 'purpura', 'púrpura', 'lila', 'morado', 'violeta', 'plum', 'lavender', 'quai'],
+  'Orange': ['orange', 'naranja', 'coral', 'apricot', 'peach', 'backboard', 'punch'],
+  'Pink': ['pink', 'rosa', 'rose', 'fuchsia', 'fucsia', 'bubblegum'],
+  'Yellow': ['yellow', 'amarillo', 'gold', 'dorado', 'sunset', 'lemon', 'sun club'],
+}
 
 const BRAND_SECTIONS = [
   { key: 'Adidas', label: 'ADIDAS' },
@@ -111,10 +129,14 @@ function PriceSlider({
 ─────────────────────────────────────────────── */
 function ProductCard({ product, activeColors }: { product: Product, activeColors?: string[] }) {
   // Encontrar si algún color activo en los filtros coincide con un color del producto que tenga imagen
-  const matchingColor = product.colors.find(c =>
-    activeColors?.some(ac => c.name.toLowerCase().includes(ac.toLowerCase())) &&
-    ((Array.isArray(c.images) && c.images.length > 0) || (c as any).image)
-  );
+  // Ahora usamos la lógica de sinónimos también para seleccionar la imagen correcta
+  const matchingColor = product.colors.find(c => {
+    if (!activeColors || activeColors.length === 0) return false;
+    return activeColors.some(selectedCol => {
+      const synonyms = COLOR_SYNONYMS[selectedCol] || [selectedCol.toLowerCase()];
+      return synonyms.some(syn => c.name.toLowerCase().includes(syn));
+    }) && ((Array.isArray(c.images) && c.images.length > 0) || (c as any).image);
+  });
 
   const displayImage = matchingColor
     ? (Array.isArray(matchingColor.images) ? matchingColor.images[0] : (matchingColor as any).image)
@@ -151,7 +173,7 @@ function ProductCard({ product, activeColors }: { product: Product, activeColors
 function BrandSection({
   label, brandKey, products, activeColors
 }: { label: string; brandKey: string; products: Product[]; activeColors?: string[] }) {
-  const items = products.filter(p => p.brand.toLowerCase() === brandKey.toLowerCase()).slice(0, 3)
+  const items = products.filter(p => p.brand.toLowerCase() === brandKey.toLowerCase())
   if (items.length === 0) return null
 
   return (
@@ -165,7 +187,7 @@ function BrandSection({
       </div>
 
       {/* Product grid */}
-      <div className="grid grid-cols-3 gap-5">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-5">
         {items.map(p => <ProductCard key={p.id} product={p} activeColors={activeColors} />)}
       </div>
     </section>
@@ -228,9 +250,15 @@ export default function Shop() {
     const catOk = activeCategory === 'All Sneakers' || p.category === activeCategory
     const priceOk = p.price / 1000 >= priceRange[0] && p.price / 1000 <= priceRange[1]
     const sizeOk = activeSizes.length === 0 || activeSizes.some(s => p.sizes.some((ps: any) => ps.size === s.toString() && ps.stock))
-    const colorOk = activeColors.length === 0 || activeColors.some(c =>
-      p.colors.some((pc: any) => pc.name.toLowerCase().includes(c.toLowerCase()))
-    )
+    
+    // Mejor lógica de color: buscar por sinónimos
+    const colorOk = activeColors.length === 0 || activeColors.some(selectedCol => {
+      const synonyms = COLOR_SYNONYMS[selectedCol] || [selectedCol.toLowerCase()];
+      return p.colors.some((pc: any) => 
+        synonyms.some(syn => pc.name.toLowerCase().includes(syn))
+      );
+    })
+
     const searchMatch = searchQuery.trim() === '' ||
       p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       p.brand.toLowerCase().includes(searchQuery.toLowerCase())
