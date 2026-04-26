@@ -136,8 +136,9 @@ function ProductCard({ product, activeColors }: { product: Product, activeColors
     return activeColors.some(selectedCol => {
       const synonyms = COLOR_SYNONYMS[selectedCol] || [selectedCol.toLowerCase()];
       return synonyms.some(syn => {
-        const regex = new RegExp(`\\b${syn.toLowerCase()}\\b`, 'i');
-        return regex.test(colorName);
+        const s = syn.toLowerCase();
+        if (s === 'red' && colorName.includes('shattered')) return false;
+        return colorName.includes(s);
       });
     }) && ((Array.isArray(c.images) && c.images.length > 0) || (c as any).image);
   });
@@ -255,15 +256,16 @@ export default function Shop() {
     const priceOk = p.price / 1000 >= priceRange[0] && p.price / 1000 <= priceRange[1]
     const sizeOk = activeSizes.length === 0 || activeSizes.some(s => p.sizes.some((ps: any) => ps.size === s.toString() && ps.stock))
     
-    // Mejor lógica de color: buscar por sinónimos (con límites de palabra para evitar falsos positivos como "red" en "shattered")
+    // Mejor lógica de color: buscar por sinónimos
     const colorOk = activeColors.length === 0 || activeColors.some(selectedCol => {
       const synonyms = COLOR_SYNONYMS[selectedCol] || [selectedCol.toLowerCase()];
       return p.colors.some((pc: any) => {
         const colorName = pc.name.toLowerCase();
         return synonyms.some(syn => {
-          // Usamos Regex para detectar la palabra completa
-          const regex = new RegExp(`\\b${syn.toLowerCase()}\\b`, 'i');
-          return regex.test(colorName);
+          const s = syn.toLowerCase();
+          // Excepción específica para evitar que "red" coincida con "shattered"
+          if (s === 'red' && colorName.includes('shattered')) return false;
+          return colorName.includes(s);
         });
       });
     })
