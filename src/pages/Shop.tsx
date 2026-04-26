@@ -132,9 +132,13 @@ function ProductCard({ product, activeColors }: { product: Product, activeColors
   // Ahora usamos la lógica de sinónimos también para seleccionar la imagen correcta
   const matchingColor = product.colors.find(c => {
     if (!activeColors || activeColors.length === 0) return false;
+    const colorName = c.name.toLowerCase();
     return activeColors.some(selectedCol => {
       const synonyms = COLOR_SYNONYMS[selectedCol] || [selectedCol.toLowerCase()];
-      return synonyms.some(syn => c.name.toLowerCase().includes(syn));
+      return synonyms.some(syn => {
+        const regex = new RegExp(`\\b${syn.toLowerCase()}\\b`, 'i');
+        return regex.test(colorName);
+      });
     }) && ((Array.isArray(c.images) && c.images.length > 0) || (c as any).image);
   });
 
@@ -251,12 +255,17 @@ export default function Shop() {
     const priceOk = p.price / 1000 >= priceRange[0] && p.price / 1000 <= priceRange[1]
     const sizeOk = activeSizes.length === 0 || activeSizes.some(s => p.sizes.some((ps: any) => ps.size === s.toString() && ps.stock))
     
-    // Mejor lógica de color: buscar por sinónimos
+    // Mejor lógica de color: buscar por sinónimos (con límites de palabra para evitar falsos positivos como "red" en "shattered")
     const colorOk = activeColors.length === 0 || activeColors.some(selectedCol => {
       const synonyms = COLOR_SYNONYMS[selectedCol] || [selectedCol.toLowerCase()];
-      return p.colors.some((pc: any) => 
-        synonyms.some(syn => pc.name.toLowerCase().includes(syn))
-      );
+      return p.colors.some((pc: any) => {
+        const colorName = pc.name.toLowerCase();
+        return synonyms.some(syn => {
+          // Usamos Regex para detectar la palabra completa
+          const regex = new RegExp(`\\b${syn.toLowerCase()}\\b`, 'i');
+          return regex.test(colorName);
+        });
+      });
     })
 
     const searchMatch = searchQuery.trim() === '' ||
