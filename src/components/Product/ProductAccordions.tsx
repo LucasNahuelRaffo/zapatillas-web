@@ -43,9 +43,18 @@ function AccordionItem({ title, children }: AccordionItemProps) {
   );
 }
 
-export default function ProductAccordions() {
+interface ProductAccordionsProps {
+  description?: string;
+}
+
+export default function ProductAccordions({ description }: ProductAccordionsProps) {
   return (
     <div className="mt-12 border-y border-gray-100">
+      {description && (
+        <AccordionItem title="Descripción">
+          {description}
+        </AccordionItem>
+      )}
       <AccordionItem title="Calidad Premium">
         Nuestros productos cumplen con los más altos estándares de calidad. 
         Utilizamos materiales seleccionados (cuero genuino, gamuza, tecnología de amortiguación) 
@@ -64,6 +73,7 @@ export default function ProductAccordions() {
           <li>Logotipo Nike Air en la lengüeta.</li>
           <li>Puntera perforada para mayor transpirabilidad.</li>
           <li>Suela de goma para una tracción duradera.</li>
+          <li>Logos y etiquetas de autenticidad.</li>
         </ul>
       </AccordionItem>
     </div>

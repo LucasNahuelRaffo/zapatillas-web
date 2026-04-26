@@ -171,6 +171,7 @@ export default function ProductDetailPage() {
             name={product.name}
             subtitle={product.subtitle}
             price={product.price}
+            selectedColor={selectedColor}
           />
 
           <ProductSelectors 
@@ -179,7 +180,7 @@ export default function ProductDetailPage() {
             selectedColor={selectedColor}
           />
 
-          <ProductAccordions />
+          <ProductAccordions description={product.description} />
         </motion.div>
       </div>
 
