@@ -422,8 +422,8 @@ export const PRODUCTS: Product[] = [
     ],
     sizes: SIZES_DEFAULT,
     colors: [
-      { name: 'Blanco Celeste', hex: '#00B0FF', images: ['/sneakers/Nike Air More Uptempo Blanco Celeste.jpeg'] },
-      { name: 'Blanco Negro Naranja', hex: '#FFFFFF', images: ['/sneakers/Nike Air More Uptempo Blanco Negro Naranja.jpeg'] },
+      { name: 'Blanco', hex: '#FFFFFF', images: ['/sneakers/Nike Air More Uptempo Blanco Celeste.jpeg'] },
+      { name: 'Blanco Negro Naranja', hex: '#FF6F00', images: ['/sneakers/Nike Air More Uptempo Blanco Negro Naranja.jpeg'] },
       { name: 'Gris Rojo', hex: '#E53935', images: ['/sneakers/Nike Air More Uptempo Gris Rojo.jpeg'] },
       { name: 'Italy Negro', hex: '#111111', images: ['/sneakers/Nike Air More Uptempo Italy Negro.jpeg'] },
       { name: 'Negro Morado', hex: '#6A1B9A', images: ['/sneakers/Nike Air More Uptempo Negro Morado.jpeg'] },

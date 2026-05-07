@@ -68,7 +68,7 @@ export default function App() {
         </Routes>
       </Suspense>
       
-      {!isAdmin && <WhatsAppButton />}
+      {(location.pathname === '/' || location.pathname === '/shop') && <WhatsAppButton />}
       {!isAdmin && <Footer />}
     </div>
   )

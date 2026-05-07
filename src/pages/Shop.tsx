@@ -223,26 +223,7 @@ export default function Shop() {
   const [activeColors, setActiveColors] = useState<string[]>([])
   const [searchQuery, setSearchQuery] = useState('')
 
-  useEffect(() => {
-    // Si hay Supabase real, intentar sincronizar desde la DB
-    if (!hasSupabaseCredentials) return
-
-    async function fetchProducts() {
-      try {
-        const { data, error } = await supabase
-          .from('products')
-          .select('*')
-          .order('id', { ascending: true })
-
-        if (error) throw error
-        if (data && data.length > 0) setProducts(data)
-      } catch (err) {
-        console.error('Error fetching products:', err)
-      }
-    }
-
-    fetchProducts()
-  }, [])
+  // Removed Supabase sync to use local products (Admin loaded) exclusively
 
   const toggleSize = (s: number) =>
     setActiveSizes(prev => prev.includes(s) ? prev.filter(x => x !== s) : [...prev, s])

@@ -47,26 +47,7 @@ export default function ProductCarousel() {
   )
   const containerRef = useRef<HTMLElement>(null)
 
-  useEffect(() => {
-    // Solo consultar Supabase si hay credenciales reales
-    if (!hasSupabaseCredentials) return
-
-    async function fetchProducts() {
-      try {
-        const { data, error } = await supabase
-          .from('products')
-          .select('*')
-          .limit(3)
-          .order('id', { ascending: true })
-        
-        if (error) throw error;
-        if (data && data.length > 0) setProducts(data)
-      } catch (err) {
-        console.error('Carousel fetch error:', err);
-      }
-    }
-    fetchProducts()
-  }, [])
+  // Removed Supabase sync to use local products exclusively
 
   useGSAP(() => {
     if (products.length === 0) return

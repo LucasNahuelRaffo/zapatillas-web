@@ -13,7 +13,7 @@ import ProductAccordions from '../components/Product/ProductAccordions';
 export default function ProductDetailPage() {
   const { id } = useParams<{ id: string }>();
   const [product, setProduct] = useState<Product | null>(null);
-  const [loading, setLoading] = useState(hasSupabaseCredentials);
+  const [loading, setLoading] = useState(true);
   const [searchParams] = useSearchParams();
   const colorFromUrl = searchParams.get('color');
   const [selectedColor, setSelectedColor] = useState<string>('');
@@ -21,45 +21,9 @@ export default function ProductDetailPage() {
 
   useEffect(() => {
     if (!id) return;
-
-    // Sin credenciales de Supabase → buscar en el productStore (localStorage)
-    if (!hasSupabaseCredentials) {
-      const local = getLocalProducts().find(p => p.id === Number(id)) ?? null;
-      setProduct(local);
-      return;
-    }
-
-    async function fetchProduct() {
-      try {
-        const { data, error } = await supabase
-          .from('products')
-          .select('*')
-          .eq('id', Number(id))
-          .single();
-
-        if (error) throw error;
-        if (data) {
-          // Normalizar para que siempre sean arrays
-          const normalized: Product = {
-            ...data,
-            images: Array.isArray(data.images) ? data.images : (data.image ? [data.image] : []),
-            colors: (data.colors || []).map((c: any) => ({
-              ...c,
-              images: Array.isArray(c.images) ? c.images : (c.image ? [c.image] : [])
-            }))
-          };
-          setProduct(normalized);
-        }
-      } catch (err) {
-        console.error('Error fetching product:', err);
-        // Fallback a productStore si Supabase falla
-        const local = getLocalProducts().find(p => p.id === Number(id)) ?? null;
-        setProduct(local);
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchProduct();
+    const local = getLocalProducts().find(p => p.id === Number(id)) ?? null;
+    setProduct(local);
+    setLoading(false);
   }, [id]);
 
   const handleColorChange = (colorName: string) => {
