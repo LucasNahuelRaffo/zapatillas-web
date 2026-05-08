@@ -1,0 +1,3 @@
+const url = 'https://jjjyalyyjqsksbigdfxf.supabase.co/rest/v1/reservas_zapatillas?select=*';
+const key = 'sb_publishable_t9zI3Bb5ph9rwQBXQy3BMw_JoBP2Rci'; // wait, is this key valid? Wait, anon key usually starts with eyJhb...
+// let's try reading what is inside src/lib/supabase.ts instead just in case.

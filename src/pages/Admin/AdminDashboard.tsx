@@ -30,7 +30,7 @@ async function syncStockZapatillas(product: Partial<Product>, oldName?: string) 
         color: color.name,
         talle: s.size,
         precio: product.price ?? 120000,
-        stock: 5,
+        stock: s.quantity ?? 5,
       }))
   )
 
@@ -290,7 +290,14 @@ export default function AdminDashboard() {
     const has = sizes.some(s => s.size === size)
     setCurrentProduct(prev => ({
       ...prev,
-      sizes: has ? sizes.filter(s => s.size !== size) : [...sizes, { size, stock: true }],
+      sizes: has ? sizes.filter(s => s.size !== size) : [...sizes, { size, stock: true, quantity: 5 }],
+    }))
+  }
+
+  const handleQuantityChange = (size: string, qty: number) => {
+    setCurrentProduct(prev => ({
+      ...prev,
+      sizes: (prev.sizes || []).map(s => s.size === size ? { ...s, quantity: qty } : s)
     }))
   }
 
@@ -579,18 +586,33 @@ export default function AdminDashboard() {
 
                 {/* Talles */}
                 <div>
-                  <label className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mb-2 block">Talles Disponibles</label>
-                  <div className="grid grid-cols-8 gap-2">
+                  <label className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mb-2 block">Talles y Stock</label>
+                  <div className="grid grid-cols-4 gap-3">
                     {ALL_SIZES.map(size => {
-                      const selected = currentProduct.sizes?.some(s => s.size === size)
+                      const sizeObj = currentProduct.sizes?.find(s => s.size === size)
+                      const selected = !!sizeObj
                       return (
-                        <button
-                          key={size} type="button"
-                          onClick={() => toggleSize(size)}
-                          className={`h-12 text-[12px] font-bold border transition-all rounded-sm ${selected ? 'bg-black text-white border-black' : 'bg-gray-50 text-gray-400 border-gray-200 hover:border-black hover:text-black'}`}
-                        >
-                          {size}
-                        </button>
+                        <div key={size} className={`flex flex-col border rounded-sm transition-all ${selected ? 'border-black bg-gray-50' : 'border-gray-200'}`}>
+                          <button
+                            type="button"
+                            onClick={() => toggleSize(size)}
+                            className={`h-10 text-[12px] font-bold transition-all ${selected ? 'bg-black text-white' : 'bg-transparent text-gray-400 hover:text-black'}`}
+                          >
+                            Talle {size}
+                          </button>
+                          {selected && (
+                            <div className="p-2 flex flex-col gap-1">
+                              <span className="text-[8px] font-black uppercase text-gray-400 tracking-widest">Cantidad</span>
+                              <input 
+                                type="number"
+                                min="0"
+                                value={sizeObj.quantity ?? 5}
+                                onChange={(e) => handleQuantityChange(size, parseInt(e.target.value) || 0)}
+                                className="w-full bg-white border border-gray-200 h-8 px-2 text-[12px] font-bold focus:outline-none focus:border-black rounded-sm"
+                              />
+                            </div>
+                          )}
+                        </div>
                       )
                     })}
                   </div>

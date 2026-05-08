@@ -6,18 +6,18 @@ export interface Product {
   subtitle?: string;
   description?: string;
   images: string[];
-  sizes: { size: string; stock: boolean }[];
+  sizes: { size: string; stock: boolean; quantity?: number }[];
   colors: { name: string; hex: string; images: string[] }[];
   category: string;
 }
 
 const SIZES_DEFAULT = [
-  { size: '38', stock: true },
-  { size: '39', stock: true },
-  { size: '40', stock: true },
-  { size: '41', stock: true },
-  { size: '42', stock: true },
-  { size: '43', stock: true },
+  { size: '38', stock: true, quantity: 5 },
+  { size: '39', stock: true, quantity: 5 },
+  { size: '40', stock: true, quantity: 5 },
+  { size: '41', stock: true, quantity: 5 },
+  { size: '42', stock: true, quantity: 5 },
+  { size: '43', stock: true, quantity: 5 },
 ];
 
 export const PRODUCTS: Product[] = [
