@@ -894,9 +894,19 @@ export default function AdminDashboard() {
                         </div>
                         
                         <div className="flex flex-col gap-1 pt-2 border-t border-gray-50">
+                          {r.nombre && (
+                            <p className="text-[11px] text-gray-500 font-medium tracking-wide">
+                              <span className="font-bold text-gray-800">Nombre:</span> {r.nombre}
+                            </p>
+                          )}
                           <p className="text-[11px] text-gray-500 font-medium tracking-wide">
                             <span className="font-bold text-gray-800">Talle:</span> {r.talle}
                           </p>
+                          {r.punto_encuentro && (
+                            <p className="text-[11px] text-gray-500 font-medium tracking-wide">
+                              <span className="font-bold text-gray-800">Entrega:</span> {r.punto_encuentro}
+                            </p>
+                          )}
                           {r.telefono && (
                             <p className="text-[11px] text-gray-500 font-medium tracking-wide">
                               <span className="font-bold text-gray-800">WhatsApp:</span> {r.telefono}
