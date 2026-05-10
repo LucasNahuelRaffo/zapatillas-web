@@ -51,10 +51,11 @@ export default function Navbar() {
       >
         <div className="max-w-[1400px] mx-auto px-6 lg:px-12">
           <motion.div 
-            animate={{ height: scrolled ? 60 : 90 }}
+            animate={{ height: scrolled ? 70 : 110 }}
             transition={{ duration: 0.3, ease: 'easeOut' }}
             className="flex items-center justify-between"
           >
+
             
             {/* Logo */}
             <motion.a 
@@ -63,7 +64,7 @@ export default function Navbar() {
               transition={{ duration: 0.3 }}
               className="flex-shrink-0 transition-opacity hover:opacity-70 z-50 relative origin-left"
             >
-              <img src={logoImg} alt="Za-pass" className="h-8 md:h-10 object-contain" />
+              <img src={logoImg} alt="Za-pass" className="h-10 md:h-14 object-contain" />
             </motion.a>
 
             {/* Desktop Nav */}
