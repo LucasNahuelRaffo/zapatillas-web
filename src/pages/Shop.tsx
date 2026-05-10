@@ -163,8 +163,8 @@ function ProductCard({ product, activeColors }: { product: Product, activeColors
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
         </div>
-        <p className="font-skylight text-2xl text-black leading-tight">
-          {product.name} {matchingColor && <span className="opacity-40 ml-1 text-lg">({matchingColor.name})</span>}
+        <p className="font-common text-[13px] font-bold text-black leading-tight uppercase tracking-wide">
+          {product.name} {matchingColor && <span className="opacity-40 ml-1 text-[11px]">({matchingColor.name})</span>}
         </p>
         <p className="text-[13px] text-black mt-0.5">${(product.price).toLocaleString('es-AR')}</p>
       </Link>
@@ -185,7 +185,7 @@ function BrandSection({
     <section className="mb-12">
       {/* Section header */}
       <div className="flex items-center justify-between mb-5">
-        <h2 className="font-skylight text-3xl leading-none text-black">{label}</h2>
+        <h2 className="font-common text-xs font-black tracking-[0.2em] text-gray-400">{label}</h2>
         <button className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest text-gray-400 hover:text-black transition-all">
           Mirá todo <ArrowRight size={12} strokeWidth={2.5} />
         </button>
@@ -204,7 +204,7 @@ function BrandSection({
 ─────────────────────────────────────────────── */
 function SidebarLabel({ children }: { children: React.ReactNode }) {
   return (
-    <p className="font-skylight text-xl text-black mb-4">
+    <p className="font-common text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 mb-4">
       {children}
     </p>
   )
@@ -276,7 +276,7 @@ export default function Shop() {
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="font-skylight text-5xl md:text-7xl leading-[1] tracking-tight max-w-xl"
+            className="font-common text-3xl md:text-5xl font-black uppercase tracking-tighter leading-[0.9] max-w-xl"
           >
             Buscá tus<br />Mejores LLantas
           </motion.h1>
@@ -390,7 +390,7 @@ export default function Shop() {
             /* Single category: flat grid */
             <>
               <div className="flex items-center justify-between mb-6">
-                <h2 className="font-skylight text-4xl text-black">
+                <h2 className="font-common text-xs font-black tracking-[0.2em] text-gray-400">
                   {activeCategory === 'All Sneakers' ? 'TODA LA DATA' : activeCategory.toUpperCase()}
                 </h2>
                 <span className="text-sm text-gray-400">{filteredProducts.length} productos</span>

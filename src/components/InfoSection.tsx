@@ -71,7 +71,7 @@ export default function InfoSection() {
   }
 
   return (
-    <section ref={containerRef} className="bg-[#fafafa] py-20 lg:py-28 overflow-hidden">
+    <section ref={containerRef} className="bg-[#fafafa] py-8 lg:py-10 overflow-hidden">
       <div className="max-w-[1200px] mx-auto px-6 lg:px-12">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-14">
           
@@ -172,7 +172,7 @@ export default function InfoSection() {
         </div>
 
         {/* Bottom Disclaimer Banner */}
-        <div className="mt-16 bg-[#efefef] rounded-md px-6 py-4 flex flex-col sm:flex-row items-start sm:items-center gap-3">
+        <div className="mt-8 bg-[#efefef] rounded-md px-6 py-4 flex flex-col sm:flex-row items-start sm:items-center gap-3">
           <Info className="w-4 h-4 text-gray-500 min-w-[16px] relative top-[2px] sm:top-0" />
           <p className="text-[12px] text-gray-500 font-medium">
             * Recomendamos medir la plantilla de tu zapatilla más cómoda y comparar con la tabla para mayor precisión.

@@ -29,7 +29,7 @@ function ProductCard({ product }: { product: Product }) {
         </div>
       </div>
       
-      <div className="flex justify-between items-start mt-auto">
+      <div className="flex justify-between items-start mt-auto font-common">
         <div>
           <h3 className="text-[14px] font-black tracking-widest text-black mb-1.5 uppercase">{product.name}</h3>
           <p className="text-[12px] text-gray-500 font-medium">{product.brand}</p>
@@ -87,7 +87,7 @@ export default function ProductCarousel() {
   }, { scope: containerRef, dependencies: [products] })
 
   return (
-    <section ref={containerRef} id="productos" className="bg-white py-24 lg:py-32 border-t border-black/5 overflow-hidden perspective-[1000px]">
+    <section ref={containerRef} id="productos" className="bg-white py-10 lg:py-12 border-t border-black/5 overflow-hidden perspective-[1000px]">
       <div className="max-w-[1400px] mx-auto px-6 lg:px-12">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-16 gap-6 overflow-hidden">
           <div className="novedades-header">

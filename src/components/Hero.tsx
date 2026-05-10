@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom'
 export default function Hero() {
   return (
     <section className="relative overflow-hidden bg-[#f9f9f9]">
-      <div className="max-w-[1400px] mx-auto px-6 lg:px-12 pt-0 pb-20 lg:pt-0 lg:pb-32">
+      <div className="max-w-[1400px] mx-auto px-6 lg:px-12 pt-0 pb-8 lg:pb-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-10 items-center">
 
           {/* Left Content */}
@@ -13,7 +13,7 @@ export default function Hero() {
             <span className="animate-fade-up inline-flex text-[10px] font-bold tracking-[0.25em] uppercase text-black mb-6 px-3 py-1 bg-gray-200/50 rounded-sm">
               Calidad Premium
             </span>
-            <h1 className="animate-fade-up delay-100 font-skylight text-7xl sm:text-8xl lg:text-9xl xl:text-[8.5rem] leading-[0.8] tracking-tight mb-8 text-balance">
+            <h1 className="animate-fade-up delay-100 font-skylight text-5xl sm:text-6xl lg:text-8xl xl:text-8xl leading-[0.8] tracking-tight mb-8 text-balance">
               <span className="block lg:inline whitespace-nowrap">LAS MEJORES</span><br />
               <span className="text-gray-300">ZAPAS.</span>
             </h1>

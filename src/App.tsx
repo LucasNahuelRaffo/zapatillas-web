@@ -30,7 +30,7 @@ const AdminDashboard = lazy(() => import('./pages/Admin/AdminDashboard'))
 
 function HomePage() {
   return (
-    <main>
+    <main className="font-skylight py-4 lg:py-6">
       <Hero />
       <InfoSection />
       <QualitySection />
@@ -39,6 +39,7 @@ function HomePage() {
     </main>
   )
 }
+
 
 // Minimal Loading screen for route suspense
 function PageLoader() {

@@ -68,7 +68,7 @@ export default function QualitySection() {
   ]
 
   return (
-    <section id="calidad" className="bg-[#f9f9f9] py-24 lg:py-32 overflow-hidden">
+    <section id="calidad" className="bg-[#f9f9f9] py-10 lg:py-12 overflow-hidden">
       <div className="max-w-[1400px] mx-auto px-6 lg:px-12">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-8 items-center">
 
@@ -84,7 +84,7 @@ export default function QualitySection() {
               Materiales & Confección
             </motion.span>
 
-            <h2 className="font-skylight text-6xl sm:text-7xl lg:text-8xl leading-[0.95] mb-6 text-balance overflow-hidden py-2 cursor-default">
+            <h2 className="font-skylight text-4xl sm:text-5xl lg:text-6xl leading-[0.95] mb-6 text-balance overflow-hidden py-2 cursor-default">
               <AnimatedLetters text="¿Qué es la" delayOffset={0} />
               <br />
               <AnimatedLetters text="Calidad Premium?" delayOffset={0.3} className="text-gray-300" />
@@ -103,7 +103,7 @@ export default function QualitySection() {
 
             <div className="flex gap-14 mt-12 pt-12 border-t border-gray-200">
               <motion.div variants={fadeUpVariants}>
-                <p className="text-5xl font-black tracking-tighter mb-1 flex items-baseline">
+                <p className="text-4xl font-black tracking-tighter mb-1 flex items-baseline">
                   <AnimatedNumber value={99} />
                   <motion.span
                     initial={{ scale: 0, opacity: 0 }}
@@ -129,7 +129,7 @@ export default function QualitySection() {
               />
 
               <motion.div variants={fadeUpVariants}>
-                <p className="text-5xl font-black tracking-tighter mb-1 overflow-hidden">
+                <p className="text-4xl font-black tracking-tighter mb-1 overflow-hidden">
                   <AnimatedLetters text="1:1" delayOffset={0.5} />
                 </p>
                 <p className="text-[11px] font-bold tracking-[0.15em] text-gray-400 uppercase mt-2">

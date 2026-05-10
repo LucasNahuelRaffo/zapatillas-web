@@ -72,7 +72,7 @@ export default function Newsletter() {
   }
 
   return (
-    <section ref={sectionRef} className="bg-[#f4f4f4] w-full flex flex-col lg:flex-row min-h-[600px] lg:h-[750px] overflow-hidden">
+    <section ref={sectionRef} className="bg-[#f4f4f4] w-full flex flex-col lg:flex-row min-h-[500px] lg:h-[650px] overflow-hidden">
       {/* Left Column - Image Container */}
       <div className="w-full lg:w-1/2 h-[450px] lg:h-full relative overflow-hidden group">
         <img 

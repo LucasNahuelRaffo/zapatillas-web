@@ -97,7 +97,7 @@ export default function ProductDetailPage() {
   }
 
   return (
-    <div className="bg-white min-h-screen pb-20">
+    <div className="bg-white min-h-screen pb-20 font-common">
       {/* Breadcrumb / Back button */}
       <div className="max-w-[1400px] mx-auto px-6 lg:px-12 py-8">
         <Link 
