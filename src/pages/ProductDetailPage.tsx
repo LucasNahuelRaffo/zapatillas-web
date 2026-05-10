@@ -2,6 +2,7 @@ import { useParams, Link, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ChevronLeft, Loader2 } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { supabase, hasSupabaseCredentials } from '../lib/supabase';
 import { Product } from '../data/products';
 import { getLocalProducts } from '../lib/productStore';
@@ -35,12 +36,10 @@ export default function ProductDetailPage() {
     const firstImage = colorImages[0];
 
     if (firstImage) {
-      // Intentar encontrar la imagen en la galería principal
       const idx = product.images.indexOf(firstImage);
       if (idx !== -1) {
         setGalleryIndex(idx);
       } else {
-        // Fallback: buscar por coincidencia parcial si la URL tiene parámetros distintos
         const baseImageUrl = firstImage.split('?')[0];
         const fuzzyIdx = product.images.findIndex(img => img.includes(baseImageUrl));
         if (fuzzyIdx !== -1) setGalleryIndex(fuzzyIdx);
@@ -51,7 +50,7 @@ export default function ProductDetailPage() {
 
   const handleGalleryIndexChange = (index: number) => {
     if (!product) return;
-    setGalleryIndex(index); // Sincronizar estado para evitar el bucle de revertido
+    setGalleryIndex(index);
     
     const imageUrl = product.images[index];
     const matchingColor = product.colors.find(c => {
@@ -96,8 +95,36 @@ export default function ProductDetailPage() {
     );
   }
 
+  // Structured Data (JSON-LD)
+  const jsonLd = {
+    "@context": "https://schema.org/",
+    "@type": "Product",
+    "name": product.name,
+    "image": product.images,
+    "description": product.subtitle,
+    "brand": {
+      "@type": "Brand",
+      "name": product.brand
+    },
+    "offers": {
+      "@type": "Offer",
+      "url": window.location.href,
+      "priceCurrency": "ARS",
+      "price": product.price,
+      "availability": "https://schema.org/InStock"
+    }
+  };
+
   return (
     <div className="bg-white min-h-screen pb-20 font-common">
+      <Helmet>
+        <title>{`${product.name} | Za-pass Premium Sneakers`}</title>
+        <meta name="description" content={`Comprá las ${product.name} en Za-pass. Calidad Premium AAA+, materiales originales y envío gratis a todo el país.`} />
+        <script type="application/ld+json">
+          {JSON.stringify(jsonLd)}
+        </script>
+      </Helmet>
+
       {/* Breadcrumb / Back button */}
       <div className="max-w-[1400px] mx-auto px-6 lg:px-12 py-8">
         <Link 
@@ -147,7 +174,7 @@ export default function ProductDetailPage() {
           <ProductAccordions description={product.description} />
         </motion.div>
       </div>
-
     </div>
   );
 }
+

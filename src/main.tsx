@@ -1,6 +1,7 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { HashRouter } from 'react-router-dom'
+import { HelmetProvider } from 'react-helmet-async'
 import { CartProvider } from './context/CartContext'
 import './index.css'
 import App from './App'
@@ -11,10 +12,13 @@ console.log('Supabase URL Configured:', !!import.meta.env.VITE_SUPABASE_URL);
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <CartProvider>
-      <HashRouter>
-        <App />
-      </HashRouter>
-    </CartProvider>
+    <HelmetProvider>
+      <CartProvider>
+        <HashRouter>
+          <App />
+        </HashRouter>
+      </CartProvider>
+    </HelmetProvider>
   </StrictMode>,
 )
+

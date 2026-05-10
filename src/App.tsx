@@ -1,22 +1,35 @@
 import { useEffect, Suspense, lazy } from 'react'
 import { Routes, Route, useLocation } from 'react-router-dom'
+import { Helmet } from 'react-helmet-async'
+import Lenis from 'lenis'
+
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+
+gsap.registerPlugin(ScrollTrigger)
 
 function ScrollToTop() {
   const { pathname } = useLocation()
 
   useEffect(() => {
-    window.scrollTo(0, 0)
+    // If lenis is active, we should use its scrollTo method or just window.scrollTo(0,0)
+    // Lenis usually handles window.scrollTo by default if initialized on body
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: 'instant' // Instant so it doesn't conflict with initial paint
+    })
   }, [pathname])
 
   return null
 }
+
 import AnnouncementBar from './components/AnnouncementBar'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 
 // Home sections (we'll keep HomePage components synchronous for fast initial paint, except heavy ones if we want)
 import Hero from './components/Hero'
-import PromoStrip from './components/PromoStrip'
 import QualitySection from './components/QualitySection'
 import InfoSection from './components/InfoSection'
 import ProductCarousel from './components/ProductCarousel'
@@ -31,6 +44,10 @@ const AdminDashboard = lazy(() => import('./pages/Admin/AdminDashboard'))
 function HomePage() {
   return (
     <main className="font-skylight py-4 lg:py-6">
+      <Helmet>
+        <title>Za-pass | Sneakers Premium AAA+ | Envío Gratis Argentina</title>
+        <meta name="description" content="Redefiniendo el estándar de las zapatillas premium. Calidad AAA+ con materiales originales, envío gratis a todo el país y garantía extendida." />
+      </Helmet>
       <Hero />
       <InfoSection />
       <QualitySection />
@@ -39,6 +56,7 @@ function HomePage() {
     </main>
   )
 }
+
 
 
 // Minimal Loading screen for route suspense
@@ -53,6 +71,34 @@ function PageLoader() {
 export default function App() {
   const location = useLocation();
   const isAdmin = location.pathname.startsWith('/admin');
+
+  useEffect(() => {
+    // Initialize Lenis
+    const lenis = new Lenis({
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      direction: 'vertical',
+      gestureDirection: 'vertical',
+      smoothWheel: true,
+      wheelMultiplier: 1,
+      smoothTouch: false,
+      touchMultiplier: 2,
+      infinite: false,
+    })
+
+    // Synchronize Lenis with ScrollTrigger
+    lenis.on('scroll', ScrollTrigger.update)
+
+    gsap.ticker.add((time) => {
+      lenis.raf(time * 1000)
+    })
+
+    gsap.ticker.lagSmoothing(0)
+
+    return () => {
+      lenis.destroy()
+    }
+  }, [])
 
   return (
     <div className="min-h-screen">
@@ -74,3 +120,4 @@ export default function App() {
     </div>
   )
 }
+

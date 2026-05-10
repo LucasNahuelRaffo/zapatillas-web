@@ -2,7 +2,9 @@ import { useState, useRef, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { ArrowRight, Loader2 } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import { Helmet } from 'react-helmet-async'
 import { supabase, hasSupabaseCredentials } from '../lib/supabase'
+
 import { Product } from '../data/products'
 import { getLocalProducts } from '../lib/productStore'
 
@@ -269,7 +271,13 @@ export default function Shop() {
 
   return (
     <div className="bg-[#f9f9f9] min-h-screen">
+      <Helmet>
+        <title>Shop | Za-pass | Catálogo de Sneakers Premium</title>
+        <meta name="description" content="Explorá nuestro catálogo exclusivo de zapatillas premium. Nike, Jordan, Adidas y más. Calidad AAA+ con envío gratis a toda la Argentina." />
+      </Helmet>
+
       {/* ── Hero banner ─────────────────────────── */}
+
       <div className="bg-[#f0f0f0] border-b border-black/5 py-12 px-6 lg:px-12">
         <div className="max-w-[1400px] mx-auto">
           <motion.h1
