@@ -101,7 +101,7 @@ export default function SneakerCanvas({ color = '#ffffff' }: SneakerCanvasProps)
             depth: true 
           }}
           performance={{ min: 0.5 }}
-          onError={(e) => console.error("Canvas onError:", e)}
+          onError={(e: any) => console.error("Canvas onError:", e)}
           camera={{ position: [0, 0, 20], fov: 50 }}
         >
 
