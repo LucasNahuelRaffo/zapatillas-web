@@ -1,13 +1,14 @@
 import { useRef, useMemo } from 'react'
 import { useFrame } from '@react-three/fiber'
-import { useGLTF, ContactShadows } from '@react-three/drei'
+import { useLoader } from '@react-three/fiber'
+import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader'
 import * as THREE from 'three'
 
 export default function SneakerModel({ color = '#ffffff' }: { color?: string }) {
   const group = useRef<THREE.Group>(null)
   
-  // Cargar el modelo GLTF optimizado (22KB vs 8.6MB del OBJ)
-  const { scene } = useGLTF('/models/sneaker/gltf/Womens_Sneakers_7.gltf')
+  // Revertimos al modelo OBJ original para asegurar visibilidad
+  const obj = useLoader(OBJLoader, '/models/sneaker/Womens_Sneakers_7.obj')
 
   // Material único para toda la zapatilla, optimizado para performance
   const material = useMemo(() => {
@@ -19,7 +20,7 @@ export default function SneakerModel({ color = '#ffffff' }: { color?: string }) 
   }, []);
 
   useMemo(() => {
-    scene.traverse((child) => {
+    obj.traverse((child) => {
       if ((child as THREE.Mesh).isMesh) {
         const mesh = child as THREE.Mesh;
         mesh.material = material;
@@ -27,7 +28,7 @@ export default function SneakerModel({ color = '#ffffff' }: { color?: string }) 
         mesh.receiveShadow = true;
       }
     })
-  }, [scene, material])
+  }, [obj, material])
 
   const targetColor = useMemo(() => new THREE.Color(color), [color]);
 
@@ -46,11 +47,8 @@ export default function SneakerModel({ color = '#ffffff' }: { color?: string }) 
 
   return (
     <group ref={group} dispose={null}>
-      <primitive object={scene} />
+      <primitive object={obj} />
     </group>
   )
 }
-
-// Pre-cargar el modelo
-useGLTF.preload('/models/sneaker/gltf/Womens_Sneakers_7.gltf')
 
