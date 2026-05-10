@@ -56,8 +56,13 @@ export default function Hero() {
                 }}
                 src={heroSneaker}
                 alt="Za-pass Premium Sneaker"
+                fetchPriority="high"
+                loading="eager"
+                width={650}
+                height={450}
                 className="w-full mix-blend-multiply"
               />
+
             </motion.div>
           </div>
         </div>

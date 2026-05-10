@@ -1,48 +1,33 @@
-import { useRef, useEffect } from 'react'
-import { useLoader } from '@react-three/fiber'
-import { useTexture } from '@react-three/drei'
+import { useRef, useMemo } from 'react'
 import { useFrame } from '@react-three/fiber'
+import { useGLTF, ContactShadows } from '@react-three/drei'
 import * as THREE from 'three'
-import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js'
-import { useMemo } from 'react'
 
 export default function SneakerModel({ color = '#ffffff' }: { color?: string }) {
   const group = useRef<THREE.Group>(null)
   
-  // Cargar geometría original OBJ y texturas optimizadas (para evitar la memoria de VRAM del GLB)
-  const obj = useLoader(OBJLoader, '/models/sneaker/Womens_Sneakers_7.obj')
+  // Cargar el modelo GLTF optimizado (22KB vs 8.6MB del OBJ)
+  const { scene } = useGLTF('/models/sneaker/gltf/Womens_Sneakers_7.gltf')
 
-  const props = useTexture({
-    map: '/models/sneaker/textures/Womens_Sneakers_7_Diffuse.jpg',
-    normalMap: '/models/sneaker/textures/Womens_Sneakers_7_Normal.jpg',
-  })
-
-  // Material único para toda la zapatilla
+  // Material único para toda la zapatilla, optimizado para performance
   const material = useMemo(() => {
-    if (props.map) {
-      props.map.colorSpace = THREE.SRGBColorSpace;
-      props.map.flipY = false;
-    }
-    if (props.normalMap) {
-      props.normalMap.flipY = false;
-    }
     return new THREE.MeshStandardMaterial({
-      map: props.map,
-      normalMap: props.normalMap,
-      color: new THREE.Color('#ffffff'), // Inicial
-      roughness: 0.5,
-      metalness: 0.1
+      color: new THREE.Color('#ffffff'),
+      roughness: 0.6,
+      metalness: 0.1,
     });
-  }, [props.map, props.normalMap]);
+  }, []);
 
-  useEffect(() => {
-    obj.traverse((child) => {
+  useMemo(() => {
+    scene.traverse((child) => {
       if ((child as THREE.Mesh).isMesh) {
         const mesh = child as THREE.Mesh;
         mesh.material = material;
+        mesh.castShadow = true;
+        mesh.receiveShadow = true;
       }
     })
-  }, [obj, material])
+  }, [scene, material])
 
   const targetColor = useMemo(() => new THREE.Color(color), [color]);
 
@@ -59,14 +44,13 @@ export default function SneakerModel({ color = '#ffffff' }: { color?: string }) 
     material.color.lerp(targetColor, 5 * delta);
   })
 
-  // Usar primitivo clonado o original
   return (
     <group ref={group} dispose={null}>
-      <primitive object={obj} />
+      <primitive object={scene} />
     </group>
   )
 }
 
-// Pre-cargar texturas
-useTexture.preload('/models/sneaker/textures/Womens_Sneakers_7_Diffuse.jpg')
-useTexture.preload('/models/sneaker/textures/Womens_Sneakers_7_Normal.jpg')
+// Pre-cargar el modelo
+useGLTF.preload('/models/sneaker/gltf/Womens_Sneakers_7.gltf')
+

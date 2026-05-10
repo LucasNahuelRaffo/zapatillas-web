@@ -22,8 +22,12 @@ function ProductCard({ product }: { product: Product }) {
         <img
           src={product.images[0]}
           alt={product.name}
+          loading="lazy"
+          width={400}
+          height={300}
           className="w-full mix-blend-multiply drop-shadow-2xl group-hover:scale-105 transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"
         />
+
         <div className="absolute top-4 right-4 bg-black text-white px-3 py-1.5 text-[10px] font-bold tracking-[0.2em] uppercase opacity-0 transform translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]">
           Comprar
         </div>

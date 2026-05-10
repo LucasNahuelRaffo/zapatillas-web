@@ -77,11 +77,15 @@ export default function Newsletter() {
       <div className="w-full lg:w-1/2 h-[450px] lg:h-full relative overflow-hidden group">
         <img 
           ref={imageRef}
-          src="https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?q=80&w=1500&auto=format&fit=crop" 
+          src="https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?q=80&w=800&auto=format&fit=crop" 
           alt="Archive Sneaker" 
+          loading="lazy"
+          width={800}
+          height={1000}
           // Hacemos la imagen más alta (scale-125) para darle margen físico para desplazarse con el parallax
           className="w-full h-[130%] object-cover grayscale contrast-[1.1] brightness-[0.8] transition-transform duration-[10s] group-hover:scale-110"
         />
+
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
         <div className="absolute inset-0 mix-blend-overlay opacity-20 bg-[url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.85%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E')]" />
       </div>

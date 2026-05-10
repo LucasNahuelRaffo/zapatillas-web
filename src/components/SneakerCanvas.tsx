@@ -93,10 +93,18 @@ export default function SneakerCanvas({ color = '#ffffff' }: SneakerCanvasProps)
       <div className="w-full h-[400px] lg:h-[600px] cursor-grab active:cursor-grabbing">
         <Canvas 
           shadows 
-          dpr={[1, 2]}
+          dpr={[1, 1.5]} // Reducido de 2 para mejor performance en móviles
+          gl={{ 
+            antialias: true, 
+            powerPreference: "high-performance",
+            stencil: false,
+            depth: true 
+          }}
+          performance={{ min: 0.5 }}
           onError={(e) => console.error("Canvas onError:", e)}
           camera={{ position: [0, 0, 20], fov: 50 }}
         >
+
           <ambientLight intensity={0.5} />
           <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={1} castShadow />
           

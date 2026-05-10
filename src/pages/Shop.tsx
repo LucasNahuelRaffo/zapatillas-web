@@ -162,9 +162,13 @@ function ProductCard({ product, activeColors }: { product: Product, activeColors
           <img
             src={displayImage}
             alt={product.name}
+            loading="lazy"
+            width={400}
+            height={400}
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
         </div>
+
         <p className="font-common text-[13px] font-bold text-black leading-tight uppercase tracking-wide">
           {product.name} {matchingColor && <span className="opacity-40 ml-1 text-[11px]">({matchingColor.name})</span>}
         </p>
