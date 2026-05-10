@@ -81,9 +81,8 @@ export default function App() {
 
       smoothWheel: true,
       wheelMultiplier: 1,
-      smoothTouch: false,
-      touchMultiplier: 2,
       infinite: false,
+
     })
 
     // Synchronize Lenis with ScrollTrigger
