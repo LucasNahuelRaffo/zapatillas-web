@@ -1,6 +1,7 @@
 import { useRef, useMemo } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { useLoader } from '@react-three/fiber'
+// @ts-ignore
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader'
 import * as THREE from 'three'
 
@@ -20,7 +21,7 @@ export default function SneakerModel({ color = '#ffffff' }: { color?: string }) 
   }, []);
 
   useMemo(() => {
-    obj.traverse((child) => {
+    obj.traverse((child: any) => {
       if ((child as THREE.Mesh).isMesh) {
         const mesh = child as THREE.Mesh;
         mesh.material = material;
