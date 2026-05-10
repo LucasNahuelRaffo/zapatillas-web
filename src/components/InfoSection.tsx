@@ -27,8 +27,8 @@ export default function InfoSection() {
     )
     
     gsap.fromTo('.section-title',
-      { opacity: 0, filter: 'blur(5px)' },
-      { opacity: 1, filter: 'blur(0px)', duration: 0.8, stagger: 0.2,
+      { opacity: 0, y: 20 },
+      { opacity: 1, y: 0, duration: 0.8, stagger: 0.2, ease: 'power2.out', force3D: true,
         scrollTrigger: { trigger: containerRef.current, start: 'top 85%' }
       }
     )

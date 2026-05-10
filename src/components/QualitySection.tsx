@@ -33,8 +33,8 @@ const AnimatedLetters = ({ text, delayOffset = 0, className = "" }: { text: stri
         <motion.span
           key={`${char}-${index}`}
           className="inline-block origin-bottom"
-          initial={{ y: "120%", opacity: 0, rotateX: -80, filter: "blur(10px)" }}
-          animate={isInView ? { y: 0, opacity: 1, rotateX: 0, filter: "blur(0px)" } : {}}
+          initial={{ y: "120%", opacity: 0, rotateX: -80 }}
+          animate={isInView ? { y: 0, opacity: 1, rotateX: 0 } : {}}
           transition={{ duration: 0.7, delay: delayOffset + index * 0.025 }}
         >
           {char === " " ? "\u00A0" : char}

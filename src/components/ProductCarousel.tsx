@@ -80,8 +80,8 @@ export default function ProductCarousel() {
 
     // Tarjetas de productos entrando desde abajo flotando en cascada
     gsap.fromTo('.product-card',
-      { opacity: 0, y: 150, rotateX: 20, scale: 0.9 },
-      { opacity: 1, y: 0, rotateX: 0, scale: 1, duration: 1, stagger: 0.2, ease: 'back.out(1.2)',
+      { opacity: 0, y: 120, scale: 0.96 },
+      { opacity: 1, y: 0, scale: 1, duration: 1, stagger: 0.18, ease: 'power3.out', force3D: true,
         scrollTrigger: {
           trigger: '.product-grid',
           start: 'top 85%',
@@ -91,7 +91,7 @@ export default function ProductCarousel() {
   }, { scope: containerRef, dependencies: [products] })
 
   return (
-    <section ref={containerRef} id="productos" className="bg-white py-10 lg:py-12 border-t border-black/5 overflow-hidden perspective-[1000px]">
+    <section ref={containerRef} id="productos" className="bg-white py-10 lg:py-12 border-t border-black/5 overflow-hidden">
       <div className="max-w-[1400px] mx-auto px-6 lg:px-12">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-16 gap-6 overflow-hidden">
           <div className="novedades-header">

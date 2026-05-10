@@ -19,11 +19,12 @@ export default function Newsletter() {
       {
         y: '15%',    // Va deslizando hacia abajo a medida que haces scroll
         ease: 'none',
+        force3D: true,
         scrollTrigger: {
           trigger: sectionRef.current,
           start: 'top bottom', // Arranca cuando la sección apenas toca la pantalla desde abajo
           end: 'bottom top',   // Termina cuando la sección se va por arriba
-          scrub: true          // Amarrado exactamente a la rueda del mouse
+          scrub: 1             // Suavizado de 1s para evitar repaint frame-a-frame
         }
       }
     )
@@ -83,6 +84,7 @@ export default function Newsletter() {
           width={800}
           height={1000}
           // Hacemos la imagen más alta (scale-125) para darle margen físico para desplazarse con el parallax
+          style={{ willChange: 'transform' }}
           className="w-full h-[130%] object-cover grayscale contrast-[1.1] brightness-[0.8] transition-transform duration-[10s] group-hover:scale-110"
         />
 

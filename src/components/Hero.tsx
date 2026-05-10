@@ -60,6 +60,7 @@ export default function Hero() {
                 loading="eager"
                 width={650}
                 height={450}
+                style={{ willChange: 'transform' }}
                 className="w-full mix-blend-multiply"
               />
 

@@ -69,11 +69,28 @@ interface SneakerCanvasProps {
 
 export default function SneakerCanvas({ color = '#ffffff' }: SneakerCanvasProps) {
   const [webGLAvailable, setWebGLAvailable] = React.useState(true);
+  const wrapperRef = React.useRef<HTMLDivElement>(null);
+  const [isVisible, setIsVisible] = React.useState(false);
 
   React.useEffect(() => {
     if (!isWebGLAvailable()) {
       setWebGLAvailable(false);
     }
+  }, []);
+
+  React.useEffect(() => {
+    const el = wrapperRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          setIsVisible(entry.isIntersecting);
+        }
+      },
+      { rootMargin: '200px 0px', threshold: 0.01 }
+    );
+    io.observe(el);
+    return () => io.disconnect();
   }, []);
 
   if (!webGLAvailable) {
@@ -90,17 +107,18 @@ export default function SneakerCanvas({ color = '#ffffff' }: SneakerCanvasProps)
 
   return (
     <ErrorBoundary>
-      <div className="w-full h-[400px] lg:h-[600px] cursor-grab active:cursor-grabbing">
-        <Canvas 
-          shadows 
+      <div ref={wrapperRef} className="w-full h-[400px] lg:h-[600px] cursor-grab active:cursor-grabbing">
+        <Canvas
+          shadows
           dpr={[1, 1.5]} // Reducido de 2 para mejor performance en móviles
-          gl={{ 
-            antialias: true, 
+          gl={{
+            antialias: true,
             powerPreference: "high-performance",
             stencil: false,
-            depth: true 
+            depth: true
           }}
           performance={{ min: 0.5 }}
+          frameloop={isVisible ? 'always' : 'demand'}
           onError={(e: any) => console.error("Canvas onError:", e)}
           camera={{ position: [0, 0, 20], fov: 50 }}
         >

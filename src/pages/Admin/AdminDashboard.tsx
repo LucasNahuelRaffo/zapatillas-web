@@ -99,6 +99,7 @@ export default function AdminDashboard() {
   const [currentDate, setCurrentDate] = useState(new Date())
   const [selectedDate, setSelectedDate] = useState<Date | null>(null)
   const [loadingReservas, setLoadingReservas] = useState(false)
+  const [errorReservas, setErrorReservas] = useState<string | null>(null)
 
   // Cargar productos desde localStorage al hacer login
   useEffect(() => {
@@ -110,12 +111,13 @@ export default function AdminDashboard() {
     if (isLoggedIn && activeTab === 'solicitudes') {
       const fetchReservas = async () => {
         setLoadingReservas(true)
+        setErrorReservas(null)
         const { data, error } = await supabase.from('reservas_zapatillas').select('*').order('fecha_reserva', { ascending: false })
         if (error) {
           console.error("Error al cargar reservas:", error)
+          setErrorReservas(error.message)
         }
         if (data) {
-          console.log("Reservas cargadas:", data)
           setReservas(data as Reserva[])
         }
         setLoadingReservas(false)
@@ -459,6 +461,11 @@ export default function AdminDashboard() {
           )
         ) : (
           <div className="bg-white border border-black/5 rounded-sm overflow-hidden shadow-sm p-8">
+            {errorReservas && (
+              <div className="mb-6 px-4 py-3 bg-red-50 border border-red-200 rounded-sm text-[12px] text-red-600 font-medium">
+                Error al conectar con Supabase: {errorReservas}
+              </div>
+            )}
             <div className="flex items-center justify-between mb-8">
               <h2 className="text-2xl font-black uppercase tracking-tighter">
                 {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}

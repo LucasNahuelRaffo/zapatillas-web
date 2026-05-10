@@ -1,4 +1,4 @@
-import { useEffect, Suspense, lazy } from 'react'
+import { useEffect, useRef, Suspense, lazy } from 'react'
 import { Routes, Route, useLocation } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async'
 import Lenis from 'lenis'
@@ -8,18 +8,18 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
 gsap.registerPlugin(ScrollTrigger)
 
-function ScrollToTop() {
+function ScrollToTop({ lenisRef }: { lenisRef: React.MutableRefObject<Lenis | null> }) {
   const { pathname } = useLocation()
 
   useEffect(() => {
-    // If lenis is active, we should use its scrollTo method or just window.scrollTo(0,0)
-    // Lenis usually handles window.scrollTo by default if initialized on body
-    window.scrollTo({
-      top: 0,
-      left: 0,
-      behavior: 'instant' // Instant so it doesn't conflict with initial paint
-    })
-  }, [pathname])
+    // Lenis intercepta el scroll, así que window.scrollTo no alcanza:
+    // hay que pedirle a Lenis que salte al tope de forma instantánea.
+    if (lenisRef.current) {
+      lenisRef.current.scrollTo(0, { immediate: true, force: true })
+    } else {
+      window.scrollTo({ top: 0, left: 0, behavior: 'instant' })
+    }
+  }, [pathname, lenisRef])
 
   return null
 }
@@ -71,36 +71,41 @@ function PageLoader() {
 export default function App() {
   const location = useLocation();
   const isAdmin = location.pathname.startsWith('/admin');
+  const lenisRef = useRef<Lenis | null>(null);
 
   useEffect(() => {
     // Initialize Lenis
     const lenis = new Lenis({
-      duration: 1.1,
+      duration: 1.2,
       easing: (t) => 1 - Math.pow(1 - t, 4), // Quartic out para fluidez total
       orientation: 'vertical',
       smoothWheel: true,
-      wheelMultiplier: 1.1,
+      wheelMultiplier: 1.0,
       infinite: false,
 
     })
+    lenisRef.current = lenis
 
     // Synchronize Lenis with ScrollTrigger
     lenis.on('scroll', ScrollTrigger.update)
 
-    gsap.ticker.add((time) => {
+    const tick = (time: number) => {
       lenis.raf(time * 1000)
-    })
+    }
+    gsap.ticker.add(tick)
 
-    gsap.ticker.lagSmoothing(0)
+    gsap.ticker.lagSmoothing(500, 33)
 
     return () => {
+      gsap.ticker.remove(tick)
       lenis.destroy()
+      lenisRef.current = null
     }
   }, [])
 
   return (
     <div className="min-h-screen">
-      <ScrollToTop />
+      <ScrollToTop lenisRef={lenisRef} />
       {!isAdmin && <AnnouncementBar />}
       {!isAdmin && <Navbar />}
       
