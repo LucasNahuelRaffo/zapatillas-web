@@ -28,7 +28,7 @@ const AnimatedLetters = ({ text, delayOffset = 0, className = "" }: { text: stri
   const isInView = useInView(ref, { once: true, margin: "-50px" })
 
   return (
-    <span ref={ref} className={`inline-block ${className}`}>
+    <span ref={ref} className={`inline-block px-1 ${className}`}>
       {text.split('').map((char, index) => (
         <motion.span
           key={`${char}-${index}`}
@@ -58,14 +58,6 @@ export default function QualitySection() {
     show: { opacity: 1, y: 0, transition: { duration: 1 } }
   }
 
-  const [shoeColor, setShoeColor] = useState('#ffffff')
-  
-  const colors = [
-    { name: 'Triple White', hex: '#ffffff' },
-    { name: 'Dark Onyx', hex: '#222222' },
-    { name: 'Chicago Red', hex: '#b31212' },
-    { name: 'Mocha', hex: '#634b35' },
-  ]
 
   return (
     <section id="calidad" className="bg-[#f9f9f9] py-10 lg:py-12 overflow-hidden">
@@ -84,7 +76,7 @@ export default function QualitySection() {
               Materiales & Confección
             </motion.span>
 
-            <h2 className="font-skylight text-4xl sm:text-5xl lg:text-6xl leading-[0.95] mb-6 text-balance overflow-hidden py-2 cursor-default">
+            <h2 className="font-skylight text-4xl sm:text-5xl lg:text-6xl leading-[1.1] mb-6 text-balance py-4 cursor-default">
               <AnimatedLetters text="¿Qué es la" delayOffset={0} />
               <br />
               <AnimatedLetters text="Calidad Premium?" delayOffset={0.3} className="text-gray-300" />
@@ -156,40 +148,9 @@ export default function QualitySection() {
                     <div className="text-black font-skylight text-2xl animate-pulse">Cargando 3D...</div>
                   </div>
                 }>
-                  <SneakerCanvas color={shoeColor} />
+                  <SneakerCanvas />
                 </Suspense>
               </div>
-
-              {/* Selector de Variantes */}
-              <motion.div 
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1, duration: 0.8 }}
-                viewport={{ once: true }}
-                className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-3"
-              >
-                <div className="flex gap-4 p-3 bg-white/70 backdrop-blur-md rounded-full shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-white/50">
-                  {colors.map((c) => (
-                    <button
-                      key={c.name}
-                      onClick={() => setShoeColor(c.hex)}
-                      className={`w-10 h-10 rounded-full transition-all duration-300 relative ${
-                        shoeColor === c.hex 
-                          ? 'scale-110 ring-2 ring-black ring-offset-2' 
-                          : 'scale-90 hover:scale-100 ring-1 ring-black/10'
-                      }`}
-                      style={{ backgroundColor: c.hex }}
-                      title={c.name}
-                    >
-                      {/* Inner shadow/highlight for depth */}
-                      <span className="absolute inset-0 rounded-full shadow-inner opacity-20 bg-black mix-blend-overlay"></span>
-                    </button>
-                  ))}
-                </div>
-                <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-gray-500 bg-white/50 px-3 py-1 rounded-full backdrop-blur-sm">
-                  {colors.find(c => c.hex === shoeColor)?.name || 'Variantes'}
-                </span>
-              </motion.div>
             </div>
           </motion.div>
         </div>

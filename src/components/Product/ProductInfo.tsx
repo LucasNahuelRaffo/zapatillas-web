@@ -3,19 +3,15 @@ interface ProductInfoProps {
   name: string;
   subtitle?: string;
   price: number;
-  selectedColor?: string;
 }
 
-export default function ProductInfo({ brand, name, subtitle, price, selectedColor }: ProductInfoProps) {
+export default function ProductInfo({ brand, name, subtitle, price }: ProductInfoProps) {
   const formattedPrice = new Intl.NumberFormat('es-AR', {
     style: 'currency',
     currency: 'ARS',
     minimumFractionDigits: 0,
   }).format(price).replace('ARS', '$');
 
-  const installmentPrice = new Intl.NumberFormat('es-AR', {
-    minimumFractionDigits: 0,
-  }).format(Math.round(price / 3));
 
   return (
     <div className="mb-8">
@@ -30,7 +26,7 @@ export default function ProductInfo({ brand, name, subtitle, price, selectedColo
       </div>
 
       <h1 className="font-common text-3xl md:text-4xl font-black leading-[1.1] mb-2 uppercase tracking-tight">
-        {name} {selectedColor && <span className="opacity-40 ml-2 text-xl italic lowercase">({selectedColor})</span>}
+        {name}
       </h1>
       <p className="text-gray-400 text-sm font-medium mb-8">
         {subtitle}
@@ -38,12 +34,6 @@ export default function ProductInfo({ brand, name, subtitle, price, selectedColo
 
       <div className="space-y-1">
         <p className="text-3xl font-black tracking-tight">{formattedPrice}</p>
-        <div className="flex items-center gap-2 text-sm">
-          <span className="w-5 h-3 flex-shrink-0 rounded-sm overflow-hidden border border-gray-200" style={{background:'linear-gradient(180deg,#74ACDF 33%,#fff 33%,#fff 66%,#74ACDF 66%)'}}/>
-          <p className="text-gray-600 font-medium">
-            3 cuotas sin interés de <span className="font-bold text-black">${installmentPrice}</span>
-          </p>
-        </div>
       </div>
     </div>
   );

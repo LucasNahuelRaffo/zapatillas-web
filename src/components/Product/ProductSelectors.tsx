@@ -6,26 +6,20 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 interface ProductSelectorsProps {
   product: Product;
-  onColorChange?: (colorName: string) => void;
-  selectedColor?: string;
 }
 
-export default function ProductSelectors({ product, onColorChange, selectedColor }: ProductSelectorsProps) {
-  const { colors, sizes } = product;
+export default function ProductSelectors({ product }: ProductSelectorsProps) {
+  const { sizes } = product;
   const { addItem } = useCart();
   
   const [selectedSize, setSelectedSize] = useState(sizes.find(s => s.stock)?.size);
-
-  const handleColorClick = (colorName: string) => {
-    if (onColorChange) onColorChange(colorName);
-  };
   const [isAdding, setIsAdding] = useState(false);
 
   const handleAddToCart = () => {
     if (!selectedSize) return;
     
     setIsAdding(true);
-    addItem(product, selectedSize, selectedColor || '');
+    addItem(product, selectedSize, '');
     
     setTimeout(() => {
       setIsAdding(false);
@@ -34,24 +28,6 @@ export default function ProductSelectors({ product, onColorChange, selectedColor
 
   return (
     <div className="space-y-10">
-      {/* Colors */}
-      <div>
-        <h3 className="text-[10px] font-bold tracking-[0.2em] uppercase text-gray-400 mb-4">Color</h3>
-        <div className="flex gap-3">
-          {colors.map((color) => (
-            <button
-              key={color.name}
-              onClick={() => handleColorClick(color.name)}
-              title={color.name}
-              className={`w-5 h-5 rounded-full transition-all flex items-center justify-center shadow-sm ${
-                selectedColor === color.name ? 'ring-2 ring-black ring-offset-2 scale-110' : 'hover:scale-110'
-              }`}
-              style={{ backgroundColor: color.hex }}
-            />
-          ))}
-        </div>
-      </div>
-
       {/* Sizes */}
       <div>
         <div className="flex justify-between items-center mb-4">
