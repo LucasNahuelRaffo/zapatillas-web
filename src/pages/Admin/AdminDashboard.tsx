@@ -114,6 +114,18 @@ export default function AdminDashboard() {
     if (isLoggedIn) setProducts(getLocalProducts())
   }, [isLoggedIn])
 
+  // Bloquear scroll del body al abrir algún panel lateral
+  useEffect(() => {
+    if (isEditing || isEditingVideo || selectedDate) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [isEditing, isEditingVideo, selectedDate])
+
   // Cargar videos
   useEffect(() => {
     if (isLoggedIn) {
@@ -713,6 +725,7 @@ export default function AdminDashboard() {
             <motion.div
               initial={{ x: '-100%' }} animate={{ x: 0 }} exit={{ x: '-100%' }}
               className="w-full max-w-xl bg-white h-full relative z-10 shadow-2xl flex flex-col p-8 overflow-y-auto"
+              data-lenis-prevent
             >
               <div className="flex justify-between items-center mb-10">
                 <h2 className="text-3xl font-black uppercase tracking-tighter">
@@ -1024,6 +1037,7 @@ export default function AdminDashboard() {
             <motion.div
               initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }}
               className="w-full max-w-md bg-white h-full relative z-10 shadow-2xl flex flex-col p-8 overflow-y-auto"
+              data-lenis-prevent
             >
               <div className="flex justify-between items-center mb-10">
                 <div>
@@ -1118,6 +1132,7 @@ export default function AdminDashboard() {
             <motion.div
               initial={{ x: '-100%' }} animate={{ x: 0 }} exit={{ x: '-100%' }}
               className="w-full max-w-xl bg-white h-full relative z-10 shadow-2xl flex flex-col p-8 overflow-y-auto"
+              data-lenis-prevent
             >
               <div className="flex justify-between items-center mb-10">
                 <h2 className="text-3xl font-black uppercase tracking-tighter">
