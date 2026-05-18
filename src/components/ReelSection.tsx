@@ -273,9 +273,9 @@ export default function ReelSection() {
                   loop
                   muted={isMuted}
                   playsInline
-                  preload="metadata"
+                  preload="none"
                   onClick={() => togglePlay(reel.id)}
-                  className="w-full h-full object-cover cursor-pointer select-none transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+                  className="w-full h-full object-cover cursor-pointer select-none transition-transform duration-700 ease-out group-hover:scale-[1.03] bg-zinc-900"
                 />
 
                 {/* Capa de degrade premium superior/inferior */}

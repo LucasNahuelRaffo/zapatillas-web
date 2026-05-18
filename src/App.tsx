@@ -28,13 +28,14 @@ import AnnouncementBar from './components/AnnouncementBar'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 
-// Home sections (we'll keep HomePage components synchronous for fast initial paint, except heavy ones if we want)
+// Home sections (Hero stays synchronous for fastest initial LCP)
 import Hero from './components/Hero'
-import ReelSection from './components/ReelSection'
-import QualitySection from './components/QualitySection'
-import InfoSection from './components/InfoSection'
-import ProductCarousel from './components/ProductCarousel'
-import Newsletter from './components/Newsletter'
+
+const ReelSection = lazy(() => import('./components/ReelSection'))
+const QualitySection = lazy(() => import('./components/QualitySection'))
+const InfoSection = lazy(() => import('./components/InfoSection'))
+const ProductCarousel = lazy(() => import('./components/ProductCarousel'))
+const Newsletter = lazy(() => import('./components/Newsletter'))
 import WhatsAppButton from './components/Common/WhatsAppButton'
 
 // Pages - Lazy loaded for performance
@@ -50,11 +51,13 @@ function HomePage() {
         <meta name="description" content="Redefiniendo el estándar de las zapatillas premium. Calidad AAA+ con materiales originales, envío gratis a todo el país y garantía extendida." />
       </Helmet>
       <Hero />
-      <ReelSection />
-      <InfoSection />
-      <QualitySection />
-      <ProductCarousel />
-      <Newsletter />
+      <Suspense fallback={<div className="w-full h-[50vh]" />}>
+        <ReelSection />
+        <InfoSection />
+        <QualitySection />
+        <ProductCarousel />
+        <Newsletter />
+      </Suspense>
     </main>
   )
 }
