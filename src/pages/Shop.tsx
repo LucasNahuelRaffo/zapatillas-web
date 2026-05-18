@@ -7,6 +7,7 @@ import { supabase, hasSupabaseCredentials } from '../lib/supabase'
 
 import { Product } from '../data/products'
 import { getLocalProducts } from '../lib/productStore'
+import ShopVideoCard from '../components/ShopVideoCard'
 
 /* ───────────────────────────────────────────────
    DATA
@@ -182,8 +183,8 @@ function ProductCard({ product, activeColors }: { product: Product, activeColors
    BRAND SECTION
 ─────────────────────────────────────────────── */
 function BrandSection({
-  label, brandKey, products, activeColors
-}: { label: string; brandKey: string; products: Product[]; activeColors?: string[] }) {
+  label, brandKey, products, activeColors, showVideo
+}: { label: string; brandKey: string; products: Product[]; activeColors?: string[]; showVideo?: boolean }) {
   const items = products.filter(p => p.brand.toLowerCase() === brandKey.toLowerCase())
   if (items.length === 0) return null
 
@@ -199,6 +200,7 @@ function BrandSection({
 
       {/* Product grid */}
       <div className="grid grid-cols-2 md:grid-cols-3 gap-5">
+        {showVideo && <ShopVideoCard />}
         {items.map(p => <ProductCard key={p.id} product={p} activeColors={activeColors} />)}
       </div>
     </section>
@@ -389,15 +391,25 @@ export default function Shop() {
           </div>
           {activeCategory === 'All Sneakers' ? (
             /* All: show brand sections */
-            BRAND_SECTIONS.map(section => (
-              <BrandSection
-                key={section.key}
-                label={section.label}
-                brandKey={section.key}
-                products={filteredProducts}
-                activeColors={activeColors}
-              />
-            ))
+            (() => {
+              let firstRendered = false;
+              return BRAND_SECTIONS.map(section => {
+                const items = filteredProducts.filter(p => p.brand.toLowerCase() === section.key.toLowerCase());
+                if (items.length === 0) return null;
+                const showVideo = !firstRendered;
+                firstRendered = true;
+                return (
+                  <BrandSection
+                    key={section.key}
+                    label={section.label}
+                    brandKey={section.key}
+                    products={filteredProducts}
+                    activeColors={activeColors}
+                    showVideo={showVideo}
+                  />
+                );
+              });
+            })()
           ) : (
             /* Single category: flat grid */
             <>
@@ -419,6 +431,7 @@ export default function Shop() {
                 </div>
               ) : (
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-5">
+                  <ShopVideoCard />
                   {filteredProducts.map(p => <ProductCard key={p.id} product={p} activeColors={activeColors} />)}
                 </div>
               )}

@@ -30,6 +30,7 @@ import Footer from './components/Footer'
 
 // Home sections (we'll keep HomePage components synchronous for fast initial paint, except heavy ones if we want)
 import Hero from './components/Hero'
+import ReelSection from './components/ReelSection'
 import QualitySection from './components/QualitySection'
 import InfoSection from './components/InfoSection'
 import ProductCarousel from './components/ProductCarousel'
@@ -49,6 +50,7 @@ function HomePage() {
         <meta name="description" content="Redefiniendo el estándar de las zapatillas premium. Calidad AAA+ con materiales originales, envío gratis a todo el país y garantía extendida." />
       </Helmet>
       <Hero />
+      <ReelSection />
       <InfoSection />
       <QualitySection />
       <ProductCarousel />
