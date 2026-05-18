@@ -98,35 +98,35 @@ export default function ReelSection() {
   useGSAP(() => {
     if (reels.length === 0) return;
 
-    // Animación de aparición de la sección
+    // Animación rápida del encabezado
     gsap.fromTo('.reels-header-anim', 
-      { opacity: 0, y: 30 },
+      { opacity: 0, y: 15 },
       {
         opacity: 1,
         y: 0,
-        duration: 0.8,
-        stagger: 0.2,
+        duration: 0.4,
+        stagger: 0.08,
         ease: 'power3.out',
         scrollTrigger: {
           trigger: containerRef.current,
-          start: 'top 85%'
+          start: 'top 90%'
         }
       }
     );
 
-    // Animación de las tarjetas de reels en cascada
+    // Animación rápida de las tarjetas de reels en cascada
     gsap.fromTo('.reel-card-anim',
-      { opacity: 0, y: 50, scale: 0.95 },
+      { opacity: 0, y: 25, scale: 0.98 },
       {
         opacity: 1,
         y: 0,
         scale: 1,
-        duration: 0.8,
-        stagger: 0.1,
+        duration: 0.4,
+        stagger: 0.06,
         ease: 'power2.out',
         scrollTrigger: {
           trigger: sliderRef.current,
-          start: 'top 80%'
+          start: 'top 88%'
         }
       }
     );
