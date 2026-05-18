@@ -52,6 +52,20 @@ export default function ShopVideoCard() {
     }
   };
 
+  const handleScrollToProducts = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const searchEl = document.getElementById('shop-search');
+    if (searchEl) {
+      searchEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      setTimeout(() => {
+        searchEl.focus();
+      }, 500);
+    } else {
+      window.scrollTo({ top: 480, behavior: 'smooth' });
+    }
+  };
+
   if (loading || !video) {
     if (loading) {
       return (
@@ -121,13 +135,13 @@ export default function ShopVideoCard() {
             <ArrowUpRight size={13} strokeWidth={2.5} />
           </Link>
         ) : (
-          <Link
-            to="/shop"
-            className="flex items-center justify-between bg-white/10 border border-white/20 backdrop-blur-md text-white px-4 py-3 rounded-sm text-[10px] font-bold uppercase tracking-[0.15em] transition-all hover:bg-white hover:text-black shadow-lg"
+          <button
+            onClick={handleScrollToProducts}
+            className="w-full flex items-center justify-between bg-white/10 border border-white/20 backdrop-blur-md text-white px-4 py-3 rounded-sm text-[10px] font-bold uppercase tracking-[0.15em] transition-all hover:bg-white hover:text-black shadow-lg cursor-pointer text-left font-common"
           >
             Explorar Drops
             <ShoppingBag size={12} />
-          </Link>
+          </button>
         )}
       </div>
 
