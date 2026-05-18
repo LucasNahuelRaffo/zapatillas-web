@@ -45,7 +45,7 @@ const AdminDashboard = lazy(() => import('./pages/Admin/AdminDashboard'))
 
 function HomePage() {
   return (
-    <main className="font-skylight py-4 lg:py-6">
+    <main className="font-skylight">
       <Helmet>
         <title>Za-pass | Sneakers Premium AAA+ | Envío Gratis Argentina</title>
         <meta name="description" content="Redefiniendo el estándar de las zapatillas premium. Calidad AAA+ con materiales originales, envío gratis a todo el país y garantía extendida." />
