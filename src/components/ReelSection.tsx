@@ -50,8 +50,8 @@ export default function ReelSection() {
 
     const observerOptions = {
       root: null,
-      rootMargin: '0px',
-      threshold: 0.4 // Al menos 40% del reel visible
+      rootMargin: '200px 0px',
+      threshold: 0.3 // Al menos 30% del reel visible
     };
 
     const observer = new IntersectionObserver((entries) => {
@@ -273,7 +273,7 @@ export default function ReelSection() {
                   loop
                   muted={isMuted}
                   playsInline
-                  preload="none"
+                  preload="metadata"
                   onClick={() => togglePlay(reel.id)}
                   className="w-full h-full object-cover cursor-pointer select-none transition-transform duration-700 ease-out group-hover:scale-[1.03]"
                 />

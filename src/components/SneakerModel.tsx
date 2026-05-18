@@ -33,7 +33,3 @@ export default function SneakerModel() {
     </group>
   )
 }
-
-// Pre-cargar el modelo para evitar saltos visuales
-useGLTF.preload('/models/sneaker/adidas.glb')
-

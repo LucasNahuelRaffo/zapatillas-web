@@ -58,6 +58,7 @@ export default function Hero() {
                 alt="Za-pass Premium Sneaker"
                 fetchPriority="high"
                 loading="eager"
+                decoding="async"
                 width={700}
                 height={500}
                 style={{ willChange: 'transform' }}

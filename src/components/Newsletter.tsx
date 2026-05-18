@@ -78,9 +78,10 @@ export default function Newsletter() {
       <div className="w-full lg:w-1/2 h-[450px] lg:h-full relative overflow-hidden group">
         <img 
           ref={imageRef}
-          src="https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?q=60&w=600&auto=format&fm=webp&fit=crop" 
+          src="https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?q=60&w=800&auto=format&fm=webp&fit=crop" 
           alt="Archive Sneaker" 
           loading="lazy"
+          decoding="async"
           width={800}
           height={1000}
           // Hacemos la imagen más alta (scale-125) para darle margen físico para desplazarse con el parallax
