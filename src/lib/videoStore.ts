@@ -74,50 +74,76 @@ const DEFAULT_VIDEOS: VideoReel[] = [
   }
 ];
 
+// Caché global en memoria y promesa de carga única para rendimiento extremo (0ms en llamadas repetidas)
+let cachedVideos: VideoReel[] | null = null;
+let activeFetchPromise: Promise<VideoReel[]> | null = null;
+
 /**
  * Obtener videos de forma híbrida:
- * 1. Intenta cargar desde Supabase.
- * 2. Si la base de datos está vacía, siembra los videos por defecto en la nube.
- * 3. Si no hay conexión o falla, lee de localStorage.
- * 4. Si no hay nada en localStorage, devuelve los videos por defecto.
+ * 1. Devuelve caché instantáneo si ya se cargó antes.
+ * 2. Deduplica llamadas paralelas compartiendo la misma promesa de red.
+ * 3. Siembra la base de datos si está vacía.
+ * 4. Respalda en localStorage y valores por defecto si falla la red.
  */
-export async function getVideos(): Promise<VideoReel[]> {
-  if (hasSupabaseCredentials) {
-    try {
-      const { data, error } = await supabase
-        .from('videos_zapatillas')
-        .select('*')
-        .order('created_at', { ascending: true });
-
-      if (!error && data && data.length > 0) {
-        return data as VideoReel[];
-      }
-
-      // Si la base de datos está vacía, sembramos (seed) los videos por defecto en Supabase con UUIDs correctos
-      if (!error && data && data.length === 0) {
-        console.log('La tabla videos_zapatillas está vacía. Sembrando videos por defecto...');
-        const seededVideos = DEFAULT_VIDEOS.map(v => ({
-          id: v.id,
-          title: v.title,
-          url: v.url,
-          position: v.position,
-          product_link: v.product_link || null,
-          is_active: v.is_active
-        }));
-        
-        const { error: insertError } = await supabase.from('videos_zapatillas').insert(seededVideos);
-        if (!insertError) {
-          return DEFAULT_VIDEOS;
-        } else {
-          console.error('Error al sembrar videos por defecto en Supabase:', insertError.message);
-        }
-      }
-    } catch (e) {
-      console.warn('Failed to fetch/seed videos from Supabase, falling back to local:', e);
-    }
+export async function getVideos(forceRefresh = false): Promise<VideoReel[]> {
+  if (cachedVideos && !forceRefresh) {
+    return cachedVideos;
+  }
+  if (activeFetchPromise && !forceRefresh) {
+    return activeFetchPromise;
   }
 
-  // Fallback a localStorage
+  activeFetchPromise = (async () => {
+    let result: VideoReel[] = [];
+    
+    if (hasSupabaseCredentials) {
+      try {
+        const { data, error } = await supabase
+          .from('videos_zapatillas')
+          .select('*')
+          .order('created_at', { ascending: true });
+
+        if (!error && data && data.length > 0) {
+          result = data as VideoReel[];
+        } else if (!error && data && data.length === 0) {
+          console.log('La tabla videos_zapatillas está vacía. Sembrando videos por defecto...');
+          const seededVideos = DEFAULT_VIDEOS.map(v => ({
+            id: v.id,
+            title: v.title,
+            url: v.url,
+            position: v.position,
+            product_link: v.product_link || null,
+            is_active: v.is_active
+          }));
+          
+          const { error: insertError } = await supabase.from('videos_zapatillas').insert(seededVideos);
+          if (!insertError) {
+            result = DEFAULT_VIDEOS;
+          } else {
+            console.error('Error al sembrar videos por defecto en Supabase:', insertError.message);
+            result = DEFAULT_VIDEOS;
+          }
+        } else {
+          throw new Error(error?.message || 'Error en consulta de Supabase');
+        }
+      } catch (e) {
+        console.warn('Failed to fetch/seed videos from Supabase, falling back to local:', e);
+        result = await getLocalFallback();
+      }
+    } else {
+      result = await getLocalFallback();
+    }
+
+    cachedVideos = result;
+    activeFetchPromise = null;
+    return result;
+  })();
+
+  return activeFetchPromise;
+}
+
+// Auxiliar para obtener datos locales rápidamente en caso de fallos
+async function getLocalFallback(): Promise<VideoReel[]> {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
@@ -128,12 +154,16 @@ export async function getVideos(): Promise<VideoReel[]> {
     }
   } catch (_) {}
 
-  // Si tampoco hay en localStorage, guardamos los valores por defecto y los devolvemos
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_VIDEOS));
   } catch (_) {}
   
   return DEFAULT_VIDEOS;
+}
+
+// Disparar pre-fetch inmediato al cargar la aplicación para calentar la caché del navegador
+if (typeof window !== 'undefined') {
+  getVideos().catch(() => {});
 }
 
 /** Guardar localmente en localStorage para mantener coherencia */
@@ -209,7 +239,8 @@ export async function uploadVideoFile(file: File): Promise<string> {
 
 /** Resetear todos los videos de la base de datos a sus valores iniciales rápidos */
 export async function resetVideosToDefault(): Promise<VideoReel[]> {
-  // Limpiar local
+  // Limpiar caché en memoria y local
+  cachedVideos = DEFAULT_VIDEOS;
   saveLocalVideos(DEFAULT_VIDEOS);
 
   // Limpiar Supabase
@@ -245,9 +276,11 @@ export async function addVideo(video: Omit<VideoReel, 'id' | 'created_at'>): Pro
     created_at: new Date().toISOString()
   };
 
-  // Guardar localmente
+  // Guardar localmente y calentar caché
   const current = await getVideos();
-  saveLocalVideos([...current, newVideo]);
+  const nextList = [...current, newVideo];
+  cachedVideos = nextList;
+  saveLocalVideos(nextList);
 
   // Guardar en Supabase
   if (hasSupabaseCredentials) {
@@ -275,9 +308,11 @@ export async function addVideo(video: Omit<VideoReel, 'id' | 'created_at'>): Pro
 
 /** Actualizar un video */
 export async function updateVideo(updated: VideoReel): Promise<void> {
-  // Actualizar local
+  // Actualizar local y calentar caché
   const current = await getVideos();
-  saveLocalVideos(current.map(v => v.id === updated.id ? updated : v));
+  const nextList = current.map(v => v.id === updated.id ? updated : v);
+  cachedVideos = nextList;
+  saveLocalVideos(nextList);
 
   // Actualizar Supabase
   if (hasSupabaseCredentials) {
@@ -307,9 +342,11 @@ export async function updateVideo(updated: VideoReel): Promise<void> {
 
 /** Eliminar un video */
 export async function deleteVideo(id: string): Promise<void> {
-  // Eliminar local
+  // Eliminar local y calentar caché
   const current = await getVideos();
-  saveLocalVideos(current.filter(v => v.id !== id));
+  const nextList = current.filter(v => v.id !== id);
+  cachedVideos = nextList;
+  saveLocalVideos(nextList);
 
   // Eliminar Supabase
   if (hasSupabaseCredentials) {

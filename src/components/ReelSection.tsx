@@ -173,8 +173,36 @@ export default function ReelSection() {
   if (loading || reels.length === 0) {
     if (loading) {
       return (
-        <section className="py-12 bg-white flex items-center justify-center min-h-[300px]">
-          <div className="text-gray-400 font-skylight text-lg animate-pulse uppercase tracking-widest">Cargando Reels...</div>
+        <section className="py-16 lg:py-24 bg-black overflow-hidden relative text-white">
+          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-neutral-900/40 rounded-full blur-[120px] pointer-events-none -z-10" />
+          <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-neutral-950/60 rounded-full blur-[100px] pointer-events-none -z-10" />
+
+          <div className="max-w-[1400px] mx-auto px-6 lg:px-12 flex flex-col gap-10">
+            {/* Header de la Sección Esqueleto */}
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+              <div className="space-y-3">
+                <div className="h-4 w-40 bg-zinc-800 rounded-sm animate-pulse" />
+                <div className="h-10 w-72 sm:w-96 bg-zinc-800 rounded-sm animate-pulse" />
+                <div className="h-5 w-80 sm:w-[500px] bg-zinc-800 rounded-sm animate-pulse" />
+              </div>
+            </div>
+
+            {/* Carrusel de Tarjetas Esqueleto */}
+            <div className="flex overflow-x-auto gap-6 pb-6 pt-2 scrollbar-none snap-x snap-mandatory touch-pan-x">
+              {[1, 2, 3, 4].map((i) => (
+                <div 
+                  key={i}
+                  className="flex-shrink-0 w-[280px] sm:w-[320px] aspect-[9/16] rounded-xl overflow-hidden bg-zinc-900 border border-zinc-800/80 shadow-2xl relative snap-start"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-r from-zinc-950 via-zinc-900 to-zinc-950 animate-pulse" />
+                  <div className="absolute bottom-0 left-0 right-0 p-5 flex flex-col gap-3">
+                    <div className="h-3 w-1/3 bg-zinc-800 rounded animate-pulse" />
+                    <div className="h-5 w-5/6 bg-zinc-800 rounded animate-pulse" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </section>
       );
     }

@@ -53,6 +53,18 @@ export default function ShopVideoCard() {
   };
 
   if (loading || !video) {
+    if (loading) {
+      return (
+        <div className="col-span-1 row-span-2 aspect-[9/16] bg-zinc-950 text-white relative overflow-hidden rounded-sm border border-zinc-800 shadow-md group select-none flex flex-col justify-end p-5">
+          <div className="absolute inset-0 bg-gradient-to-r from-zinc-950 via-zinc-900 to-zinc-950 animate-pulse animate-duration-1000" />
+          <div className="space-y-3 z-10 relative">
+            <div className="h-3 w-1/3 bg-zinc-800 rounded animate-pulse" />
+            <div className="h-4 w-5/6 bg-zinc-800 rounded animate-pulse" />
+            <div className="h-10 w-full bg-zinc-800/40 rounded-sm animate-pulse" />
+          </div>
+        </div>
+      );
+    }
     return null; // Si no hay video asignado para el Shop, no renderiza nada (la grilla sigue normal)
   }
 
