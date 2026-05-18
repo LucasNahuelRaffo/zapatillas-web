@@ -67,12 +67,19 @@ export default function SneakerCanvas() {
   const [webGLAvailable, setWebGLAvailable] = React.useState(true);
   const wrapperRef = React.useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = React.useState(false);
+  const [hasBeenVisible, setHasBeenVisible] = React.useState(false);
 
   React.useEffect(() => {
     if (!isWebGLAvailable()) {
       setWebGLAvailable(false);
     }
   }, []);
+
+  React.useEffect(() => {
+    if (isVisible) {
+      setHasBeenVisible(true);
+    }
+  }, [isVisible]);
 
   React.useEffect(() => {
     const el = wrapperRef.current;
@@ -123,25 +130,31 @@ export default function SneakerCanvas() {
           <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={1} castShadow />
           
           <Suspense fallback={<Loader />}>
-            <Center scale={0.8}>
-              <SneakerModel />
-            </Center>
-            <ContactShadows 
-              position={[0, -2.5, 0]} 
-              opacity={0.4} 
-              scale={30} 
-              blur={2} 
-              far={10} 
-            />
-            <Environment preset="city" />
+            {hasBeenVisible && (
+              <>
+                <Center scale={0.8}>
+                  <SneakerModel />
+                </Center>
+                <ContactShadows 
+                  position={[0, -2.5, 0]} 
+                  opacity={0.4} 
+                  scale={30} 
+                  blur={2} 
+                  far={10} 
+                />
+                <Environment preset="city" />
+              </>
+            )}
           </Suspense>
 
-          <OrbitControls 
-            enableZoom={false} 
-            minPolarAngle={Math.PI / 2.5} 
-            maxPolarAngle={Math.PI / 1.5} 
-            makeDefault
-          />
+          {hasBeenVisible && (
+            <OrbitControls 
+              enableZoom={false} 
+              minPolarAngle={Math.PI / 2.5} 
+              maxPolarAngle={Math.PI / 1.5} 
+              makeDefault
+            />
+          )}
         </Canvas>
       </div>
     </ErrorBoundary>

@@ -50,7 +50,7 @@ export default function ReelSection() {
 
     const observerOptions = {
       root: null,
-      rootMargin: '200px 0px',
+      rootMargin: '600px 0px', // Expandido para anticipar descarga inteligente de los videos
       threshold: 0.3 // Al menos 30% del reel visible
     };
 
@@ -273,7 +273,7 @@ export default function ReelSection() {
                   loop
                   muted={isMuted}
                   playsInline
-                  preload="none"
+                  preload="metadata" // Cambiado a metadata para precarga fluida sin bloquear red
                   onClick={() => togglePlay(reel.id)}
                   className="w-full h-full object-cover cursor-pointer select-none transition-transform duration-700 ease-out group-hover:scale-[1.03] bg-zinc-900"
                 />
