@@ -76,6 +76,14 @@ export default function App() {
   const lenisRef = useRef<Lenis | null>(null);
 
   useEffect(() => {
+    if (isAdmin) {
+      if (lenisRef.current) {
+        lenisRef.current.destroy()
+        lenisRef.current = null
+      }
+      return;
+    }
+
     // Initialize Lenis
     const lenis = new Lenis({
       duration: 1.2,
@@ -84,7 +92,6 @@ export default function App() {
       smoothWheel: true,
       wheelMultiplier: 1.0,
       infinite: false,
-
     })
     lenisRef.current = lenis
 
@@ -92,7 +99,9 @@ export default function App() {
     lenis.on('scroll', ScrollTrigger.update)
 
     const tick = (time: number) => {
-      lenis.raf(time * 1000)
+      if (lenisRef.current) {
+        lenis.raf(time * 1000)
+      }
     }
     gsap.ticker.add(tick)
 
@@ -103,7 +112,7 @@ export default function App() {
       lenis.destroy()
       lenisRef.current = null
     }
-  }, [])
+  }, [isAdmin])
 
   return (
     <div className="min-h-screen">
