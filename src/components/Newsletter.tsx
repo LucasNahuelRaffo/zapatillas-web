@@ -58,9 +58,9 @@ export default function Newsletter() {
   }
 
   return (
-    <section ref={sectionRef} className="bg-[#f4f4f4] w-full flex flex-col lg:flex-row min-h-[500px] lg:h-[650px] overflow-hidden">
+    <section ref={sectionRef} className="bg-[#f4f4f4] w-full flex flex-col lg:flex-row min-h-[500px] lg:min-h-[650px] overflow-hidden">
       {/* Left Column - Image Container */}
-      <div className="w-full lg:w-1/2 h-[450px] lg:h-full relative overflow-hidden group">
+      <div className="w-full lg:w-1/2 min-h-[400px] lg:min-h-full relative overflow-hidden group">
         <img 
           src="https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?q=60&w=800&auto=format&fm=webp&fit=crop" 
           alt="Archive Sneaker" 
@@ -68,11 +68,11 @@ export default function Newsletter() {
           decoding="async"
           width={800}
           height={1000}
-          className="w-full h-full object-cover grayscale contrast-[1.1] brightness-[0.8]"
+          className="absolute inset-0 w-full h-full object-cover grayscale contrast-[1.1] brightness-[0.8]"
         />
 
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-        <div className="absolute inset-0 mix-blend-overlay opacity-20 bg-[url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.85%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E')]" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none" />
+        <div className="absolute inset-0 mix-blend-overlay opacity-20 bg-[url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.85%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E')] pointer-events-none" />
       </div>
 
       {/* Right Column - Content */}
