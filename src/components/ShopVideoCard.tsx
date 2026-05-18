@@ -29,17 +29,30 @@ export default function ShopVideoCard() {
     loadShopVideo();
   }, []);
 
-  // Efecto robusto para forzar autoplay en navegadores móviles y de escritorio sin bloqueos de reproducción
   useEffect(() => {
     const videoEl = videoRef.current;
     if (videoEl && video) {
       videoEl.muted = isMuted;
       videoEl.defaultMuted = true;
-      videoEl.play().catch(err => {
-        console.warn("Autoplay bloqueado temporalmente por política de navegador:", err);
-      });
     }
   }, [video, isMuted]);
+
+  useEffect(() => {
+    const videoEl = videoRef.current;
+    if (!videoEl || !video) return;
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          videoEl.play().catch(() => {});
+        } else {
+          videoEl.pause();
+        }
+      },
+      { rootMargin: '100px 0px', threshold: 0.1 }
+    );
+    io.observe(videoEl);
+    return () => io.disconnect();
+  }, [video]);
 
   const toggleMute = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -92,7 +105,7 @@ export default function ShopVideoCard() {
         muted={isMuted}
         loop
         playsInline
-        preload="metadata"
+        preload="none"
         className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
       />
 

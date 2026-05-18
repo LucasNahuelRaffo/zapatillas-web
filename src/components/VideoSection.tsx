@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useRef, useEffect } from 'react'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
@@ -9,6 +9,7 @@ export default function VideoSection() {
   const sectionRef = useRef<HTMLElement>(null)
   const videoWrapperRef = useRef<HTMLDivElement>(null)
   const textRef = useRef<HTMLDivElement>(null)
+  const videoRef = useRef<HTMLVideoElement>(null)
 
   useGSAP(() => {
     // 1. Efecto Apple Full: Pinear la sección y tomar la pantalla completa.
@@ -69,6 +70,23 @@ export default function VideoSection() {
 
   }, { scope: sectionRef })
 
+  useEffect(() => {
+    const wrapper = videoWrapperRef.current
+    const video = videoRef.current
+    if (!wrapper || !video) return
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          video.play().catch(() => {})
+          io.disconnect()
+        }
+      },
+      { rootMargin: '300px 0px', threshold: 0 }
+    )
+    io.observe(wrapper)
+    return () => io.disconnect()
+  }, [])
+
   return (
     <section ref={sectionRef} id="video" className="bg-[#111] w-full h-screen flex flex-col justify-center items-center overflow-hidden relative">
       
@@ -116,14 +134,15 @@ export default function VideoSection() {
         ref={videoWrapperRef} 
         className="absolute z-20 overflow-hidden shadow-2xl flex items-center justify-center bg-black"
       >
-        {/* Etiqueta de Video con reproducción automática, silenciada y en bucle */}
-        <video 
-          autoPlay 
-          muted 
-          loop 
+        <video
+          ref={videoRef}
+          muted
+          loop
           playsInline
+          preload="none"
+          poster="/sneakers/Nike Air Jordan 4 Black Cat.jpeg"
           className="w-full h-full object-cover opacity-90"
-          src="https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4" 
+          src="https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"
         />
         
         {/* Capa sutil de oscurecimiento o decoración (Opcional) */}

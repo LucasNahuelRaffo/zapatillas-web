@@ -90,7 +90,7 @@ export default function SneakerCanvas() {
           setIsVisible(entry.isIntersecting);
         }
       },
-      { rootMargin: '200px 0px', threshold: 0.01 }
+      { rootMargin: '500px 0px', threshold: 0.01 }
     );
     io.observe(el);
     return () => io.disconnect();
@@ -113,7 +113,8 @@ export default function SneakerCanvas() {
       <div ref={wrapperRef} className="w-full h-[400px] lg:h-[600px] cursor-grab active:cursor-grabbing">
         <Canvas
           shadows
-          dpr={[1, 1.5]} // Reducido de 2 para mejor performance en móviles
+          frameloop={isVisible ? 'always' : 'demand'}
+          dpr={[1, Math.min(1.5, window.devicePixelRatio)]}
           gl={{
             antialias: true,
             powerPreference: "high-performance",

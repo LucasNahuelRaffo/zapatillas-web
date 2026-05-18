@@ -7,11 +7,13 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
+  assetsInclude: ['**/*.glb'],
   build: {
+    assetsInlineLimit: 4096,
+    chunkSizeWarningLimit: 1000,
     rollupOptions: {
       output: {
         manualChunks: {
-          // Separar librerías pesadas en chunks independientes que se descargan en paralelo
           'vendor-react': ['react', 'react-dom', 'react-router-dom'],
           'vendor-animation': ['framer-motion', 'gsap', '@gsap/react'],
           'vendor-three': ['three', '@react-three/fiber', '@react-three/drei'],

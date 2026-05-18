@@ -3,13 +3,13 @@ import { useFrame } from '@react-three/fiber'
 import { useGLTF } from '@react-three/drei'
 import * as THREE from 'three'
 
+useGLTF.preload('/models/sneaker/adidas-draco.glb', true)
+
 export default function SneakerModel() {
   const group = useRef<THREE.Group>(null)
   
-  // Cargamos el nuevo modelo GLB de Adidas
-  const { scene } = useGLTF('/models/sneaker/adidas.glb')
+  const { scene } = useGLTF('/models/sneaker/adidas-draco.glb', true)
 
-  // Configuración de sombras optimizada para el nuevo modelo usando useMemo
   useMemo(() => {
     scene.traverse((child) => {
       if ((child as THREE.Mesh).isMesh) {
@@ -19,7 +19,6 @@ export default function SneakerModel() {
     });
   }, [scene]);
 
-  // Animación de flotado suave con offset vertical para subir el modelo
   useFrame((state) => {
     if (group.current) {
       const t = state.clock.getElapsedTime()
