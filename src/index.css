@@ -44,7 +44,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Cursores globales para que siempre se vea el mouse correctamente */
+/* Cursores globales con diseño personalizado para garantizar máxima visibilidad en cualquier fondo (incluyendo inputs blancos) */
 input[type="text"],
 input[type="email"],
 input[type="search"],
@@ -52,9 +52,12 @@ input[type="password"],
 input[type="number"],
 input[type="tel"],
 input[type="url"],
-textarea,
+textarea {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='24' viewBox='0 0 16 24'%3E%3Cpath d='M8 3v18M4 3h8M4 21h8' stroke='white' stroke-width='4' stroke-linecap='round'/%3E%3Cpath d='M8 3v18M4 3h8M4 21h8' stroke='black' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E") 8 12, text;
+}
+
 select {
-  cursor: text;
+  cursor: pointer;
 }
 
 button,
