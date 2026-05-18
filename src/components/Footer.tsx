@@ -89,8 +89,6 @@ export default function Footer() {
           <div className="flex items-center gap-4">
             <span className="text-[9px] font-bold tracking-[0.2em] text-gray-600 uppercase">Pagos</span>
             <div className="flex flex-wrap gap-2">
-              <div className="px-3 py-1.5 border border-white/20 text-gray-400 text-[10px] font-bold tracking-widest uppercase transition-all duration-300 hover:bg-[#1434CB] hover:text-white hover:border-[#1434CB] cursor-default">Visa</div>
-              <div className="px-3 py-1.5 border border-white/20 text-gray-400 text-[10px] font-bold tracking-widest uppercase transition-all duration-300 hover:bg-gradient-to-r hover:from-[#EB001B] hover:via-[#FF5F00] hover:to-[#F79E1B] hover:text-white hover:border-l-[#EB001B] hover:border-r-[#F79E1B] hover:border-y-[#FF5F00] cursor-default">Mastercard</div>
               <div className="px-3 py-1.5 border border-white/20 text-gray-400 text-[10px] font-bold tracking-widest uppercase transition-all duration-300 hover:bg-[#009EE3] hover:text-white hover:border-[#009EE3] cursor-default">Mercado Pago</div>
             </div>
           </div>
