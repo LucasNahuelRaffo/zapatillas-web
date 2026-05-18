@@ -110,16 +110,53 @@ export default function AdminDashboard() {
     title: '', url: '', position: 'home', product_link: '', is_active: true
   })
 
+  // Estado para la ventana de confirmación bonita
+  const [confirmModal, setConfirmModal] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    confirmLabel: string;
+    cancelLabel: string;
+    onConfirm: () => void | Promise<void>;
+  }>({
+    isOpen: false,
+    title: '',
+    message: '',
+    confirmLabel: 'Eliminar',
+    cancelLabel: 'Cancelar',
+    onConfirm: () => {}
+  });
+
+  const showConfirm = (
+    title: string,
+    message: string,
+    onConfirm: () => void | Promise<void>,
+    confirmLabel = 'Eliminar',
+    cancelLabel = 'Cancelar'
+  ) => {
+    setConfirmModal({
+      isOpen: true,
+      title,
+      message,
+      confirmLabel,
+      cancelLabel,
+      onConfirm: async () => {
+        await onConfirm();
+        setConfirmModal(prev => ({ ...prev, isOpen: false }));
+      }
+    });
+  };
+
   // Cargar productos desde localStorage al hacer login
   useEffect(() => {
     if (isLoggedIn) setProducts(getLocalProducts())
   }, [isLoggedIn])
 
-  // Bloquear scroll del body y html al abrir algún panel lateral para evitar que Lenis/Scroll afecte el fondo
+  // Bloquear scroll del body y html al abrir algún panel lateral o modal para evitar que Lenis/Scroll afecte el fondo
   useEffect(() => {
     const htmlEl = document.documentElement;
     const bodyEl = document.body;
-    if (isEditing || isEditingVideo || selectedDate) {
+    if (isEditing || isEditingVideo || selectedDate || confirmModal.isOpen) {
       htmlEl.style.overflow = 'hidden';
       bodyEl.style.overflow = 'hidden';
     } else {
@@ -130,7 +167,7 @@ export default function AdminDashboard() {
       htmlEl.style.overflow = '';
       bodyEl.style.overflow = '';
     }
-  }, [isEditing, isEditingVideo, selectedDate])
+  }, [isEditing, isEditingVideo, selectedDate, confirmModal.isOpen])
 
   // Cargar videos
   useEffect(() => {
@@ -171,11 +208,15 @@ export default function AdminDashboard() {
   }
 
   const handleDeleteVideo = async (id: string) => {
-    if (confirm('¿Estás seguro de que deseas eliminar este video?')) {
-      await deleteVideo(id)
-      const vList = await getVideos()
-      setVideosList(vList)
-    }
+    showConfirm(
+      '¿Eliminar Video Reel?',
+      '¿Estás seguro de que deseas eliminar este video? Esta acción no se puede deshacer y el video dejará de mostrarse en la web.',
+      async () => {
+        await deleteVideo(id)
+        const vList = await getVideos()
+        setVideosList(vList)
+      }
+    )
   }
 
   const toggleVideoActive = async (v: VideoReel) => {
@@ -283,11 +324,17 @@ export default function AdminDashboard() {
   }
 
   const handleDelete = async (id: number) => {
-    if (!confirm('¿Eliminar este producto?')) return
     const product = products.find(p => p.id === id)
-    deleteLocalProduct(id)
-    setProducts(getLocalProducts())
-    if (product) await removeStockZapatillas(product.name)
+    const productName = product ? `${product.brand} ${product.name}` : 'este producto'
+    showConfirm(
+      '¿Eliminar Producto?',
+      `¿Estás seguro de que deseas eliminar "${productName}"? Esta acción borrará el calzado y su stock de forma permanente.`,
+      async () => {
+        deleteLocalProduct(id)
+        setProducts(getLocalProducts())
+        if (product) await removeStockZapatillas(product.name)
+      }
+    )
   }
 
   const handleSave = async (e: React.FormEvent) => {
@@ -637,16 +684,21 @@ export default function AdminDashboard() {
               </div>
               <button
                 type="button"
-                onClick={async () => {
-                  if (confirm('¿Estás seguro de que deseas restablecer TODOS los videos a los predeterminados de fábrica? Esto eliminará tus videos actuales y cargará los videos ultra-rápidos de Google CDN para máxima velocidad de la web.')) {
-                    try {
-                      const reseted = await resetVideosToDefault();
-                      setVideosList(reseted);
-                      alert('¡Videos restablecidos con éxito! La velocidad de carga de la web ahora es óptima.');
-                    } catch (err: any) {
-                      alert('Error al restablecer videos: ' + (err.message || err));
-                    }
-                  }
+                onClick={() => {
+                  showConfirm(
+                    '¿Restablecer Videos?',
+                    '¿Estás seguro de que deseas restablecer TODOS los videos a los predeterminados de fábrica? Esto eliminará tus videos actuales y cargará los videos ultra-rápidos de Google CDN para máxima velocidad de la web.',
+                    async () => {
+                      try {
+                        const reseted = await resetVideosToDefault();
+                        setVideosList(reseted);
+                        alert('¡Videos restablecidos con éxito! La velocidad de carga de la web ahora es óptima.');
+                      } catch (err: any) {
+                        alert('Error al restablecer videos: ' + (err.message || err));
+                      }
+                    },
+                    'Restablecer'
+                  );
                 }}
                 className="bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 px-5 py-3 text-[10px] font-black uppercase tracking-widest rounded-sm transition-all flex items-center gap-2 cursor-pointer whitespace-nowrap"
               >
@@ -1319,6 +1371,66 @@ export default function AdminDashboard() {
                   </button>
                 </div>
               </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Ventana de Confirmación Premium */}
+      <AnimatePresence>
+        {confirmModal.isOpen && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            {/* Fondo Oscuro con Desenfoque */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setConfirmModal(prev => ({ ...prev, isOpen: false }))}
+              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            />
+
+            {/* Tarjeta del Modal */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 15 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 15 }}
+              transition={{ type: 'spring', duration: 0.4 }}
+              className="bg-white rounded-sm border border-black/5 shadow-2xl p-8 max-w-sm w-full relative z-10 text-center flex flex-col items-center"
+            >
+              {/* Icono de Alerta */}
+              <div className="w-14 h-14 bg-red-50 text-red-600 rounded-full flex items-center justify-center mb-5 border border-red-100">
+                <Trash2 size={24} strokeWidth={2} />
+              </div>
+
+              {/* Título */}
+              <h3 className="font-common text-base font-black uppercase tracking-[0.1em] text-black leading-tight">
+                {confirmModal.title}
+              </h3>
+
+              {/* Mensaje */}
+              <p className="text-[10px] text-gray-400 font-medium leading-relaxed mt-3 uppercase tracking-wider">
+                {confirmModal.message}
+              </p>
+
+              {/* Acciones */}
+              <div className="flex gap-3 w-full mt-8">
+                <button
+                  type="button"
+                  onClick={() => setConfirmModal(prev => ({ ...prev, isOpen: false }))}
+                  className="flex-1 py-3 border border-gray-200 text-gray-400 text-[10px] font-black uppercase tracking-widest rounded-sm hover:border-black hover:text-black transition-colors cursor-pointer"
+                >
+                  {confirmModal.cancelLabel}
+                </button>
+                <button
+                  type="button"
+                  onClick={async () => {
+                    await confirmModal.onConfirm();
+                  }}
+                  className="flex-1 py-3 bg-red-600 hover:bg-red-700 text-white text-[10px] font-black uppercase tracking-widest rounded-sm transition-colors cursor-pointer shadow-sm hover:shadow-md"
+                >
+                  {confirmModal.confirmLabel}
+                </button>
+              </div>
             </motion.div>
           </div>
         )}
