@@ -475,7 +475,7 @@ export default function AdminDashboard() {
 
       {/* Main Content */}
       <main className="max-w-[1400px] mx-auto px-6 lg:px-12 py-12">
-        {activeTab === 'productos' ? (
+        {activeTab === 'productos' && (
           products.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-32 text-center">
             <Package size={48} className="text-gray-200 mb-4" />
@@ -534,7 +534,9 @@ export default function AdminDashboard() {
             </table>
           </div>
           )
-        ) : (
+        )}
+
+        {activeTab === 'solicitudes' && (
           <div className="bg-white border border-black/5 rounded-sm overflow-hidden shadow-sm p-8">
             {errorReservas && (
               <div className="mb-6 px-4 py-3 bg-red-50 border border-red-200 rounded-sm text-[12px] text-red-600 font-medium">
