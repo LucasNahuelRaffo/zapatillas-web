@@ -10,24 +10,9 @@ export default function Newsletter() {
   const [submitted, setSubmitted] = useState(false)
   
   const sectionRef = useRef<HTMLElement>(null)
-  const imageRef = useRef<HTMLImageElement>(null)
 
   useGSAP(() => {
-    // 1. Efecto Parallax súper premium para la imagen izquierda
-    gsap.fromTo(imageRef.current,
-      { y: '-15%' }, // Empieza movida hacia arriba a propósito
-      {
-        y: '15%',    // Va deslizando hacia abajo a medida que haces scroll
-        ease: 'none',
-        force3D: true,
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: 'top bottom', // Arranca cuando la sección apenas toca la pantalla desde abajo
-          end: 'bottom top',   // Termina cuando la sección se va por arriba
-          scrub: 1             // Suavizado de 1s para evitar repaint frame-a-frame
-        }
-      }
-    )
+
 
     // 2. Revelación Dramática del Título (Efecto Clip-Path de cortina)
     gsap.fromTo('.nl-title',
@@ -77,16 +62,13 @@ export default function Newsletter() {
       {/* Left Column - Image Container */}
       <div className="w-full lg:w-1/2 h-[450px] lg:h-full relative overflow-hidden group">
         <img 
-          ref={imageRef}
           src="https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?q=60&w=800&auto=format&fm=webp&fit=crop" 
           alt="Archive Sneaker" 
           loading="lazy"
           decoding="async"
           width={800}
           height={1000}
-          // Hacemos la imagen más alta (scale-125) para darle margen físico para desplazarse con el parallax
-          style={{ willChange: 'transform' }}
-          className="w-full h-[130%] object-cover grayscale contrast-[1.1] brightness-[0.8] transition-transform duration-[10s] group-hover:scale-110"
+          className="w-full h-full object-cover grayscale contrast-[1.1] brightness-[0.8]"
         />
 
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
