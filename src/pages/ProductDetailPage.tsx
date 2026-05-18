@@ -1,4 +1,4 @@
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ChevronLeft, Loader2 } from 'lucide-react';
 import { useState, useEffect } from 'react';
@@ -15,7 +15,10 @@ export default function ProductDetailPage() {
   const { id } = useParams<{ id: string }>();
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
-  const [galleryIndex, setGalleryIndex] = useState(0);
+  const [searchParams] = useSearchParams();
+  const colorFromUrl = searchParams.get('color');
+  const [selectedColor, setSelectedColor] = useState<string>('');
+  const [galleryIndex, setGalleryIndex] = useState(-1);
 
   useEffect(() => {
     if (!id) return;
@@ -24,9 +27,55 @@ export default function ProductDetailPage() {
     setLoading(false);
   }, [id]);
 
-  const handleGalleryIndexChange = (index: number) => {
-    setGalleryIndex(index);
+  const handleColorChange = (colorName: string) => {
+    if (!product) return;
+    const colorObj = product.colors.find(c => c.name.toLowerCase() === colorName.toLowerCase());
+    if (!colorObj) return;
+
+    const colorImages = Array.isArray(colorObj.images) ? colorObj.images : [(colorObj as any).image];
+    const firstImage = colorImages[0];
+
+    if (firstImage) {
+      // Intentar encontrar la imagen en la galería principal
+      const idx = product.images.indexOf(firstImage);
+      if (idx !== -1) {
+        setGalleryIndex(idx);
+      } else {
+        // Fallback: buscar por coincidencia parcial si la URL tiene parámetros distintos
+        const baseImageUrl = firstImage.split('?')[0];
+        const fuzzyIdx = product.images.findIndex(img => img.includes(baseImageUrl));
+        if (fuzzyIdx !== -1) setGalleryIndex(fuzzyIdx);
+      }
+    }
+    setSelectedColor(colorName);
   };
+
+  const handleGalleryIndexChange = (index: number) => {
+    if (!product) return;
+    setGalleryIndex(index); // Sincronizar estado para evitar el bucle de revertido
+    
+    const imageUrl = product.images[index];
+    const matchingColor = product.colors.find(c => {
+      const colorImages = Array.isArray(c.images) ? c.images : [(c as any).image];
+      return colorImages.some(img => {
+        const baseImg = img.split('?')[0];
+        return imageUrl.includes(baseImg);
+      });
+    });
+
+    if (matchingColor && matchingColor.name !== selectedColor) {
+      setSelectedColor(matchingColor.name);
+    }
+  };
+
+  useEffect(() => {
+    if (product && !selectedColor) {
+      const initial = colorFromUrl || product.colors[0]?.name;
+      if (initial) {
+        handleColorChange(initial);
+      }
+    }
+  }, [product, colorFromUrl, selectedColor]);
 
   if (loading) {
     return (
@@ -115,10 +164,13 @@ export default function ProductDetailPage() {
             name={product.name}
             subtitle={product.subtitle}
             price={product.price}
+            selectedColor={selectedColor}
           />
 
           <ProductSelectors 
             product={product}
+            onColorChange={handleColorChange}
+            selectedColor={selectedColor}
           />
 
           <ProductAccordions description={product.description} />

@@ -3,9 +3,10 @@ interface ProductInfoProps {
   name: string;
   subtitle?: string;
   price: number;
+  selectedColor?: string;
 }
 
-export default function ProductInfo({ brand, name, subtitle, price }: ProductInfoProps) {
+export default function ProductInfo({ brand, name, subtitle, price, selectedColor }: ProductInfoProps) {
   const formattedPrice = new Intl.NumberFormat('es-AR', {
     style: 'currency',
     currency: 'ARS',
@@ -26,7 +27,7 @@ export default function ProductInfo({ brand, name, subtitle, price }: ProductInf
       </div>
 
       <h1 className="font-common text-3xl md:text-4xl font-black leading-[1.1] mb-2 uppercase tracking-tight">
-        {name}
+        {name} {selectedColor && <span className="opacity-40 ml-2 text-xl italic lowercase">({selectedColor})</span>}
       </h1>
       <p className="text-gray-400 text-sm font-medium mb-8">
         {subtitle}

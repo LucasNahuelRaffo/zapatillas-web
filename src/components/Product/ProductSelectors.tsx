@@ -6,20 +6,26 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 interface ProductSelectorsProps {
   product: Product;
+  onColorChange?: (colorName: string) => void;
+  selectedColor?: string;
 }
 
-export default function ProductSelectors({ product }: ProductSelectorsProps) {
-  const { sizes } = product;
+export default function ProductSelectors({ product, onColorChange, selectedColor }: ProductSelectorsProps) {
+  const { colors, sizes } = product;
   const { addItem } = useCart();
   
   const [selectedSize, setSelectedSize] = useState(sizes.find(s => s.stock)?.size);
   const [isAdding, setIsAdding] = useState(false);
 
+  const handleColorClick = (colorName: string) => {
+    if (onColorChange) onColorChange(colorName);
+  };
+
   const handleAddToCart = () => {
     if (!selectedSize) return;
     
     setIsAdding(true);
-    addItem(product, selectedSize, '');
+    addItem(product, selectedSize, selectedColor || '');
     
     setTimeout(() => {
       setIsAdding(false);
@@ -28,11 +34,31 @@ export default function ProductSelectors({ product }: ProductSelectorsProps) {
 
   return (
     <div className="space-y-10">
+      {/* Colors */}
+      {colors && colors.length > 0 && (
+        <div>
+          <h3 className="text-[10px] font-bold tracking-[0.2em] uppercase text-gray-400 mb-4">Color</h3>
+          <div className="flex flex-wrap gap-3">
+            {colors.map((color) => (
+              <button
+                key={color.name}
+                onClick={() => handleColorClick(color.name)}
+                title={color.name}
+                className={`w-6 h-6 rounded-full transition-all flex items-center justify-center shadow-sm cursor-pointer ${
+                  selectedColor === color.name ? 'ring-2 ring-black ring-offset-2 scale-110' : 'hover:scale-110'
+                }`}
+                style={{ backgroundColor: color.hex }}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Sizes */}
       <div>
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-[10px] font-bold tracking-[0.2em] uppercase text-gray-400">Talle (US)</h3>
-          <button className="text-[10px] font-bold underline uppercase tracking-widest hover:opacity-60">
+          <button className="text-[10px] font-bold underline uppercase tracking-widest hover:opacity-60 cursor-pointer">
             Guía de Talles
           </button>
         </div>
@@ -42,7 +68,7 @@ export default function ProductSelectors({ product }: ProductSelectorsProps) {
               key={s.size}
               disabled={!s.stock}
               onClick={() => setSelectedSize(s.size)}
-              className={`h-16 flex flex-col items-center justify-center border transition-all relative overflow-hidden ${
+              className={`h-16 flex flex-col items-center justify-center border transition-all relative overflow-hidden cursor-pointer ${
                 !s.stock 
                   ? 'bg-gray-50 text-gray-300 border-gray-100 cursor-not-allowed' 
                   : selectedSize === s.size 
@@ -67,7 +93,7 @@ export default function ProductSelectors({ product }: ProductSelectorsProps) {
         <button 
           onClick={handleAddToCart}
           disabled={isAdding}
-          className={`w-full h-16 flex items-center justify-center gap-3 font-bold uppercase tracking-[0.2em] text-[11px] transition-all duration-300 ${
+          className={`w-full h-16 flex items-center justify-center gap-3 font-bold uppercase tracking-[0.2em] text-[11px] transition-all duration-300 cursor-pointer ${
             isAdding ? 'bg-green-600 text-white' : 'bg-[#111] text-white hover:bg-black'
           }`}
         >
