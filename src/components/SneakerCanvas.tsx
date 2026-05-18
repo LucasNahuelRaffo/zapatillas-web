@@ -121,7 +121,6 @@ export default function SneakerCanvas() {
             depth: true
           }}
           performance={{ min: 0.5 }}
-          frameloop={isVisible ? 'always' : 'demand'}
           onError={(e: any) => console.error("Canvas onError:", e)}
           camera={{ position: [0, 0, 20], fov: 50 }}
         >

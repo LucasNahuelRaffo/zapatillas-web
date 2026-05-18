@@ -60,7 +60,7 @@ export default function Newsletter() {
   return (
     <section ref={sectionRef} className="bg-[#f4f4f4] w-full flex flex-col lg:flex-row min-h-[500px] lg:min-h-[650px] overflow-hidden">
       {/* Left Column - Image Container */}
-      <div className="w-full lg:w-1/2 min-h-[400px] lg:h-auto lg:self-stretch relative overflow-hidden group flex flex-col">
+      <div className="w-full lg:w-1/2 min-h-[400px] lg:min-h-full relative overflow-hidden group">
         <img 
           src="https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?q=60&w=800&auto=format&fm=webp&fit=crop" 
           alt="Archive Sneaker" 
@@ -68,7 +68,7 @@ export default function Newsletter() {
           decoding="async"
           width={800}
           height={1000}
-          className="flex-1 w-full h-full object-cover grayscale contrast-[1.1] brightness-[0.8]"
+          className="absolute inset-0 w-full h-full object-cover grayscale contrast-[1.1] brightness-[0.8]"
         />
 
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none" />
