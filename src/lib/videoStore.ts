@@ -12,44 +12,62 @@ export interface VideoReel {
 
 const STORAGE_KEY = 'zapass_videos';
 
-// Videos premium de calzado vertical por defecto (usando Mixkit con URLs directas estáticas)
+// Generar un UUID v4 válido nativamente compatible con Postgres
+function generateUUID(): string {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    const r = Math.random() * 16 | 0;
+    const v = c === 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+}
+
+// 5 UUIDs estables y 100% válidos en Postgres para los videos por defecto
+const DEFAULT_UUIDS = {
+  v1: 'da111111-1111-4111-a111-111111111111',
+  v2: 'da222222-2222-4222-a222-222222222222',
+  v3: 'da333333-3333-4333-a333-333333333333',
+  v4: 'da444444-4444-4444-a444-444444444444',
+  v5: 'da555555-5555-4555-a555-555555555555'
+};
+
+// Videos premium de calzado por defecto (usando links de Google Storage ultra estables, públicos y rápidos)
 const DEFAULT_VIDEOS: VideoReel[] = [
   {
-    id: 'default-1',
+    id: DEFAULT_UUIDS.v1,
     title: 'Jordan 4 Retro Sail - Premium Unboxing',
-    url: 'https://assets.mixkit.co/videos/preview/mixkit-holding-a-pair-of-white-sneakers-40098-large.mp4',
+    url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
     position: 'home',
-    product_link: '8', // Jordan 4 Retro Black Cat o similar (ID correspondiente en el catálogo)
+    product_link: '8', // Relacionado con producto 8
     is_active: true,
   },
   {
-    id: 'default-2',
+    id: DEFAULT_UUIDS.v2,
     title: 'Nike Air Max DN - On Feet View',
-    url: 'https://assets.mixkit.co/videos/preview/mixkit-close-up-of-sneakers-being-tied-40097-large.mp4',
+    url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
     position: 'home',
-    product_link: '26', // Nike Air Max DN Beige o similar
+    product_link: '26', // Relacionado con producto 26
     is_active: true,
   },
   {
-    id: 'default-3',
+    id: DEFAULT_UUIDS.v3,
     title: 'Adidas Forum Low x Bad Bunny - Style Check',
-    url: 'https://assets.mixkit.co/videos/preview/mixkit-man-dancing-in-sneakers-40096-large.mp4',
+    url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
     position: 'home',
-    product_link: '13', // Adidas Forum Low x Bad Bunny
+    product_link: '13', // Relacionado con producto 13
     is_active: true,
   },
   {
-    id: 'default-4',
+    id: DEFAULT_UUIDS.v4,
     title: 'Premium Sneakers Detail Shot',
-    url: 'https://assets.mixkit.co/videos/preview/mixkit-holding-a-pair-of-white-sneakers-40098-large.mp4',
+    url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4',
     position: 'home',
     product_link: '',
     is_active: true,
   },
   {
-    id: 'default-5',
+    id: DEFAULT_UUIDS.v5,
     title: 'Shop Exclusive Drop Lookbook',
-    url: 'https://assets.mixkit.co/videos/preview/mixkit-close-up-of-sneakers-being-tied-40097-large.mp4',
+    url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4',
     position: 'shop',
     product_link: '',
     is_active: true,
@@ -59,8 +77,9 @@ const DEFAULT_VIDEOS: VideoReel[] = [
 /**
  * Obtener videos de forma híbrida:
  * 1. Intenta cargar desde Supabase.
- * 2. Si falla o no está configurado, lee de localStorage.
- * 3. Si no hay nada en localStorage, devuelve los videos por defecto.
+ * 2. Si la base de datos está vacía, siembra los videos por defecto en la nube.
+ * 3. Si no hay conexión o falla, lee de localStorage.
+ * 4. Si no hay nada en localStorage, devuelve los videos por defecto.
  */
 export async function getVideos(): Promise<VideoReel[]> {
   if (hasSupabaseCredentials) {
@@ -73,11 +92,28 @@ export async function getVideos(): Promise<VideoReel[]> {
       if (!error && data && data.length > 0) {
         return data as VideoReel[];
       }
-      if (error) {
-        console.warn('Supabase videos query returned error, falling back to local:', error.message);
+
+      // Si la base de datos está vacía, sembramos (seed) los videos por defecto en Supabase con UUIDs correctos
+      if (!error && data && data.length === 0) {
+        console.log('La tabla videos_zapatillas está vacía. Sembrando videos por defecto...');
+        const seededVideos = DEFAULT_VIDEOS.map(v => ({
+          id: v.id,
+          title: v.title,
+          url: v.url,
+          position: v.position,
+          product_link: v.product_link || null,
+          is_active: v.is_active
+        }));
+        
+        const { error: insertError } = await supabase.from('videos_zapatillas').insert(seededVideos);
+        if (!insertError) {
+          return DEFAULT_VIDEOS;
+        } else {
+          console.error('Error al sembrar videos por defecto en Supabase:', insertError.message);
+        }
       }
     } catch (e) {
-      console.warn('Failed to fetch videos from Supabase, falling back to local:', e);
+      console.warn('Failed to fetch/seed videos from Supabase, falling back to local:', e);
     }
   }
 
@@ -109,7 +145,7 @@ function saveLocalVideos(videos: VideoReel[]): void {
 
 /** Agregar un video */
 export async function addVideo(video: Omit<VideoReel, 'id' | 'created_at'>): Promise<VideoReel> {
-  const newId = 'vid-' + Math.random().toString(36).substr(2, 9) + '-' + Date.now();
+  const newId = generateUUID(); // Generamos un UUID v4 válido
   const newVideo: VideoReel = {
     ...video,
     id: newId,
@@ -153,22 +189,25 @@ export async function updateVideo(updated: VideoReel): Promise<void> {
   // Actualizar Supabase
   if (hasSupabaseCredentials) {
     try {
+      // Usamos UPSERT en lugar de UPDATE para garantizar que si un video aún no existe
+      // físicamente en la tabla de Supabase (por ejemplo, si se configuró después),
+      // se cree directamente con su ID correcto sin fallar silenciosamente.
       const { error } = await supabase
         .from('videos_zapatillas')
-        .update({
+        .upsert({
+          id: updated.id,
           title: updated.title,
           url: updated.url,
           position: updated.position,
           product_link: updated.product_link || null,
           is_active: updated.is_active
-        })
-        .eq('id', updated.id);
+        });
 
       if (error) {
-        console.error('Supabase error updating video:', error.message);
+        console.error('Supabase error updating/upserting video:', error.message);
       }
     } catch (e) {
-      console.error('Failed to update video in Supabase:', e);
+      console.error('Failed to update/upsert video in Supabase:', e);
     }
   }
 }
