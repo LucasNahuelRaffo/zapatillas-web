@@ -120,12 +120,12 @@ export default function Newsletter() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Introduce tu dirección de email"
-              className="w-full px-6 py-4 sm:py-5 bg-white border border-gray-200/60 shadow-sm text-[13px] focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition-all placeholder:text-gray-400 font-medium"
+              className="w-full px-6 py-4 sm:py-5 bg-white border border-gray-200/60 shadow-sm text-[13px] focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition-all placeholder:text-gray-400 font-medium cursor-text"
               required
             />
             <button
               type="submit"
-              className="w-full bg-black hover:bg-[#1a1a1a] text-white text-[11px] font-bold tracking-[0.2em] uppercase px-10 py-5 transition-colors"
+              className="w-full bg-black hover:bg-[#1a1a1a] text-white text-[11px] font-bold tracking-[0.2em] uppercase px-10 py-5 transition-colors cursor-pointer"
             >
               Suscribirse
             </button>

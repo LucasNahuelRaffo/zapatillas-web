@@ -44,6 +44,25 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Cursores globales para que siempre se vea el mouse correctamente */
+input[type="text"],
+input[type="email"],
+input[type="search"],
+input[type="password"],
+input[type="number"],
+input[type="tel"],
+input[type="url"],
+textarea,
+select {
+  cursor: text;
+}
+
+button,
+[role="button"],
+a {
+  cursor: pointer;
+}
+
 
 /* Clase utilitaria para la tipografía de la marca (ahora Permanent Marker) */
 .font-skylight {
