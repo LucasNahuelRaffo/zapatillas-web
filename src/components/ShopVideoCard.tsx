@@ -29,6 +29,18 @@ export default function ShopVideoCard() {
     loadShopVideo();
   }, []);
 
+  // Efecto robusto para forzar autoplay en navegadores móviles y de escritorio sin bloqueos de reproducción
+  useEffect(() => {
+    const videoEl = videoRef.current;
+    if (videoEl && video) {
+      videoEl.muted = isMuted;
+      videoEl.defaultMuted = true;
+      videoEl.play().catch(err => {
+        console.warn("Autoplay bloqueado temporalmente por política de navegador:", err);
+      });
+    }
+  }, [video, isMuted]);
+
   const toggleMute = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -54,6 +66,7 @@ export default function ShopVideoCard() {
         muted={isMuted}
         loop
         playsInline
+        preload="metadata"
         className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
       />
 

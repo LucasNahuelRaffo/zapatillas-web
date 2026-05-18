@@ -245,6 +245,7 @@ export default function ReelSection() {
                   loop
                   muted={isMuted}
                   playsInline
+                  preload="none"
                   onClick={() => togglePlay(reel.id)}
                   className="w-full h-full object-cover cursor-pointer select-none transition-transform duration-700 ease-out group-hover:scale-[1.03]"
                 />

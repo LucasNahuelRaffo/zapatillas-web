@@ -143,6 +143,99 @@ function saveLocalVideos(videos: VideoReel[]): void {
   } catch (_) {}
 }
 
+/** 
+ * Sube un archivo de video al Storage Bucket público de Supabase ('videos').
+ * Si tiene éxito, devuelve la URL de streaming pública. 
+ * Si falla o está offline, hace fallback a Base64 local.
+ */
+export async function uploadVideoFile(file: File): Promise<string> {
+  if (!hasSupabaseCredentials) {
+    // Fallback local a Base64 offline
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = (e) => resolve(e.target?.result as string);
+      reader.readAsDataURL(file);
+    });
+  }
+
+  try {
+    // 1. Asegurar la existencia del bucket público 'videos'
+    try {
+      await supabase.storage.createBucket('videos', {
+        public: true,
+        fileSizeLimit: 50 * 1024 * 1024 // Permitir hasta 50MB
+      });
+    } catch (_) {
+      // Ignorar error si ya existe el bucket
+    }
+
+    // 2. Generar nombre de archivo único
+    const fileExt = file.name.split('.').pop() || 'mp4';
+    const fileName = `${Math.random().toString(36).substring(2, 15)}-${Date.now()}.${fileExt}`;
+    const filePath = `reels/${fileName}`;
+
+    // 3. Subir archivo
+    const { data, error } = await supabase.storage
+      .from('videos')
+      .upload(filePath, file, {
+        cacheControl: '3600',
+        upsert: true
+      });
+
+    if (error) {
+      throw error;
+    }
+
+    // 4. Obtener URL de acceso público
+    const { data: urlData } = supabase.storage
+      .from('videos')
+      .getPublicUrl(filePath);
+
+    if (urlData?.publicUrl) {
+      return urlData.publicUrl;
+    }
+
+    throw new Error('No se pudo obtener la URL pública');
+  } catch (err: any) {
+    console.error('Error al subir video a Supabase Storage, fallback a Base64:', err);
+    // Fallback a Base64 si falla el Storage (ej: RLS deshabilitado)
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = (e) => resolve(e.target?.result as string);
+      reader.readAsDataURL(file);
+    });
+  }
+}
+
+/** Resetear todos los videos de la base de datos a sus valores iniciales rápidos */
+export async function resetVideosToDefault(): Promise<VideoReel[]> {
+  // Limpiar local
+  saveLocalVideos(DEFAULT_VIDEOS);
+
+  // Limpiar Supabase
+  if (hasSupabaseCredentials) {
+    try {
+      // Eliminar registros existentes
+      await supabase.from('videos_zapatillas').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+      
+      // Volver a insertar la lista limpia por defecto
+      const seededVideos = DEFAULT_VIDEOS.map(v => ({
+        id: v.id,
+        title: v.title,
+        url: v.url,
+        position: v.position,
+        product_link: v.product_link || null,
+        is_active: v.is_active
+      }));
+      await supabase.from('videos_zapatillas').insert(seededVideos);
+    } catch (e) {
+      console.error('Failed to reset videos in Supabase:', e);
+    }
+  }
+
+  return DEFAULT_VIDEOS;
+}
+
 /** Agregar un video */
 export async function addVideo(video: Omit<VideoReel, 'id' | 'created_at'>): Promise<VideoReel> {
   const newId = generateUUID(); // Generamos un UUID v4 válido

@@ -10,7 +10,7 @@ import {
   deleteLocalProduct,
 } from '../../lib/productStore'
 import { supabase } from '../../lib/supabase'
-import { getVideos, addVideo, updateVideo, deleteVideo, VideoReel } from '../../lib/videoStore'
+import { getVideos, addVideo, updateVideo, deleteVideo, uploadVideoFile, resetVideosToDefault, VideoReel } from '../../lib/videoStore'
 
 // Sincroniza un producto con stock_zapatillas: borra filas viejas y re-inserta
 async function syncStockZapatillas(product: Partial<Product>, oldName?: string) {
@@ -105,6 +105,7 @@ export default function AdminDashboard() {
   // Estados de Videos CRUD
   const [videosList, setVideosList] = useState<VideoReel[]>([])
   const [isEditingVideo, setIsEditingVideo] = useState(false)
+  const [uploadingVideo, setUploadingVideo] = useState(false)
   const [currentVideo, setCurrentVideo] = useState<Partial<VideoReel>>({
     title: '', url: '', position: 'home', product_link: '', is_active: true
   })
@@ -114,15 +115,20 @@ export default function AdminDashboard() {
     if (isLoggedIn) setProducts(getLocalProducts())
   }, [isLoggedIn])
 
-  // Bloquear scroll del body al abrir algún panel lateral
+  // Bloquear scroll del body y html al abrir algún panel lateral para evitar que Lenis/Scroll afecte el fondo
   useEffect(() => {
+    const htmlEl = document.documentElement;
+    const bodyEl = document.body;
     if (isEditing || isEditingVideo || selectedDate) {
-      document.body.style.overflow = 'hidden'
+      htmlEl.style.overflow = 'hidden';
+      bodyEl.style.overflow = 'hidden';
     } else {
-      document.body.style.overflow = ''
+      htmlEl.style.overflow = '';
+      bodyEl.style.overflow = '';
     }
     return () => {
-      document.body.style.overflow = ''
+      htmlEl.style.overflow = '';
+      bodyEl.style.overflow = '';
     }
   }, [isEditing, isEditingVideo, selectedDate])
 
@@ -620,98 +626,127 @@ export default function AdminDashboard() {
         )}
 
         {activeTab === 'videos' && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {videosList.map(v => (
-              <div key={v.id} className="bg-white border border-black/5 rounded-sm overflow-hidden shadow-sm p-5 flex flex-col gap-4 relative group">
-                {/* Visual Video Thumbnail */}
-                <div className="aspect-[9/16] w-full bg-black rounded-sm overflow-hidden relative border border-gray-100 shadow-inner group-hover:shadow-md transition-shadow">
-                  <video 
-                    src={v.url}
-                    className="w-full h-full object-cover"
-                    muted
-                    playsInline
-                    loop
-                    onMouseEnter={e => e.currentTarget.play().catch(() => {})}
-                    onMouseLeave={e => e.currentTarget.pause()}
-                  />
-                  <div className="absolute inset-0 bg-black/20 pointer-events-none" />
-                  
-                  {/* Tag de Posición */}
-                  <div className="absolute top-3 left-3 bg-black/60 backdrop-blur-md text-white border border-white/10 font-bold text-[8px] uppercase tracking-[0.25em] px-2 py-0.5 rounded-sm">
-                    {v.position === 'home' ? 'Inicio' : 'Tienda'}
-                  </div>
+          <div className="space-y-6">
+            {/* Panel de Mantenimiento de Velocidad / Reels */}
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white border border-black/5 p-6 rounded-sm shadow-sm">
+              <div>
+                <h2 className="text-xs font-black uppercase tracking-widest text-black mb-1">Mantenimiento de Reels & Videos</h2>
+                <p className="text-[10px] text-gray-400 font-medium max-w-2xl leading-relaxed uppercase">
+                  Si subiste un video muy pesado por error que ralentiza la carga o si querés volver al estado inicial con videos ultra-rápidos en la nube Google Storage CDN, podés restablecerlos de forma instantánea.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={async () => {
+                  if (confirm('¿Estás seguro de que deseas restablecer TODOS los videos a los predeterminados de fábrica? Esto eliminará tus videos actuales y cargará los videos ultra-rápidos de Google CDN para máxima velocidad de la web.')) {
+                    try {
+                      const reseted = await resetVideosToDefault();
+                      setVideosList(reseted);
+                      alert('¡Videos restablecidos con éxito! La velocidad de carga de la web ahora es óptima.');
+                    } catch (err: any) {
+                      alert('Error al restablecer videos: ' + (err.message || err));
+                    }
+                  }
+                }}
+                className="bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 px-5 py-3 text-[10px] font-black uppercase tracking-widest rounded-sm transition-all flex items-center gap-2 cursor-pointer whitespace-nowrap"
+              >
+                Restablecer Predeterminados
+              </button>
+            </div>
 
-                  {/* Icono de Reproducción en hover */}
-                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/20 pointer-events-none">
-                    <div className="w-10 h-10 rounded-full bg-white/30 backdrop-blur-md border border-white/20 flex items-center justify-center text-white">
-                      <Play size={16} fill="currentColor" className="ml-0.5" />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Detalles */}
-                <div className="flex-1 flex flex-col justify-between gap-3">
-                  <div>
-                    <h3 className="text-[13px] font-bold text-black uppercase tracking-wide leading-tight line-clamp-1">{v.title}</h3>
-                    <p className="text-[10px] text-gray-400 font-medium truncate mt-1">URL: {v.url}</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              {videosList.map(v => (
+                <div key={v.id} className="bg-white border border-black/5 rounded-sm overflow-hidden shadow-sm p-5 flex flex-col gap-4 relative group">
+                  {/* Visual Video Thumbnail */}
+                  <div className="aspect-[9/16] w-full bg-black rounded-sm overflow-hidden relative border border-gray-100 shadow-inner group-hover:shadow-md transition-shadow">
+                    <video 
+                      src={v.url}
+                      className="w-full h-full object-cover"
+                      muted
+                      playsInline
+                      loop
+                      onMouseEnter={e => e.currentTarget.play().catch(() => {})}
+                      onMouseLeave={e => e.currentTarget.pause()}
+                    />
+                    <div className="absolute inset-0 bg-black/20 pointer-events-none" />
                     
-                    {v.product_link && (
-                      <div className="mt-2 flex items-center gap-1.5 bg-gray-50 border border-gray-100 px-2 py-1 rounded-sm text-[10px] font-bold text-gray-500 uppercase tracking-widest w-fit">
-                        <ShoppingBag size={10} />
-                        Prod ID: {v.product_link}
+                    {/* Tag de Posición */}
+                    <div className="absolute top-3 left-3 bg-black/60 backdrop-blur-md text-white border border-white/10 font-bold text-[8px] uppercase tracking-[0.25em] px-2 py-0.5 rounded-sm">
+                      {v.position === 'home' ? 'Inicio' : 'Tienda'}
+                    </div>
+
+                    {/* Icono de Reproducción en hover */}
+                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/20 pointer-events-none">
+                      <div className="w-10 h-10 rounded-full bg-white/30 backdrop-blur-md border border-white/20 flex items-center justify-center text-white">
+                        <Play size={16} fill="currentColor" className="ml-0.5" />
                       </div>
-                    )}
+                    </div>
                   </div>
 
-                  {/* Estado + Acciones */}
-                  <div className="flex items-center justify-between pt-3 border-t border-gray-50 mt-1">
-                    {/* Switch de Activo */}
-                    <button 
-                      type="button"
-                      onClick={() => toggleVideoActive(v)}
-                      className={`text-[9px] font-black uppercase tracking-[0.2em] px-2.5 py-1 rounded-full border transition-all cursor-pointer ${
-                        v.is_active 
-                          ? 'bg-green-50 border-green-200 text-green-700 hover:bg-green-100' 
-                          : 'bg-red-50 border-red-200 text-red-700 hover:bg-red-100'
-                      }`}
-                    >
-                      {v.is_active ? 'Activo' : 'Pausado'}
-                    </button>
+                  {/* Detalles */}
+                  <div className="flex-1 flex flex-col justify-between gap-3">
+                    <div>
+                      <h3 className="text-[13px] font-bold text-black uppercase tracking-wide leading-tight line-clamp-1">{v.title}</h3>
+                      <p className="text-[10px] text-gray-400 font-medium truncate mt-1">URL: {v.url}</p>
+                      
+                      {v.product_link && (
+                        <div className="mt-2 flex items-center gap-1.5 bg-gray-50 border border-gray-100 px-2 py-1 rounded-sm text-[10px] font-bold text-gray-500 uppercase tracking-widest w-fit">
+                          <ShoppingBag size={10} />
+                          Prod ID: {v.product_link}
+                        </div>
+                      )}
+                    </div>
 
-                    {/* Acciones CRUD */}
-                    <div className="flex items-center gap-1">
+                    {/* Estado + Acciones */}
+                    <div className="flex items-center justify-between pt-3 border-t border-gray-50 mt-1">
+                      {/* Switch de Activo */}
                       <button 
                         type="button"
-                        onClick={() => openEditVideo(v)} 
-                        className="p-1.5 text-gray-400 hover:text-blue-600 transition-colors cursor-pointer"
-                        title="Editar Video"
+                        onClick={() => toggleVideoActive(v)}
+                        className={`text-[9px] font-black uppercase tracking-[0.2em] px-2.5 py-1 rounded-full border transition-all cursor-pointer ${
+                          v.is_active 
+                            ? 'bg-green-50 border-green-200 text-green-700 hover:bg-green-100' 
+                            : 'bg-red-50 border-red-200 text-red-700 hover:bg-red-100'
+                        }`}
                       >
-                        <Pencil size={15} />
+                        {v.is_active ? 'Activo' : 'Pausado'}
                       </button>
-                      <button 
-                        type="button"
-                        onClick={() => handleDeleteVideo(v.id)} 
-                        className="p-1.5 text-gray-400 hover:text-red-600 transition-colors cursor-pointer"
-                        title="Eliminar Video"
-                      >
-                        <Trash2 size={15} />
-                      </button>
+
+                      {/* Acciones CRUD */}
+                      <div className="flex items-center gap-1">
+                        <button 
+                          type="button"
+                          onClick={() => openEditVideo(v)} 
+                          className="p-1.5 text-gray-400 hover:text-blue-600 transition-colors cursor-pointer"
+                          title="Editar Video"
+                        >
+                          <Pencil size={15} />
+                        </button>
+                        <button 
+                          type="button"
+                          onClick={() => handleDeleteVideo(v.id)} 
+                          className="p-1.5 text-gray-400 hover:text-red-600 transition-colors cursor-pointer"
+                          title="Eliminar Video"
+                        >
+                          <Trash2 size={15} />
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
+              ))}
+              
+              {/* Tarjeta para Agregar nuevo */}
+              <div 
+                onClick={openNewVideo}
+                className="border-2 border-dashed border-gray-200 hover:border-black/35 rounded-sm p-8 flex flex-col items-center justify-center text-center cursor-pointer min-h-[300px] hover:bg-gray-50/50 transition-all group"
+              >
+                <div className="w-12 h-12 rounded-full border border-gray-200 bg-white text-gray-400 flex items-center justify-center mb-4 group-hover:border-black group-hover:text-black transition-all">
+                  <Plus size={20} />
+                </div>
+                <p className="text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 group-hover:text-black transition-colors">Añadir Reel</p>
+                <p className="text-[9px] text-gray-400 mt-1 max-w-[160px] leading-relaxed">Mostrá tus zapatillas en acción en formato vertical 9:16.</p>
               </div>
-            ))}
-            
-            {/* Tarjeta para Agregar nuevo */}
-            <div 
-              onClick={openNewVideo}
-              className="border-2 border-dashed border-gray-200 hover:border-black/35 rounded-sm p-8 flex flex-col items-center justify-center text-center cursor-pointer min-h-[300px] hover:bg-gray-50/50 transition-all group"
-            >
-              <div className="w-12 h-12 rounded-full border border-gray-200 bg-white text-gray-400 flex items-center justify-center mb-4 group-hover:border-black group-hover:text-black transition-all">
-                <Plus size={20} />
-              </div>
-              <p className="text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 group-hover:text-black transition-colors">Añadir Reel</p>
-              <p className="text-[9px] text-gray-400 mt-1 max-w-[160px] leading-relaxed">Mostrá tus zapatillas en acción en formato vertical 9:16.</p>
             </div>
           </div>
         )}
@@ -724,7 +759,7 @@ export default function AdminDashboard() {
             <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setIsEditing(false)} />
             <motion.div
               initial={{ x: '-100%' }} animate={{ x: 0 }} exit={{ x: '-100%' }}
-              className="w-full max-w-xl bg-white h-full relative z-10 shadow-2xl flex flex-col p-8 overflow-y-auto"
+              className="w-full max-w-xl bg-white h-screen relative z-10 shadow-2xl flex flex-col p-8 overflow-y-auto"
               data-lenis-prevent
             >
               <div className="flex justify-between items-center mb-10">
@@ -1036,7 +1071,7 @@ export default function AdminDashboard() {
             <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setSelectedDate(null)} />
             <motion.div
               initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }}
-              className="w-full max-w-md bg-white h-full relative z-10 shadow-2xl flex flex-col p-8 overflow-y-auto"
+              className="w-full max-w-md bg-white h-screen relative z-10 shadow-2xl flex flex-col p-8 overflow-y-auto"
               data-lenis-prevent
             >
               <div className="flex justify-between items-center mb-10">
@@ -1131,7 +1166,7 @@ export default function AdminDashboard() {
             <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setIsEditingVideo(false)} />
             <motion.div
               initial={{ x: '-100%' }} animate={{ x: 0 }} exit={{ x: '-100%' }}
-              className="w-full max-w-xl bg-white h-full relative z-10 shadow-2xl flex flex-col p-8 overflow-y-auto"
+              className="w-full max-w-xl bg-white h-screen relative z-10 shadow-2xl flex flex-col p-8 overflow-y-auto"
               data-lenis-prevent
             >
               <div className="flex justify-between items-center mb-10">
@@ -1207,28 +1242,36 @@ export default function AdminDashboard() {
                       />
                     </div>
                     
-                    <label className="bg-black text-white px-4 h-12 text-[11px] font-bold uppercase tracking-widest rounded-sm hover:bg-gray-800 transition-colors flex items-center justify-center gap-2 cursor-pointer shrink-0">
-                      <Plus size={14} /> ARCHIVO
+                    <label className={`px-4 h-12 text-[11px] font-bold uppercase tracking-widest rounded-sm transition-colors flex items-center justify-center gap-2 cursor-pointer shrink-0 ${uploadingVideo ? 'bg-zinc-300 text-zinc-500 cursor-not-allowed' : 'bg-black text-white hover:bg-gray-800'}`}>
+                      {uploadingVideo ? (
+                        <>
+                          <span className="w-4 h-4 border-2 border-zinc-500 border-t-transparent rounded-full animate-spin"></span>
+                          SUBIENDO...
+                        </>
+                      ) : (
+                        <>
+                          <Plus size={14} /> ARCHIVO
+                        </>
+                      )}
                       <input 
                         type="file" 
                         accept="video/mp4,video/quicktime,video/webm" 
                         className="hidden" 
-                        onChange={(e) => {
+                        disabled={uploadingVideo}
+                        onChange={async (e) => {
                           const file = e.target.files?.[0];
                           if (!file) return;
                           
-                          if (file.size > 8 * 1024 * 1024) {
-                            alert("Atención: Los videos pesados pueden tardar en cargar y exceder el límite de almacenamiento si no usás Supabase. Recomendamos usar un link o videos menores a 8MB.");
+                          try {
+                            setUploadingVideo(true);
+                            const publicUrl = await uploadVideoFile(file);
+                            setCurrentVideo(prev => ({ ...prev, url: publicUrl }));
+                          } catch (err: any) {
+                            alert("Error al cargar el video: " + (err.message || err));
+                          } finally {
+                            setUploadingVideo(false);
+                            e.target.value = ''; // Reset input
                           }
-
-                          const reader = new FileReader();
-                          reader.onload = (ev) => {
-                            if (ev.target?.result) {
-                              setCurrentVideo(prev => ({ ...prev, url: ev.target!.result as string }));
-                            }
-                          };
-                          reader.readAsDataURL(file);
-                          e.target.value = ''; // Reset input
                         }} 
                       />
                     </label>
