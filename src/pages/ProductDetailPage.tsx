@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { supabase, hasSupabaseCredentials } from '../lib/supabase';
 import { Product } from '../data/products';
-import { getLocalProducts } from '../lib/productStore';
+import { getLocalProducts, getProducts } from '../lib/productStore';
 import ImageGallery from '../components/Product/ImageGallery';
 import ProductInfo from '../components/Product/ProductInfo';
 import ProductSelectors from '../components/Product/ProductSelectors';
@@ -25,6 +25,9 @@ export default function ProductDetailPage() {
     const local = getLocalProducts().find(p => p.id === Number(id)) ?? null;
     setProduct(local);
     setLoading(false);
+    getProducts().then(all => {
+      setProduct(all.find(p => p.id === Number(id)) ?? local);
+    }).catch(() => {});
   }, [id]);
 
   const handleColorChange = (colorName: string) => {

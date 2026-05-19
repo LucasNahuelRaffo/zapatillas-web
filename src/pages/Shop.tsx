@@ -6,7 +6,7 @@ import { Helmet } from 'react-helmet-async'
 import { supabase, hasSupabaseCredentials } from '../lib/supabase'
 
 import { Product } from '../data/products'
-import { getLocalProducts } from '../lib/productStore'
+import { getLocalProducts, getProducts } from '../lib/productStore'
 import ShopVideoCard from '../components/ShopVideoCard'
 
 /* ───────────────────────────────────────────────
@@ -222,7 +222,6 @@ function SidebarLabel({ children }: { children: React.ReactNode }) {
    SHOP PAGE
 ─────────────────────────────────────────────── */
 export default function Shop() {
-  // Cargar desde localStorage (productStore) instantáneamente
   const [products, setProducts] = useState<Product[]>(() => getLocalProducts())
   const [loading, setLoading] = useState(false)
   const [activeCategory, setActiveCategory] = useState('All Sneakers')
@@ -231,7 +230,9 @@ export default function Shop() {
   const [activeColors, setActiveColors] = useState<string[]>([])
   const [searchQuery, setSearchQuery] = useState('')
 
-  // Removed Supabase sync to use local products (Admin loaded) exclusively
+  useEffect(() => {
+    getProducts().then(setProducts).catch(() => {})
+  }, [])
 
   const toggleSize = (s: number) =>
     setActiveSizes(prev => prev.includes(s) ? prev.filter(x => x !== s) : [...prev, s])

@@ -8,6 +8,10 @@ import {
   addLocalProduct,
   updateLocalProduct,
   deleteLocalProduct,
+  saveProductToSupabase,
+  deleteProductFromSupabase,
+  uploadProductImage,
+  getProducts,
 } from '../../lib/productStore'
 import { supabase } from '../../lib/supabase'
 import { getVideos, addVideo, updateVideo, deleteVideo, uploadVideoFile, resetVideosToDefault, VideoReel } from '../../lib/videoStore'
@@ -93,6 +97,7 @@ export default function AdminDashboard() {
   const [newImageUrl, setNewImageUrl] = useState('')
   const [newColorImageUrls, setNewColorImageUrls] = useState<Record<string, string>>({})
   const [imageMode, setImageMode] = useState<'general' | 'color'>('general')
+  const [uploadingImage, setUploadingImage] = useState(false)
 
   // Estados del Calendario / Solicitudes
   const [activeTab, setActiveTab] = useState<'productos' | 'solicitudes' | 'videos'>('productos')
@@ -147,9 +152,10 @@ export default function AdminDashboard() {
     });
   };
 
-  // Cargar productos desde localStorage al hacer login
   useEffect(() => {
-    if (isLoggedIn) setProducts(getLocalProducts())
+    if (isLoggedIn) {
+      getProducts().then(setProducts).catch(() => setProducts(getLocalProducts()))
+    }
   }, [isLoggedIn])
 
   // Bloquear scroll del body y html al abrir algún panel lateral o modal para evitar que Lenis/Scroll afecte el fondo
@@ -333,6 +339,7 @@ export default function AdminDashboard() {
         deleteLocalProduct(id)
         setProducts(getLocalProducts())
         if (product) await removeStockZapatillas(product.name)
+        await deleteProductFromSupabase(id)
       }
     )
   }
@@ -348,15 +355,17 @@ export default function AdminDashboard() {
       ? products.find(p => p.id === currentProduct.id)?.name
       : undefined
 
+    let savedProduct: Product
     if (currentProduct.id) {
       updateLocalProduct(currentProduct as Product)
+      savedProduct = currentProduct as Product
     } else {
-      addLocalProduct(currentProduct as Omit<Product, 'id'>)
+      savedProduct = addLocalProduct(currentProduct as Omit<Product, 'id'>)
     }
     setProducts(getLocalProducts())
     setIsEditing(false)
 
-    // Sincronizar con Supabase stock_zapatillas
+    await saveProductToSupabase(savedProduct)
     await syncStockZapatillas(currentProduct, originalName)
   }
 
@@ -387,21 +396,17 @@ export default function AdminDashboard() {
     setNewColorImageUrls(prev => ({ ...prev, [colorName]: '' }))
   }
 
-  const handleColorFileChange = (colorName: string, file: File) => {
-    const reader = new FileReader();
-    reader.onload = (ev) => {
-      const result = ev.target?.result as string;
-      if (result) {
-        setCurrentProduct(prev => ({
-          ...prev,
-          colors: (prev.colors || []).map(c => 
-            c.name === colorName ? { ...c, images: [...(c.images || []), result] } : c
-          ),
-          images: prev.images?.includes(result) ? prev.images : [...(prev.images || []), result]
-        }))
-      }
-    };
-    reader.readAsDataURL(file);
+  const handleColorFileChange = async (colorName: string, file: File) => {
+    setUploadingImage(true)
+    const url = await uploadProductImage(file)
+    setCurrentProduct(prev => ({
+      ...prev,
+      colors: (prev.colors || []).map(c =>
+        c.name === colorName ? { ...c, images: [...(c.images || []), url] } : c
+      ),
+      images: prev.images?.includes(url) ? prev.images : [...(prev.images || []), url]
+    }))
+    setUploadingImage(false)
   }
 
   const removeColorImage = (colorName: string, idx: number) => {
@@ -1007,17 +1012,14 @@ export default function AdminDashboard() {
                           type="file" 
                           accept="image/*" 
                           className="hidden" 
-                          onChange={(e) => {
+                          onChange={async (e) => {
                             const file = e.target.files?.[0];
                             if (!file) return;
-                            const reader = new FileReader();
-                            reader.onload = (ev) => {
-                              if (ev.target?.result) {
-                                setCurrentProduct(prev => ({ ...prev, images: [...(prev.images || []), ev.target!.result as string] }));
-                              }
-                            };
-                            reader.readAsDataURL(file);
-                            e.target.value = ''; // Reset input
+                            e.target.value = '';
+                            setUploadingImage(true);
+                            const url = await uploadProductImage(file);
+                            setCurrentProduct(prev => ({ ...prev, images: [...(prev.images || []), url] }));
+                            setUploadingImage(false);
                           }} 
                         />
                       </label>
@@ -1105,9 +1107,11 @@ export default function AdminDashboard() {
                 <div className="pt-6 border-t border-gray-100">
                   <button
                     type="submit"
-                    className="w-full bg-black text-white h-16 text-[11px] font-bold uppercase tracking-[0.2em] hover:bg-gray-800 transition-all flex items-center justify-center gap-3 rounded-sm"
+                    disabled={uploadingImage}
+                    className="w-full bg-black text-white h-16 text-[11px] font-bold uppercase tracking-[0.2em] hover:bg-gray-800 transition-all flex items-center justify-center gap-3 rounded-sm disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    <Check size={18} /> {currentProduct.id ? 'Guardar Cambios' : 'Publicar Producto'}
+                    <Check size={18} />
+                    {uploadingImage ? 'Subiendo imagen...' : currentProduct.id ? 'Guardar Cambios' : 'Publicar Producto'}
                   </button>
                 </div>
               </form>

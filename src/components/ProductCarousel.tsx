@@ -5,7 +5,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { Link } from 'react-router-dom'
 import { supabase, hasSupabaseCredentials } from '../lib/supabase'
 import { Product } from '../data/products'
-import { getLocalProducts } from '../lib/productStore'
+import { getLocalProducts, getProducts } from '../lib/productStore'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -45,13 +45,14 @@ function ProductCard({ product }: { product: Product }) {
 }
 
 export default function ProductCarousel() {
-  // Cargar desde localStorage (productStore) instantáneamente
   const [products, setProducts] = useState<Product[]>(
     () => getLocalProducts().slice(0, 3)
   )
   const containerRef = useRef<HTMLElement>(null)
 
-  // Removed Supabase sync to use local products exclusively
+  useEffect(() => {
+    getProducts().then(all => setProducts(all.slice(0, 3))).catch(() => {})
+  }, [])
 
   useGSAP(() => {
     if (products.length === 0) return
