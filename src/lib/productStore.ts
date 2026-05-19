@@ -121,9 +121,32 @@ export async function getProducts(): Promise<Product[]> {
       .from('catalogo_zapatillas')
       .select('*')
       .order('id', { ascending: true });
+
     if (!error && data && data.length > 0) {
       saveLocalProducts(data as Product[]);
       return data as Product[];
+    }
+
+    if (!error && data && data.length === 0) {
+      // Tabla vacía: sembrar todos los productos locales en Supabase
+      const local = getLocalProducts();
+      const rows = local.map(p => ({
+        id: p.id,
+        brand: p.brand,
+        name: p.name,
+        price: p.price,
+        subtitle: p.subtitle ?? '',
+        description: p.description ?? '',
+        category: p.category ?? p.brand,
+        images: p.images,
+        colors: p.colors,
+        sizes: p.sizes,
+      }));
+      const { error: insertError } = await supabase.from('catalogo_zapatillas').insert(rows);
+      if (insertError) {
+        console.error('Error al sembrar catálogo en Supabase:', insertError.message);
+      }
+      return local;
     }
   } catch (e) {
     console.error('Failed to fetch products from Supabase:', e);
