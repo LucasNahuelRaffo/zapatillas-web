@@ -436,10 +436,17 @@ export default function AdminDashboard() {
 
   const toggleColor = (colorName: string, hex: string) => {
     const colors = currentProduct.colors || []
-    const has = colors.some(c => c.name === colorName)
+    const has = colors.some(c => c.hex === hex)
     setCurrentProduct(prev => ({
       ...prev,
-      colors: has ? colors.filter(c => c.name !== colorName) : [...colors, { name: colorName, hex, images: [] }],
+      colors: has ? colors.filter(c => c.hex !== hex) : [...colors, { name: colorName, hex, images: [] }],
+    }))
+  }
+
+  const updateColorName = (hex: string, newName: string) => {
+    setCurrentProduct(prev => ({
+      ...prev,
+      colors: (prev.colors || []).map(c => c.hex === hex ? { ...c, name: newName } : c)
     }))
   }
 
@@ -909,7 +916,7 @@ export default function AdminDashboard() {
                   <label className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mb-2 block">Colores</label>
                   <div className="flex flex-wrap gap-3">
                     {COLORS_LIST.map(c => {
-                      const selected = currentProduct.colors?.some(col => col.name === c.name)
+                      const selected = currentProduct.colors?.some(col => col.hex === c.hex)
                       return (
                         <button
                           key={c.name} type="button"
@@ -927,6 +934,25 @@ export default function AdminDashboard() {
                       )
                     })}
                   </div>
+
+                  {/* Nombres descriptivos para colores seleccionados */}
+                  {(currentProduct.colors?.length ?? 0) > 0 && (
+                    <div className="mt-4 space-y-2">
+                      <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-gray-400">Nombre descriptivo (opcional)</span>
+                      {currentProduct.colors!.map(c => (
+                        <div key={c.hex} className="flex items-center gap-3">
+                          <div className="w-3 h-3 rounded-full border border-black/10 shrink-0" style={{ backgroundColor: c.hex }} />
+                          <input
+                            type="text"
+                            value={c.name}
+                            onChange={e => updateColorName(c.hex, e.target.value)}
+                            className="flex-1 bg-gray-50 border border-gray-200 h-9 px-3 text-[12px] font-medium focus:outline-none focus:border-black transition-colors rounded-sm"
+                            placeholder="Ej: Blanco Azul, Negro Total..."
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 {/* Descripción */}
