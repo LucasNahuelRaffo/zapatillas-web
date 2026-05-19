@@ -55,10 +55,10 @@ const BRANDS = ['Adidas', 'Nike', 'Jordan', 'Travis Scott', 'Puma', 'Topper', 'J
   'Asics', 'Salomon', 'Olympikus', 'Under Armour', 'Skechers', 'Reebok', 'On']
 
 const COLORS_LIST = [
-  { name: 'Black', hex: '#000000' }, { name: 'White', hex: '#FFFFFF' },
-  { name: 'Red', hex: '#FF0000' }, { name: 'Blue', hex: '#0000FF' },
-  { name: 'Green', hex: '#008000' }, { name: 'Gray', hex: '#808080' },
-  { name: 'Brown', hex: '#8B4513' }, { name: 'Beige', hex: '#F5F5DC' },
+  { name: 'Negro', hex: '#000000' }, { name: 'Blanco', hex: '#FFFFFF' },
+  { name: 'Rojo', hex: '#FF0000' }, { name: 'Azul', hex: '#0000FF' },
+  { name: 'Verde', hex: '#008000' }, { name: 'Gris', hex: '#808080' },
+  { name: 'Marrón', hex: '#8B4513' }, { name: 'Beige', hex: '#F5F5DC' },
 ]
 
 const ALL_SIZES = ['38', '39', '40', '41', '42', '43', '44', '45']
