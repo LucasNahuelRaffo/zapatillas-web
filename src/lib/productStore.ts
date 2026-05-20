@@ -39,7 +39,7 @@ export function deleteLocalProduct(id: number): void {
 }
 
 /**
- * Sube una imagen al bucket 'product-images' de Supabase Storage.
+ * Sube una imagen al bucket 'products' de Supabase Storage.
  * Si falla o no hay credenciales, hace fallback a DataURL local.
  */
 export async function uploadProductImage(file: File): Promise<string> {
@@ -52,15 +52,15 @@ export async function uploadProductImage(file: File): Promise<string> {
   }
   try {
     try {
-      await supabase.storage.createBucket('product-images', { public: true });
+      await supabase.storage.createBucket('products', { public: true });
     } catch (_) {}
     const ext = file.name.split('.').pop() || 'jpg';
     const fileName = `${Math.random().toString(36).substring(2, 10)}-${Date.now()}.${ext}`;
     const { error } = await supabase.storage
-      .from('product-images')
+      .from('products')
       .upload(fileName, file, { cacheControl: '31536000', upsert: true });
     if (error) throw error;
-    const { data: urlData } = supabase.storage.from('product-images').getPublicUrl(fileName);
+    const { data: urlData } = supabase.storage.from('products').getPublicUrl(fileName);
     if (urlData?.publicUrl) return urlData.publicUrl;
     throw new Error('No public URL');
   } catch (err) {
