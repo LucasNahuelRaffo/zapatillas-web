@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Plus, Pencil, Trash2, LogOut, Package, Check, X, Link as LinkIcon, ShoppingBag, LayoutGrid, Calendar, ChevronLeft, ChevronRight, Film, Play } from 'lucide-react'
 import { Link } from 'react-router-dom'
@@ -104,6 +104,7 @@ export default function AdminDashboard() {
   const [imageMode, setImageMode] = useState<'general' | 'color'>('general')
   const [uploadingImage, setUploadingImage] = useState(false)
   const [stockColors, setStockColors] = useState<string[]>([])
+  const customColorInputRef = useRef<HTMLInputElement>(null)
 
   // Estados del Calendario / Solicitudes
   const [activeTab, setActiveTab] = useState<'productos' | 'solicitudes' | 'videos'>('productos')
@@ -956,6 +957,32 @@ export default function AdminDashboard() {
                         </button>
                       )
                     })}
+
+                    {/* Picker de color personalizado */}
+                    <div className="relative flex flex-col items-center gap-1">
+                      <button
+                        type="button"
+                        onClick={() => customColorInputRef.current?.click()}
+                        className="relative flex flex-col items-center gap-1 p-2 rounded-sm border border-dashed border-gray-300 hover:border-black transition-all"
+                        title="Elegir color personalizado"
+                      >
+                        <div
+                          className="w-6 h-6 rounded-full border border-black/10 shadow-sm flex items-center justify-center text-gray-400 hover:text-black"
+                          style={{ background: 'conic-gradient(red, yellow, lime, cyan, blue, magenta, red)' }}
+                        />
+                        <span className="text-[9px] font-bold uppercase text-gray-400">+Color</span>
+                      </button>
+                      <input
+                        ref={customColorInputRef}
+                        type="color"
+                        className="absolute opacity-0 w-0 h-0 pointer-events-none"
+                        onChange={e => {
+                          const hex = e.target.value
+                          const already = currentProduct.colors?.some(c => c.hex === hex)
+                          if (!already) toggleColor('Personalizado', hex)
+                        }}
+                      />
+                    </div>
                   </div>
 
                   {/* Nombres descriptivos para colores seleccionados */}
