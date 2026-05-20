@@ -73,9 +73,16 @@ export async function uploadProductImage(file: File): Promise<string> {
   }
 }
 
+const SITE_BASE_URL = 'https://lucasnahuelraffo.github.io/Za-Pass'
+
+function toAbsoluteUrl(path: string): string {
+  if (!path || path.startsWith('http') || path.startsWith('data:')) return path
+  return `${SITE_BASE_URL}${path}`
+}
+
 /**
  * Guarda (upsert) un producto completo en la tabla catalogo_zapatillas de Supabase.
- * Incluye colores con sus imágenes específicas.
+ * Incluye colores con sus imágenes específicas. Las rutas relativas se convierten a URLs absolutas.
  */
 export async function saveProductToSupabase(product: Product): Promise<void> {
   if (!hasSupabaseCredentials) return;
@@ -88,8 +95,8 @@ export async function saveProductToSupabase(product: Product): Promise<void> {
       subtitle: product.subtitle ?? '',
       description: product.description ?? '',
       category: product.category ?? product.brand,
-      images: product.images,
-      colors: product.colors,
+      images: product.images.map(toAbsoluteUrl),
+      colors: product.colors.map(c => ({ ...c, images: c.images.map(toAbsoluteUrl) })),
       sizes: product.sizes,
       updated_at: new Date().toISOString(),
     });

@@ -98,6 +98,7 @@ export default function AdminDashboard() {
   const [newColorImageUrls, setNewColorImageUrls] = useState<Record<string, string>>({})
   const [imageMode, setImageMode] = useState<'general' | 'color'>('general')
   const [uploadingImage, setUploadingImage] = useState(false)
+  const [stockColors, setStockColors] = useState<string[]>([])
 
   // Estados del Calendario / Solicitudes
   const [activeTab, setActiveTab] = useState<'productos' | 'solicitudes' | 'videos'>('productos')
@@ -318,6 +319,7 @@ export default function AdminDashboard() {
     setNewImageUrl('')
     setNewColorImageUrls({})
     setImageMode('general')
+    setStockColors([])
     setIsEditing(true)
   }
 
@@ -326,6 +328,8 @@ export default function AdminDashboard() {
     setNewImageUrl('')
     setNewColorImageUrls({})
     setImageMode(p.colors?.some(c => c.images?.length > 0) ? 'color' : 'general')
+    setStockColors([])
+    fetchStockColors(p.name)
     setIsEditing(true)
   }
 
@@ -448,6 +452,19 @@ export default function AdminDashboard() {
       ...prev,
       colors: (prev.colors || []).map(c => c.hex === hex ? { ...c, name: newName } : c)
     }))
+  }
+
+  const fetchStockColors = async (modeloName: string) => {
+    if (!modeloName) { setStockColors([]); return }
+    try {
+      const { data } = await supabase
+        .from('stock_zapatillas')
+        .select('color')
+        .eq('modelo', modeloName)
+      if (data) {
+        setStockColors([...new Set(data.map((r: any) => r.color as string))])
+      }
+    } catch (_) {}
   }
 
   // ─── LOGIN SCREEN ────────────────────────────────────────────────
@@ -856,6 +873,7 @@ export default function AdminDashboard() {
                       type="text" required
                       value={currentProduct.name}
                       onChange={e => setCurrentProduct({ ...currentProduct, name: e.target.value })}
+                      onBlur={e => fetchStockColors(e.target.value.trim())}
                       className="w-full bg-gray-50 border border-gray-200 h-14 px-5 text-[13px] font-bold focus:outline-none focus:border-black transition-colors rounded-sm"
                       placeholder="Ej: Air Max 90"
                     />
@@ -940,15 +958,31 @@ export default function AdminDashboard() {
                     <div className="mt-4 space-y-2">
                       <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-gray-400">Nombre descriptivo (opcional)</span>
                       {currentProduct.colors!.map(c => (
-                        <div key={c.hex} className="flex items-center gap-3">
-                          <div className="w-3 h-3 rounded-full border border-black/10 shrink-0" style={{ backgroundColor: c.hex }} />
-                          <input
-                            type="text"
-                            value={c.name}
-                            onChange={e => updateColorName(c.hex, e.target.value)}
-                            className="flex-1 bg-gray-50 border border-gray-200 h-9 px-3 text-[12px] font-medium focus:outline-none focus:border-black transition-colors rounded-sm"
-                            placeholder="Ej: Blanco Azul, Negro Total..."
-                          />
+                        <div key={c.hex} className="flex flex-col gap-1.5">
+                          <div className="flex items-center gap-3">
+                            <div className="w-3 h-3 rounded-full border border-black/10 shrink-0" style={{ backgroundColor: c.hex }} />
+                            <input
+                              type="text"
+                              value={c.name}
+                              onChange={e => updateColorName(c.hex, e.target.value)}
+                              className="flex-1 bg-gray-50 border border-gray-200 h-9 px-3 text-[12px] font-medium focus:outline-none focus:border-black transition-colors rounded-sm"
+                              placeholder="Ej: Blanco Azul, Negro Total..."
+                            />
+                          </div>
+                          {stockColors.length > 0 && (
+                            <div className="flex flex-wrap gap-1.5 pl-6">
+                              {stockColors.map(sc => (
+                                <button
+                                  key={sc}
+                                  type="button"
+                                  onClick={() => updateColorName(c.hex, sc)}
+                                  className="text-[9px] font-bold uppercase tracking-wider px-2 py-1 border border-gray-200 rounded-sm hover:border-black hover:bg-black hover:text-white transition-all text-gray-500"
+                                >
+                                  {sc}
+                                </button>
+                              ))}
+                            </div>
+                          )}
                         </div>
                       ))}
                     </div>
