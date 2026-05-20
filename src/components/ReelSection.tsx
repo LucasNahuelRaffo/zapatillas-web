@@ -234,25 +234,19 @@ export default function ReelSection() {
         </div>
 
         {/* Carrusel de Tarjetas Reels con flechas laterales */}
-        <div className="relative">
-          {/* Flecha izquierda */}
+        <div className="flex items-center gap-4">
+          {/* Flecha izquierda — solo desktop */}
           <button
             onClick={() => scrollSlider('left')}
-            className="hidden md:flex absolute left-3 top-1/2 -translate-y-[calc(50%+12px)] z-20 w-14 h-14 rounded-full bg-white text-black items-center justify-center shadow-2xl hover:scale-110 active:scale-95 transition-all duration-200 cursor-pointer"
+            className="hidden md:flex flex-shrink-0 w-14 h-14 rounded-full bg-white text-black items-center justify-center shadow-2xl hover:scale-110 active:scale-95 transition-all duration-200 cursor-pointer"
             aria-label="Reel anterior"
           >
             <ChevronLeft size={24} strokeWidth={2.5} />
           </button>
 
-          {/* Fade izquierda */}
-          <div className="hidden md:block absolute left-0 top-0 bottom-6 w-20 bg-gradient-to-r from-black/70 to-transparent pointer-events-none z-10" />
-
-          {/* Fade derecha */}
-          <div className="hidden md:block absolute right-0 top-0 bottom-6 w-20 bg-gradient-to-l from-black/70 to-transparent pointer-events-none z-10" />
-
           <div
             ref={sliderRef}
-            className="flex overflow-x-auto gap-6 pb-6 pt-2 scrollbar-none snap-x snap-mandatory touch-pan-x"
+            className="flex-1 min-w-0 flex overflow-x-auto gap-6 pb-6 pt-2 scrollbar-none snap-x snap-mandatory touch-pan-x"
             style={{ scrollbarWidth: 'none' }}
           >
 
@@ -325,10 +319,10 @@ export default function ReelSection() {
           })}
           </div>
 
-          {/* Flecha derecha */}
+          {/* Flecha derecha — solo desktop */}
           <button
             onClick={() => scrollSlider('right')}
-            className="hidden md:flex absolute right-3 top-1/2 -translate-y-[calc(50%+12px)] z-20 w-14 h-14 rounded-full bg-white text-black items-center justify-center shadow-2xl hover:scale-110 active:scale-95 transition-all duration-200 cursor-pointer"
+            className="hidden md:flex flex-shrink-0 w-14 h-14 rounded-full bg-white text-black items-center justify-center shadow-2xl hover:scale-110 active:scale-95 transition-all duration-200 cursor-pointer"
             aria-label="Siguiente reel"
           >
             <ChevronRight size={24} strokeWidth={2.5} />

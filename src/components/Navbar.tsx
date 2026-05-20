@@ -41,10 +41,10 @@ export default function Navbar() {
 
   return (
     <>
-      <motion.nav 
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
-        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+      <motion.nav
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.4, delay: 0.3 }}
         className={`sticky top-0 w-full z-50 transition-all duration-300 border-b ${
           scrolled ? 'bg-[#f9f9f9]/90 backdrop-blur-xl border-black/5 shadow-sm' : 'bg-transparent border-transparent'
         }`}
