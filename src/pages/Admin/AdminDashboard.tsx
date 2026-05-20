@@ -378,6 +378,7 @@ export default function AdminDashboard() {
 
     await saveProductToSupabase(savedProduct)
     await syncStockZapatillas(currentProduct, originalName)
+    getProducts().then(setProducts).catch(() => {})
   }
 
   const addImageUrl = () => {
@@ -552,12 +553,21 @@ export default function AdminDashboard() {
               <ShoppingBag size={18} /> Ver Tienda
             </Link>
             {activeTab === 'productos' && (
-              <button
-                onClick={openNew}
-                className="bg-black text-white px-6 py-3 text-[11px] font-bold uppercase tracking-[0.2em] flex items-center gap-2 hover:bg-gray-800 transition-colors rounded-sm shadow-lg shadow-black/5"
-              >
-                <Plus size={16} /> Nuevo
-              </button>
+              <>
+                <button
+                  onClick={() => getProducts().then(setProducts).catch(() => {})}
+                  className="px-6 py-3 text-[11px] font-bold uppercase tracking-[0.2em] flex items-center gap-2 border border-gray-200 hover:border-black transition-colors rounded-sm text-gray-500 hover:text-black"
+                  title="Actualizar catálogo desde Supabase"
+                >
+                  Actualizar
+                </button>
+                <button
+                  onClick={openNew}
+                  className="bg-black text-white px-6 py-3 text-[11px] font-bold uppercase tracking-[0.2em] flex items-center gap-2 hover:bg-gray-800 transition-colors rounded-sm shadow-lg shadow-black/5"
+                >
+                  <Plus size={16} /> Nuevo
+                </button>
+              </>
             )}
             {activeTab === 'videos' && (
               <button
