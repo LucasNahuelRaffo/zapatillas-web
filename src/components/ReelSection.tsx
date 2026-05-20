@@ -231,31 +231,31 @@ export default function ReelSection() {
             </p>
           </div>
           
-          {/* Botones de Control del Slider */}
-          <div className="reels-header-anim flex items-center gap-3 self-end md:self-auto">
-            <button 
-              onClick={() => scrollSlider('left')}
-              className="w-12 h-12 rounded-full border border-zinc-800 hover:border-white flex items-center justify-center text-zinc-400 hover:text-white transition-all bg-zinc-950/50 backdrop-blur-sm cursor-pointer"
-              aria-label="Reel anterior"
-            >
-              <ChevronLeft size={20} />
-            </button>
-            <button 
-              onClick={() => scrollSlider('right')}
-              className="w-12 h-12 rounded-full border border-zinc-800 hover:border-white flex items-center justify-center text-zinc-400 hover:text-white transition-all bg-zinc-950/50 backdrop-blur-sm cursor-pointer"
-              aria-label="Siguiente reel"
-            >
-              <ChevronRight size={20} />
-            </button>
-          </div>
         </div>
 
-        {/* Carrusel de Tarjetas Reels */}
-        <div 
-          ref={sliderRef}
-          className="flex overflow-x-auto gap-6 pb-6 pt-2 scrollbar-none snap-x snap-mandatory touch-pan-x"
-          style={{ scrollbarWidth: 'none' }}
-        >
+        {/* Carrusel de Tarjetas Reels con flechas laterales */}
+        <div className="relative">
+          {/* Flecha izquierda */}
+          <button
+            onClick={() => scrollSlider('left')}
+            className="hidden md:flex absolute left-3 top-1/2 -translate-y-[calc(50%+12px)] z-20 w-14 h-14 rounded-full bg-white text-black items-center justify-center shadow-2xl hover:scale-110 active:scale-95 transition-all duration-200 cursor-pointer"
+            aria-label="Reel anterior"
+          >
+            <ChevronLeft size={24} strokeWidth={2.5} />
+          </button>
+
+          {/* Fade izquierda */}
+          <div className="hidden md:block absolute left-0 top-0 bottom-6 w-20 bg-gradient-to-r from-black/70 to-transparent pointer-events-none z-10" />
+
+          {/* Fade derecha */}
+          <div className="hidden md:block absolute right-0 top-0 bottom-6 w-20 bg-gradient-to-l from-black/70 to-transparent pointer-events-none z-10" />
+
+          <div
+            ref={sliderRef}
+            className="flex overflow-x-auto gap-6 pb-6 pt-2 scrollbar-none snap-x snap-mandatory touch-pan-x"
+            style={{ scrollbarWidth: 'none' }}
+          >
+
           {reels.map((reel) => {
             const isMuted = mutedStates[reel.id] ?? true;
             const isPlaying = playingStates[reel.id] ?? false;
@@ -323,6 +323,16 @@ export default function ReelSection() {
               </div>
             );
           })}
+          </div>
+
+          {/* Flecha derecha */}
+          <button
+            onClick={() => scrollSlider('right')}
+            className="hidden md:flex absolute right-3 top-1/2 -translate-y-[calc(50%+12px)] z-20 w-14 h-14 rounded-full bg-white text-black items-center justify-center shadow-2xl hover:scale-110 active:scale-95 transition-all duration-200 cursor-pointer"
+            aria-label="Siguiente reel"
+          >
+            <ChevronRight size={24} strokeWidth={2.5} />
+          </button>
         </div>
       </div>
     </section>
