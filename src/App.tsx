@@ -53,9 +53,17 @@ function HomePage() {
       <Hero />
       <Suspense fallback={<div className="w-full h-[50vh]" />}>
         <ReelSection />
+      </Suspense>
+      <Suspense fallback={null}>
         <InfoSection />
+      </Suspense>
+      <Suspense fallback={<div className="w-full h-[50vh]" />}>
         <QualitySection />
+      </Suspense>
+      <Suspense fallback={null}>
         <ProductCarousel />
+      </Suspense>
+      <Suspense fallback={null}>
         <Newsletter />
       </Suspense>
     </main>

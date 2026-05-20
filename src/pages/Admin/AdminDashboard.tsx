@@ -183,9 +183,9 @@ export default function AdminDashboard() {
     }
   }, [isEditing, isEditingVideo, selectedDate, confirmModal.isOpen])
 
-  // Cargar videos
+  // Cargar videos solo al entrar a la tab de videos (videoStore cachea en memoria)
   useEffect(() => {
-    if (isLoggedIn) {
+    if (isLoggedIn && activeTab === 'videos') {
       const fetchVideos = async () => {
         const vList = await getVideos()
         setVideosList(vList)
