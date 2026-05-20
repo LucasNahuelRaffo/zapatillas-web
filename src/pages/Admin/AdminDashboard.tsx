@@ -105,6 +105,7 @@ export default function AdminDashboard() {
   const [uploadingImage, setUploadingImage] = useState(false)
   const [stockColors, setStockColors] = useState<string[]>([])
   const customColorInputRef = useRef<HTMLInputElement>(null)
+  const pendingCustomHex = useRef<string | null>(null)
 
   // Estados del Calendario / Solicitudes
   const [activeTab, setActiveTab] = useState<'productos' | 'solicitudes' | 'videos'>('productos')
@@ -978,8 +979,14 @@ export default function AdminDashboard() {
                         className="absolute opacity-0 w-0 h-0 pointer-events-none"
                         onChange={e => {
                           const hex = e.target.value
-                          const already = currentProduct.colors?.some(c => c.hex === hex)
-                          if (!already) toggleColor('Personalizado', hex)
+                          setCurrentProduct(prev => {
+                            let colors = prev.colors || []
+                            if (pendingCustomHex.current) {
+                              colors = colors.filter(c => c.hex !== pendingCustomHex.current)
+                            }
+                            pendingCustomHex.current = hex
+                            return { ...prev, colors: [...colors, { name: 'Personalizado', hex, images: [] }] }
+                          })
                         }}
                       />
                     </div>
