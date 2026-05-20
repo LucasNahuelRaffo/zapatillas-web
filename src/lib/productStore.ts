@@ -51,9 +51,6 @@ export async function uploadProductImage(file: File): Promise<string> {
     });
   }
   try {
-    try {
-      await supabase.storage.createBucket('products', { public: true });
-    } catch (_) {}
     const ext = file.name.split('.').pop() || 'jpg';
     const fileName = `${Math.random().toString(36).substring(2, 10)}-${Date.now()}.${ext}`;
     const { error } = await supabase.storage
