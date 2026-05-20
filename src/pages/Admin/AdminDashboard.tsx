@@ -366,18 +366,30 @@ export default function AdminDashboard() {
       ? products.find(p => p.id === currentProduct.id)?.name
       : undefined
 
+    // Limpiar DataURLs del array de imágenes — reemplazar con URLs reales de los colores
+    const colorHttpImages = (currentProduct.colors || [])
+      .flatMap(c => (c.images || []).filter(img => img.startsWith('http')))
+    const cleanImages = [
+      ...(currentProduct.images || []).filter(img => img.startsWith('http')),
+      ...colorHttpImages,
+    ].filter((v, i, arr) => arr.indexOf(v) === i)
+    const productToSave = {
+      ...currentProduct,
+      images: cleanImages.length > 0 ? cleanImages : (currentProduct.images || []),
+    }
+
     let savedProduct: Product
-    if (currentProduct.id) {
-      updateLocalProduct(currentProduct as Product)
-      savedProduct = currentProduct as Product
+    if (productToSave.id) {
+      updateLocalProduct(productToSave as Product)
+      savedProduct = productToSave as Product
     } else {
-      savedProduct = addLocalProduct(currentProduct as Omit<Product, 'id'>)
+      savedProduct = addLocalProduct(productToSave as Omit<Product, 'id'>)
     }
     setProducts(getLocalProducts())
     setIsEditing(false)
 
     await saveProductToSupabase(savedProduct)
-    await syncStockZapatillas(currentProduct, originalName)
+    await syncStockZapatillas(productToSave, originalName)
     getProducts().then(setProducts).catch(() => {})
   }
 
