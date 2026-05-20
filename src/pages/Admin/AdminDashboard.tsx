@@ -12,6 +12,7 @@ import {
   deleteProductFromSupabase,
   uploadProductImage,
   getProducts,
+  toAbsoluteUrl,
 } from '../../lib/productStore'
 import { supabase } from '../../lib/supabase'
 import { getVideos, addVideo, updateVideo, deleteVideo, uploadVideoFile, resetVideosToDefault, VideoReel } from '../../lib/videoStore'
@@ -27,8 +28,11 @@ async function syncStockZapatillas(product: Partial<Product>, oldName?: string) 
   if (!product.name || !product.colors?.length || !product.sizes?.length) return
 
   // 2. Insertar una fila por cada combinación color × talle
-  const rows = product.colors.flatMap(color =>
-    product.sizes!
+  const rows = product.colors.flatMap(color => {
+    const colorImg = color.images?.[0] || product.images?.[0] || '';
+    const absoluteImg = toAbsoluteUrl(colorImg);
+
+    return product.sizes!
       .filter(s => s.stock)
       .map(s => ({
         modelo: product.name!,
@@ -36,8 +40,9 @@ async function syncStockZapatillas(product: Partial<Product>, oldName?: string) 
         talle: s.size,
         precio: product.price ?? 120000,
         stock: s.quantity ?? 5,
-      }))
-  )
+        imagen_url: absoluteImg || null,
+      }));
+  })
 
   if (rows.length > 0) {
     await supabase.from('stock_zapatillas').insert(rows)

@@ -73,9 +73,9 @@ export async function uploadProductImage(file: File): Promise<string> {
   }
 }
 
-const SITE_BASE_URL = 'https://lucasnahuelraffo.github.io/Za-Pass'
+export const SITE_BASE_URL = 'https://lucasnahuelraffo.github.io/Za-Pass'
 
-function toAbsoluteUrl(path: string): string {
+export function toAbsoluteUrl(path: string): string {
   if (!path || path.startsWith('http') || path.startsWith('data:')) return path
   return `${SITE_BASE_URL}${path}`
 }
@@ -145,8 +145,8 @@ export async function getProducts(): Promise<Product[]> {
         subtitle: p.subtitle ?? '',
         description: p.description ?? '',
         category: p.category ?? p.brand,
-        images: p.images,
-        colors: p.colors,
+        images: p.images.map(toAbsoluteUrl),
+        colors: p.colors.map(c => ({ ...c, images: c.images.map(toAbsoluteUrl) })),
         sizes: p.sizes,
       }));
       const { error: insertError } = await supabase.from('catalogo_zapatillas').insert(rows);
