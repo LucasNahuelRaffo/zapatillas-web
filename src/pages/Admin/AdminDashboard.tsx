@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Plus, Pencil, Trash2, LogOut, Package, Check, X, Link as LinkIcon, ShoppingBag, LayoutGrid, Calendar, ChevronLeft, ChevronRight, Film, Play } from 'lucide-react'
 import { Link } from 'react-router-dom'
@@ -110,6 +110,7 @@ export default function AdminDashboard() {
   // Estados del Calendario / Solicitudes
   const [activeTab, setActiveTab] = useState<'productos' | 'solicitudes' | 'videos'>('productos')
   const [reservas, setReservas] = useState<Reserva[]>([])
+  const [hasLoadedReservas, setHasLoadedReservas] = useState(false)
   const [currentDate, setCurrentDate] = useState(new Date())
   const [selectedDate, setSelectedDate] = useState<Date | null>(null)
   const [loadingReservas, setLoadingReservas] = useState(false)
@@ -242,7 +243,7 @@ export default function AdminDashboard() {
 
   // Cargar reservas
   useEffect(() => {
-    if (isLoggedIn && activeTab === 'solicitudes') {
+    if (isLoggedIn && activeTab === 'solicitudes' && !hasLoadedReservas) {
       const fetchReservas = async () => {
         setLoadingReservas(true)
         setErrorReservas(null)
@@ -253,23 +254,44 @@ export default function AdminDashboard() {
         }
         if (data) {
           setReservas(data as Reserva[])
+          setHasLoadedReservas(true)
         }
         setLoadingReservas(false)
       }
       fetchReservas()
     }
-  }, [isLoggedIn, activeTab])
+  }, [isLoggedIn, activeTab, hasLoadedReservas])
+
+  // Memoized product lookup function/map to replace linear searches on render
+  const productLookup = useMemo(() => {
+    const cache: Record<string, { id: number | null; image: string | null }> = {}
+    return {
+      get: (modelo: string) => {
+        if (!modelo) return { id: null, image: null }
+        const lowerModelo = modelo.toLowerCase()
+        if (cache[lowerModelo]) return cache[lowerModelo]
+
+        const prod = products.find(p => {
+          const lowerName = p.name.toLowerCase()
+          return lowerModelo.includes(lowerName) || lowerName.includes(lowerModelo)
+        })
+
+        const res = {
+          id: prod?.id || null,
+          image: prod?.images?.[0] || null
+        }
+        cache[lowerModelo] = res
+        return res
+      }
+    }
+  }, [products])
 
   const getProductImage = (modelo: string) => {
-    if (!modelo) return null;
-    const prod = products.find(p => modelo.toLowerCase().includes(p.name.toLowerCase()) || p.name.toLowerCase().includes(modelo.toLowerCase()));
-    return prod?.images?.[0] || null;
+    return productLookup.get(modelo).image
   }
 
   const getProductId = (modelo: string) => {
-    if (!modelo) return null;
-    const prod = products.find(p => modelo.toLowerCase().includes(p.name.toLowerCase()) || p.name.toLowerCase().includes(modelo.toLowerCase()));
-    return prod?.id || null;
+    return productLookup.get(modelo).id
   }
 
   // Lógica del Calendario
@@ -298,7 +320,45 @@ export default function AdminDashboard() {
     }
   }
 
+  // Pre-calculate/group reservations for the current month/year to run in O(R) instead of O(31 * R)
+  const reservationsByDay = useMemo(() => {
+    const map: Record<number, Reserva[]> = {}
+    const currentYear = currentDate.getFullYear()
+    const currentMonth = currentDate.getMonth() // 0-indexed
+
+    reservas.forEach(r => {
+      const targetDate = r.fecha_entrega || r.fecha_reserva || r.created_at
+      if (!targetDate) return
+      
+      let year: number, month: number, day: number
+      if (typeof targetDate === 'string') {
+        const datePart = targetDate.split('T')[0]
+        const parts = datePart.split('-').map(Number)
+        if (parts.length === 3) {
+          [year, month, day] = parts
+        } else {
+          return
+        }
+      } else {
+        const dObj = new Date(targetDate)
+        year = dObj.getFullYear()
+        month = dObj.getMonth() + 1
+        day = dObj.getDate()
+      }
+
+      if (year === currentYear && month === currentMonth + 1) {
+        if (!map[day]) map[day] = []
+        map[day].push(r)
+      }
+    })
+    return map
+  }, [reservas, currentDate])
+
   const getReservasForDate = (date: Date) => {
+    const day = date.getDate()
+    if (date.getMonth() === currentDate.getMonth() && date.getFullYear() === currentDate.getFullYear()) {
+      return reservationsByDay[day] || []
+    }
     return reservas.filter(r => {
       const targetDate = r.fecha_entrega || r.fecha_reserva || r.created_at
       if (!targetDate) return false
@@ -307,8 +367,7 @@ export default function AdminDashboard() {
   }
 
   const getReservasForDay = (day: number) => {
-    const dateObj = new Date(currentDate.getFullYear(), currentDate.getMonth(), day)
-    return getReservasForDate(dateObj)
+    return reservationsByDay[day] || []
   }
 
   const handleLogin = (e: React.FormEvent) => {
@@ -581,6 +640,15 @@ export default function AdminDashboard() {
                 </button>
               </>
             )}
+            {activeTab === 'solicitudes' && (
+              <button
+                onClick={() => setHasLoadedReservas(false)}
+                className="px-6 py-3 text-[11px] font-bold uppercase tracking-[0.2em] flex items-center gap-2 border border-gray-200 hover:border-black transition-colors rounded-sm text-gray-500 hover:text-black"
+                title="Actualizar solicitudes desde Supabase"
+              >
+                Actualizar
+              </button>
+            )}
             {activeTab === 'videos' && (
               <button
                 onClick={openNewVideo}
@@ -775,6 +843,7 @@ export default function AdminDashboard() {
                       muted
                       playsInline
                       loop
+                      preload="none"
                       onMouseEnter={e => e.currentTarget.play().catch(() => {})}
                       onMouseLeave={e => e.currentTarget.pause()}
                     />
