@@ -85,7 +85,29 @@ function PageLoader() {
 export default function App() {
   const location = useLocation();
   const isAdmin = location.pathname.startsWith('/admin');
+  const isHome = location.pathname === '/';
   const lenisRef = useRef<Lenis | null>(null);
+
+  // Prefetch en idle de los chunks lazy del home, para que al scrollear ya estén en caché.
+  // Solo se dispara en la home; en otras rutas no malgastamos data.
+  useEffect(() => {
+    if (!isHome) return
+    const prefetch = () => {
+      import('./components/ReelSection')
+      import('./components/InfoSection')
+      import('./components/QualitySection')
+      import('./components/ProductCarousel')
+      import('./components/Newsletter')
+    }
+    type IdleWin = Window & { requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number }
+    const w = window as IdleWin
+    if (typeof w.requestIdleCallback === 'function') {
+      w.requestIdleCallback(prefetch, { timeout: 2000 })
+    } else {
+      const id = window.setTimeout(prefetch, 1500)
+      return () => window.clearTimeout(id)
+    }
+  }, [isHome])
 
   useEffect(() => {
     if (isAdmin) {

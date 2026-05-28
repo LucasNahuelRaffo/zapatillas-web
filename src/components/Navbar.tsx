@@ -155,6 +155,7 @@ export default function Navbar() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
+            transition={{ duration: 0.15 }}
             onClick={() => setIsOpen(false)}
             className="fixed inset-0 bg-black/40 z-40 backdrop-blur-sm md:hidden"
           />
@@ -168,7 +169,7 @@ export default function Navbar() {
             initial={{ x: '100%' }}
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
-            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+            transition={{ type: 'spring', damping: 24, stiffness: 280 }}
             className="fixed top-0 right-0 h-full w-[85vw] max-w-sm bg-white z-50 p-8 shadow-2xl md:hidden overflow-y-auto"
           >
             <div className="flex flex-col gap-8 mt-20">
@@ -178,7 +179,7 @@ export default function Navbar() {
                     key={link.name}
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: i * 0.1 + 0.1 }}
+                    transition={{ delay: i * 0.04 + 0.04, duration: 0.2 }}
                   >
                     <Link
                       to={link.href}
@@ -197,7 +198,7 @@ export default function Navbar() {
                     onClick={() => setIsOpen(false)}
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: i * 0.1 + 0.1 }}
+                    transition={{ delay: i * 0.04 + 0.04, duration: 0.2 }}
                     className="text-lg font-black uppercase tracking-tight border-b border-gray-100 pb-4 flex justify-between items-center group"
                   >
                     {link.name}
@@ -207,10 +208,10 @@ export default function Navbar() {
               )}
               
               {/* Additional Mobile Elements */}
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ delay: 0.5 }}
+                transition={{ delay: 0.2, duration: 0.2 }}
                 className="mt-12 space-y-4"
               >
                 <div className="text-[10px] font-bold tracking-[0.2em] text-gray-400 uppercase">Contacto</div>

@@ -300,21 +300,34 @@ export default function ReelSection() {
             const isNear = shouldLoad.has(reel.id);
 
             return (
-              <div 
+              <div
                 key={reel.id}
                 data-reel-id={reel.id}
                 className="reel-card-anim reel-card-container flex-shrink-0 w-[280px] sm:w-[320px] aspect-[9/16] rounded-xl overflow-hidden bg-zinc-900 border border-zinc-800/80 shadow-2xl relative snap-start group transition-all duration-500 hover:border-zinc-500/50 hover:shadow-zinc-500/5"
               >
+                {/* Placeholder mientras la card no entró a "near": gradient sutil para no verse negra */}
+                {!isNear && (
+                  <div className="absolute inset-0 bg-gradient-to-br from-zinc-800 via-zinc-900 to-black animate-pulse" />
+                )}
+
                 {/* Video HTML5 — el src se asigna solo cuando la card está cerca del viewport.
-                    El fragmento #t=0.1 fuerza a mostrar el primer frame como preview en vez de negro. */}
+                    Para iOS, onLoadedMetadata seekea a 0.1s para forzar el render del primer frame como poster. */}
                 <video
                   ref={el => { videoRefs.current[reel.id] = el; }}
                   src={isNear ? `${reel.url}#t=0.1` : undefined}
                   loop
                   muted={isMuted}
                   playsInline
+                  autoPlay={isNear}
                   preload={isNear ? 'metadata' : 'none'}
                   onClick={() => togglePlay(reel.id)}
+                  onLoadedMetadata={(e) => {
+                    const video = e.currentTarget;
+                    // Forzar render del primer frame (iOS Safari no lo muestra con #t en src)
+                    if (video.currentTime < 0.05) {
+                      try { video.currentTime = 0.1; } catch (_) { /* ignorar */ }
+                    }
+                  }}
                   className="w-full h-full object-cover cursor-pointer select-none transition-transform duration-700 ease-out group-hover:scale-[1.03] bg-zinc-900"
                 />
 
