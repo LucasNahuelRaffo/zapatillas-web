@@ -131,7 +131,7 @@ export default function ShopVideoCard() {
       <div className="absolute bottom-0 left-0 right-0 p-5 flex flex-col justify-end gap-3 z-10">
         <div className="space-y-1">
           <span className="block text-[9px] font-black tracking-[0.25em] uppercase text-zinc-400">
-            Za-pass Lookbook
+            Tuviejasneakers Lookbook
           </span>
           <h3 className="text-[13px] sm:text-[14px] font-bold tracking-wide uppercase leading-tight line-clamp-2 text-white drop-shadow-md">
             {video.title}

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Plus, Pencil, Trash2, LogOut, Package, Check, X, Link as LinkIcon, ShoppingBag, LayoutGrid, Calendar, ChevronLeft, ChevronRight, Film, Play } from 'lucide-react'
+import { Plus, Pencil, Trash2, LogOut, Package, Check, X, Link as LinkIcon, ShoppingBag, LayoutGrid, Calendar, ChevronLeft, ChevronRight, Film, Play, Star } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { Product } from '../../data/products'
 import {
@@ -414,6 +414,13 @@ export default function AdminDashboard() {
     )
   }
 
+  const toggleFeatured = async (product: Product) => {
+    const updated = { ...product, is_featured: !product.is_featured }
+    updateLocalProduct(updated)
+    setProducts(prev => prev.map(p => p.id === updated.id ? updated : p))
+    await saveProductToSupabase(updated)
+  }
+
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault()
     if ((currentProduct.images?.length ?? 0) === 0) {
@@ -595,7 +602,7 @@ export default function AdminDashboard() {
       <header className="bg-white border-b border-black/5 py-6 px-6 lg:px-12 sticky top-0 z-40">
         <div className="max-w-[1400px] mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
           <div className="flex flex-col sm:flex-row items-center justify-between w-full md:w-auto gap-8">
-            <h1 className="font-skylight text-2xl text-black">Admin <span className="text-gray-400">/</span> Za-pass</h1>
+            <h1 className="font-skylight text-2xl text-black">Admin <span className="text-gray-400">/</span> Tuviejasneakers</h1>
             
             <div className="flex items-center bg-gray-100 p-1 rounded-sm">
               <button 
@@ -683,6 +690,7 @@ export default function AdminDashboard() {
                   <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Producto</th>
                   <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Categoría</th>
                   <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Precio</th>
+                  <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 text-center">Novedades</th>
                   <th className="px-8 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 text-right">Acciones</th>
                 </tr>
               </thead>
@@ -708,6 +716,15 @@ export default function AdminDashboard() {
                     </td>
                     <td className="px-8 py-6">
                       <p className="text-[14px] font-black text-black">${p.price.toLocaleString('es-AR')}</p>
+                    </td>
+                    <td className="px-8 py-6 text-center">
+                      <button
+                        onClick={() => toggleFeatured(p)}
+                        className={`inline-flex items-center justify-center w-9 h-9 rounded-full transition-colors ${p.is_featured ? 'bg-black text-white' : 'text-gray-300 hover:text-black hover:bg-gray-100'}`}
+                        title={p.is_featured ? 'Quitar de Novedades' : 'Mostrar en Novedades'}
+                      >
+                        <Star size={18} fill={p.is_featured ? 'currentColor' : 'none'} />
+                      </button>
                     </td>
                     <td className="px-8 py-6 text-right">
                       <div className="flex justify-end gap-2">

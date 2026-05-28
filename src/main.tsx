@@ -9,7 +9,7 @@ import App from './App'
 
 useGLTF.setDecoderPath('/draco/')
 
-console.log('🚀 Za-pass initializing...');
+console.log('🚀 Tuviejasneakers initializing...');
 console.log('Environment:', import.meta.env.MODE);
 console.log('Supabase URL Configured:', !!import.meta.env.VITE_SUPABASE_URL);
 

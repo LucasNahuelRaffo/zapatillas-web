@@ -59,10 +59,10 @@ export default function InfoSection() {
     },
     {
       icon: <ShieldCheck className="w-5 h-5 text-white" strokeWidth={2} />,
-      label: 'GARANTÍA EXTENDIDA',
-      data: '30 Días',
-      sub: 'Cambios por talle sin cargo',
-      description: 'Tu tranquilidad es nuestra prioridad. Si el talle no te convence, tenés 30 días para solicitar un cambio directo sin hacerte preguntas y sin costos ocultos.'
+      label: 'GARANTÍA Y DEVOLUCIONES',
+      data: '5 Días Hábiles',
+      sub: 'Cambios y devoluciones sin uso',
+      description: 'Tenés 5 días hábiles para solicitar un cambio de talle o devolución, siempre que las zapatillas se encuentren sin uso y en su caja original.'
     }
   ]
 

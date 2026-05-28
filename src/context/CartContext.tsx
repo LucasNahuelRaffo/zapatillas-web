@@ -73,7 +73,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const checkoutWhatsApp = () => {
     const PHONE_NUMBER = '5491112345678';
-    let message = 'Hola Za-pass! Quiero realizar el siguiente pedido:\n\n';
+    let message = 'Hola Tuviejasneakers! Quiero realizar el siguiente pedido:\n\n';
     
     cart.forEach((item) => {
       message += `• ${item.product.name}\n`;

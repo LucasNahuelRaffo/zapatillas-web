@@ -63,8 +63,8 @@ export default function ProductAccordions({ description }: ProductAccordionsProp
       </AccordionItem>
       <AccordionItem title="Envíos y Garantía">
         Ofrecemos envío gratuito a todo el país. Para CABA y GBA, contamos con entrega en 24hs si compras antes de las 14:00. 
-        Todos nuestros productos cuentan con garantía por falla de fabricación. Tenés 10 días para solicitar cambios 
-        de talle o devoluciones, siempre que el producto se encuentre sin uso y en su caja original.
+        Todos nuestros productos cuentan con garantía por falla de fabricación. Tenés 5 días hábiles para solicitar cambios
+        de talle o devoluciones, siempre que las zapatillas se encuentren sin uso y en su caja original.
       </AccordionItem>
       <AccordionItem title="Detalles del Producto">
         <ul className="list-disc pl-5 space-y-1">

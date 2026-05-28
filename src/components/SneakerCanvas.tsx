@@ -1,6 +1,6 @@
 import React, { Suspense, Component, ErrorInfo, ReactNode } from 'react'
 import { Canvas } from '@react-three/fiber'
-import { OrbitControls, Environment, ContactShadows, Html, useProgress, Center } from '@react-three/drei'
+import { OrbitControls, Environment, ContactShadows, Html, useProgress, Center, Lightformer } from '@react-three/drei'
 import SneakerModel from './SneakerModel'
 import qualitySneaker from '../img/quality_sneaker.png'
 
@@ -112,7 +112,6 @@ export default function SneakerCanvas() {
     <ErrorBoundary>
       <div ref={wrapperRef} className="w-full h-[400px] lg:h-[600px] cursor-grab active:cursor-grabbing">
         <Canvas
-          shadows
           frameloop={isVisible ? 'always' : 'demand'}
           dpr={[1, Math.min(1.5, window.devicePixelRatio)]}
           gl={{
@@ -127,7 +126,7 @@ export default function SneakerCanvas() {
         >
 
           <ambientLight intensity={0.5} />
-          <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={1} castShadow />
+          <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={1} />
           
           <Suspense fallback={<Loader />}>
             {hasBeenVisible && (
@@ -135,14 +134,45 @@ export default function SneakerCanvas() {
                 <Center scale={0.8}>
                   <SneakerModel />
                 </Center>
-                <ContactShadows 
-                  position={[0, -2.5, 0]} 
-                  opacity={0.4} 
-                  scale={30} 
-                  blur={2} 
-                  far={10} 
+                <ContactShadows
+                  position={[0, -2.5, 0]}
+                  opacity={0.4}
+                  scale={30}
+                  blur={2}
+                  far={10}
                 />
-                <Environment preset="city" />
+                <Environment resolution={256}>
+                  {/* Key light: panel grande arriba */}
+                  <Lightformer
+                    intensity={2}
+                    position={[0, 5, 2]}
+                    scale={[10, 5, 1]}
+                    target={[0, 0, 0]}
+                  />
+                  {/* Relleno frontal suave */}
+                  <Lightformer
+                    intensity={1}
+                    position={[0, 0, 6]}
+                    scale={[10, 10, 1]}
+                    color="#ffffff"
+                  />
+                  {/* Borde lateral derecho (define el contorno) */}
+                  <Lightformer
+                    form="rect"
+                    intensity={1.5}
+                    position={[6, 2, 1]}
+                    scale={[1, 6, 1]}
+                    color="#dfe7ff"
+                  />
+                  {/* Borde lateral izquierdo */}
+                  <Lightformer
+                    form="rect"
+                    intensity={1.2}
+                    position={[-6, 2, 1]}
+                    scale={[1, 6, 1]}
+                    color="#fff4e6"
+                  />
+                </Environment>
               </>
             )}
           </Suspense>

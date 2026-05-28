@@ -279,8 +279,8 @@ export default function Shop() {
   return (
     <div className="bg-[#f9f9f9] min-h-screen">
       <Helmet>
-        <title>Shop | Za-pass | Catálogo de Sneakers Premium</title>
-        <meta name="description" content="Explorá nuestro catálogo exclusivo de zapatillas premium. Nike, Jordan, Adidas y más. Calidad AAA+ con envío gratis a toda la Argentina." />
+        <title>Shop | Tuviejasneakers | Catálogo de Sneakers Premium</title>
+        <meta name="description" content="Explorá nuestro catálogo exclusivo de zapatillas premium. Nike, Jordan, Adidas y más. Calidad premium con envío gratis a toda la Argentina." />
       </Helmet>
 
       {/* ── Hero banner ─────────────────────────── */}

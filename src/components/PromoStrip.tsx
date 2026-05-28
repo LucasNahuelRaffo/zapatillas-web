@@ -99,7 +99,7 @@ export default function PromoStrip() {
                   <div className="flex justify-between items-end">
                     <div>
                       <div className="text-[7px] text-gray-500 uppercase tracking-widest mb-0.5">Card Holder</div>
-                      <div className="text-[10px] font-mono tracking-widest text-gray-300 uppercase">ZA-PASS MEMBER</div>
+                      <div className="text-[10px] font-mono tracking-widest text-gray-300 uppercase">TUVIEJASNEAKERS MEMBER</div>
                     </div>
                     <div className="flex -space-x-2.5 opacity-60">
                       <div className="w-6 h-6 bg-white rounded-full mix-blend-overlay" />
@@ -123,7 +123,7 @@ export default function PromoStrip() {
                     </div>
                   </div>
                   <p className="text-[6px] text-gray-500 mt-6 leading-relaxed tracking-wider text-right max-w-[85%]">
-                    This card is property of Za-pass. If found, please return to any authorized Za-pass retailer. Valid only for exclusive drops. Use of this card constitutes acceptance of the terms and conditions.
+                    This card is property of Tuviejasneakers. If found, please return to any authorized Tuviejasneakers retailer. Valid only for exclusive drops. Use of this card constitutes acceptance of the terms and conditions.
                   </p>
                 </div>
               </div>

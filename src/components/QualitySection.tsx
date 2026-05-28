@@ -45,6 +45,25 @@ const AnimatedLetters = ({ text, delayOffset = 0, className = "" }: { text: stri
 }
 
 export default function QualitySection() {
+  const canvasWrapperRef = useRef<HTMLDivElement>(null)
+  const [near, setNear] = useState(false)
+
+  useEffect(() => {
+    const el = canvasWrapperRef.current
+    if (!el) return
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setNear(true)
+          io.disconnect()
+        }
+      },
+      { rootMargin: '600px 0px' }
+    )
+    io.observe(el)
+    return () => io.disconnect()
+  }, [])
+
   const containerVariants = {
     hidden: { opacity: 0 },
     show: {
@@ -142,14 +161,16 @@ export default function QualitySection() {
             <div
               className="relative w-full h-[400px] lg:h-[600px] flex flex-col justify-center items-center"
             >
-              <div className="w-full h-full absolute inset-0 z-0">
-                <Suspense fallback={
-                  <div className="w-full h-full flex justify-center items-center">
-                    <div className="text-black font-skylight text-2xl animate-pulse">Cargando 3D...</div>
-                  </div>
-                }>
-                  <SneakerCanvas />
-                </Suspense>
+              <div ref={canvasWrapperRef} className="w-full h-full absolute inset-0 z-0">
+                {near && (
+                  <Suspense fallback={
+                    <div className="w-full h-full flex justify-center items-center">
+                      <div className="text-black font-skylight text-2xl animate-pulse">Cargando 3D...</div>
+                    </div>
+                  }>
+                    <SneakerCanvas />
+                  </Suspense>
+                )}
               </div>
             </div>
           </motion.div>

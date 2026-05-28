@@ -10,7 +10,7 @@ export default defineConfig({
   assetsInclude: ['**/*.glb'],
   build: {
     assetsInlineLimit: 4096,
-    chunkSizeWarningLimit: 1000,
+    chunkSizeWarningLimit: 1400, // Three.js chunk (~1.2MB) is lazy-loaded and isolated; warning is expected
     rollupOptions: {
       output: {
         manualChunks: {

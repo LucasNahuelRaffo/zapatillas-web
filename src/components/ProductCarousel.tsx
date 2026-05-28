@@ -44,14 +44,20 @@ function ProductCard({ product }: { product: Product }) {
   )
 }
 
+// Elige los productos a mostrar: los marcados como destacados; si no hay ninguno, los 3 primeros
+function pickFeatured(all: Product[]): Product[] {
+  const featured = all.filter(p => p.is_featured)
+  return featured.length > 0 ? featured : all.slice(0, 3)
+}
+
 export default function ProductCarousel() {
   const [products, setProducts] = useState<Product[]>(
-    () => getLocalProducts().slice(0, 3)
+    () => pickFeatured(getLocalProducts())
   )
   const containerRef = useRef<HTMLElement>(null)
 
   useEffect(() => {
-    getProducts().then(all => setProducts(all.slice(0, 3))).catch(() => {})
+    getProducts().then(all => setProducts(pickFeatured(all))).catch(() => {})
   }, [])
 
   useGSAP(() => {

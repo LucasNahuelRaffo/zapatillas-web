@@ -12,6 +12,7 @@ export default function ReelSection() {
   const [reels, setReels] = useState<VideoReel[]>([]);
   const [mutedStates, setMutedStates] = useState<Record<string, boolean>>({});
   const [playingStates, setPlayingStates] = useState<Record<string, boolean>>({});
+  const [shouldLoad, setShouldLoad] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
   
   const containerRef = useRef<HTMLDivElement>(null);
@@ -50,7 +51,7 @@ export default function ReelSection() {
 
     const observerOptions = {
       root: null,
-      rootMargin: '600px 0px', // Expandido para anticipar descarga inteligente de los videos
+      rootMargin: '50px 0px', // Margen reducido: solo precargar cuando está cerca
       threshold: 0.3 // Al menos 30% del reel visible
     };
 
@@ -64,22 +65,34 @@ export default function ReelSection() {
 
         if (entry.isIntersecting) {
           // Entró en pantalla -> Reproducir
-          video.play()
-            .then(() => {
-              setPlayingStates(prev => ({ ...prev, [reelId]: true }));
-            })
-            .catch(() => {
-              // Si falla (por políticas de autoplay), nos aseguramos que esté silenciado y reintentamos
-              video.muted = true;
-              setMutedStates(prev => ({ ...prev, [reelId]: true }));
-              video.play().then(() => {
-                setPlayingStates(prev => ({ ...prev, [reelId]: true }));
+          if (video.paused) {
+            video.play()
+              .then(() => {
+                setPlayingStates(prev =>
+                  prev[reelId] === true ? prev : { ...prev, [reelId]: true }
+                );
+              })
+              .catch(() => {
+                // Si falla (por políticas de autoplay), nos aseguramos que esté silenciado y reintentamos
+                video.muted = true;
+                setMutedStates(prev =>
+                  prev[reelId] === true ? prev : { ...prev, [reelId]: true }
+                );
+                video.play().then(() => {
+                  setPlayingStates(prev =>
+                    prev[reelId] === true ? prev : { ...prev, [reelId]: true }
+                  );
+                });
               });
-            });
+          }
         } else {
           // Salió de pantalla -> Pausar
-          video.pause();
-          setPlayingStates(prev => ({ ...prev, [reelId]: false }));
+          if (!video.paused) {
+            video.pause();
+            setPlayingStates(prev =>
+              prev[reelId] === false ? prev : { ...prev, [reelId]: false }
+            );
+          }
         }
       });
     }, observerOptions);
@@ -92,6 +105,37 @@ export default function ReelSection() {
       elements.forEach(el => observer.unobserve(el));
       observer.disconnect();
     };
+  }, [reels]);
+
+  // Observer "near": marca qué reels están cerca del viewport para recién ahí asignar el src
+  // (evita 4 fetches simultáneos al montar la sección)
+  useEffect(() => {
+    if (reels.length === 0) return;
+
+    const observer = new IntersectionObserver((entries) => {
+      const newlyNear: string[] = [];
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const reelId = entry.target.getAttribute('data-reel-id');
+          if (reelId) {
+            newlyNear.push(reelId);
+            observer.unobserve(entry.target);
+          }
+        }
+      });
+      if (newlyNear.length > 0) {
+        setShouldLoad(prev => {
+          const next = new Set(prev);
+          newlyNear.forEach(id => next.add(id));
+          return next;
+        });
+      }
+    }, { root: null, rootMargin: '300px 0px', threshold: 0 });
+
+    const elements = document.querySelectorAll('.reel-card-container');
+    elements.forEach(el => observer.observe(el));
+
+    return () => observer.disconnect();
   }, [reels]);
 
   // Animaciones de entrada con GSAP
@@ -253,21 +297,23 @@ export default function ReelSection() {
           {reels.map((reel) => {
             const isMuted = mutedStates[reel.id] ?? true;
             const isPlaying = playingStates[reel.id] ?? false;
-            
+            const isNear = shouldLoad.has(reel.id);
+
             return (
               <div 
                 key={reel.id}
                 data-reel-id={reel.id}
                 className="reel-card-anim reel-card-container flex-shrink-0 w-[280px] sm:w-[320px] aspect-[9/16] rounded-xl overflow-hidden bg-zinc-900 border border-zinc-800/80 shadow-2xl relative snap-start group transition-all duration-500 hover:border-zinc-500/50 hover:shadow-zinc-500/5"
               >
-                {/* Video HTML5 */}
+                {/* Video HTML5 — el src se asigna solo cuando la card está cerca del viewport.
+                    El fragmento #t=0.1 fuerza a mostrar el primer frame como preview en vez de negro. */}
                 <video
                   ref={el => { videoRefs.current[reel.id] = el; }}
-                  src={reel.url}
+                  src={isNear ? `${reel.url}#t=0.1` : undefined}
                   loop
                   muted={isMuted}
                   playsInline
-                  preload="metadata" // Cambiado a metadata para precarga fluida sin bloquear red
+                  preload={isNear ? 'metadata' : 'none'}
                   onClick={() => togglePlay(reel.id)}
                   className="w-full h-full object-cover cursor-pointer select-none transition-transform duration-700 ease-out group-hover:scale-[1.03] bg-zinc-900"
                 />

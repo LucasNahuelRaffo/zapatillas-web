@@ -70,7 +70,7 @@ export async function uploadProductImage(file: File): Promise<string> {
   }
 }
 
-export const SITE_BASE_URL = 'https://lucasnahuelraffo.github.io/Za-Pass'
+export const SITE_BASE_URL = 'https://tuviejasneakers.com'
 
 export function toAbsoluteUrl(path: string): string {
   if (!path || path.startsWith('http') || path.startsWith('data:')) return path
@@ -92,9 +92,10 @@ export async function saveProductToSupabase(product: Product): Promise<void> {
       subtitle: product.subtitle ?? '',
       description: product.description ?? '',
       category: product.category ?? product.brand,
-      images: product.images.map(toAbsoluteUrl),
-      colors: product.colors.map(c => ({ ...c, images: c.images.map(toAbsoluteUrl) })),
+      images: product.images,
+      colors: product.colors,
       sizes: product.sizes,
+      is_featured: product.is_featured ?? false,
       updated_at: new Date().toISOString(),
     });
     if (error) console.error('Error saving product to Supabase:', error.message);
@@ -142,9 +143,10 @@ export async function getProducts(): Promise<Product[]> {
         subtitle: p.subtitle ?? '',
         description: p.description ?? '',
         category: p.category ?? p.brand,
-        images: p.images.map(toAbsoluteUrl),
-        colors: p.colors.map(c => ({ ...c, images: c.images.map(toAbsoluteUrl) })),
+        images: p.images,
+        colors: p.colors,
         sizes: p.sizes,
+        is_featured: p.is_featured ?? false,
       }));
       const { error: insertError } = await supabase.from('catalogo_zapatillas').insert(rows);
       if (insertError) {

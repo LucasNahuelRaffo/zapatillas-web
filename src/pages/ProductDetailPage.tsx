@@ -123,8 +123,8 @@ export default function ProductDetailPage() {
   return (
     <div className="bg-white min-h-screen pb-20 font-common">
       <Helmet>
-        <title>{`${product.name} | Za-pass Premium Sneakers`}</title>
-        <meta name="description" content={`Comprá las ${product.name} en Za-pass. Calidad Premium AAA+, materiales originales y envío gratis a todo el país.`} />
+        <title>{`${product.name} | Tuviejasneakers Premium Sneakers`}</title>
+        <meta name="description" content={`Comprá las ${product.name} en Tuviejasneakers. Calidad Premium, materiales seleccionados y envío gratis a todo el país.`} />
         <script type="application/ld+json">
           {JSON.stringify(jsonLd)}
         </script>

@@ -1,8 +1,8 @@
 {
-  "name": "za-pass",
+  "name": "tuviejasneakers",
   "private": true,
   "version": "0.0.0",
-  "homepage": "https://LucasNahuelRaffo.github.io/Za-Pass",
+  "homepage": "https://tuviejasneakers.com",
   "type": "module",
   "scripts": {
     "dev": "vite",

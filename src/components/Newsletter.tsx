@@ -84,7 +84,7 @@ export default function Newsletter() {
               <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
             </svg>
             <h2 className="text-[10px] font-bold tracking-[0.2em] text-black uppercase">
-              Club Za-pass
+              Club Tuviejasneakers
             </h2>
           </div>
           

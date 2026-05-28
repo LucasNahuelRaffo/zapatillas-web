@@ -9,6 +9,7 @@ export interface Product {
   sizes: { size: string; stock: boolean; quantity?: number }[];
   colors: { name: string; hex: string; images: string[] }[];
   category: string;
+  is_featured?: boolean;
 }
 
 const SIZES_DEFAULT = [

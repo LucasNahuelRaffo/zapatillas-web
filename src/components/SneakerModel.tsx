@@ -1,4 +1,4 @@
-import { useRef, useMemo } from 'react'
+import { useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { useGLTF } from '@react-three/drei'
 import * as THREE from 'three'
@@ -10,14 +10,6 @@ export default function SneakerModel() {
   
   const { scene } = useGLTF('/models/sneaker/adidas-draco.glb', true)
 
-  useMemo(() => {
-    scene.traverse((child) => {
-      if ((child as THREE.Mesh).isMesh) {
-        child.castShadow = true;
-        child.receiveShadow = true;
-      }
-    });
-  }, [scene]);
 
   useFrame((state) => {
     if (group.current) {

@@ -42,13 +42,14 @@ import WhatsAppButton from './components/Common/WhatsAppButton'
 const Shop = lazy(() => import('./pages/Shop'))
 const ProductDetailPage = lazy(() => import('./pages/ProductDetailPage'))
 const AdminDashboard = lazy(() => import('./pages/Admin/AdminDashboard'))
+const LegalPage = lazy(() => import('./pages/LegalPage'))
 
 function HomePage() {
   return (
     <main className="font-skylight">
       <Helmet>
-        <title>Za-pass | Sneakers Premium AAA+ | Envío Gratis Argentina</title>
-        <meta name="description" content="Redefiniendo el estándar de las zapatillas premium. Calidad AAA+ con materiales originales, envío gratis a todo el país y garantía extendida." />
+        <title>Tuviejasneakers | Zapatillas Premium | Envío Gratis Argentina</title>
+        <meta name="description" content="Redefiniendo el estándar de las zapatillas premium. Calidad superior con materiales seleccionados, envío gratis a todo el país y garantía extendida." />
       </Helmet>
       <Hero />
       <Suspense fallback={<div className="w-full h-[50vh]" />}>
@@ -137,6 +138,9 @@ export default function App() {
           <Route path="/shop" element={<Shop />} />
           <Route path="/product/:id" element={<ProductDetailPage />} />
           <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/terminos-y-condiciones" element={<LegalPage slug="terminos-y-condiciones" />} />
+          <Route path="/politica-de-privacidad" element={<LegalPage slug="politica-de-privacidad" />} />
+          <Route path="/cambios-y-devoluciones" element={<LegalPage slug="cambios-y-devoluciones" />} />
         </Routes>
       </Suspense>
       

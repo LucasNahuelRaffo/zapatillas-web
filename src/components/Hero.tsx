@@ -55,7 +55,7 @@ export default function Hero() {
                   ease: "easeInOut"
                 }}
                 src={heroSneaker}
-                alt="Za-pass Premium Sneaker"
+                alt="Tuviejasneakers Premium Sneaker"
                 fetchPriority="high"
                 loading="eager"
                 decoding="async"

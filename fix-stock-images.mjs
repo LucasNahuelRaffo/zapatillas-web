@@ -17,7 +17,7 @@ const supabase = createClient(
   env['VITE_SUPABASE_PUBLISHABLE_KEY']
 );
 
-const SITE_BASE_URL = 'https://lucasnahuelraffo.github.io/Za-Pass';
+const SITE_BASE_URL = 'https://tuviejasneakers.com';
 function toAbsoluteUrl(p) {
   if (!p || p.startsWith('http') || p.startsWith('data:')) return p;
   return `${SITE_BASE_URL}${p}`;
