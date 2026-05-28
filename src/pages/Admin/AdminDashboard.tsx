@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Plus, Pencil, Trash2, LogOut, Package, Check, X, Link as LinkIcon, ShoppingBag, LayoutGrid, Calendar, ChevronLeft, ChevronRight, Film, Play, Star } from 'lucide-react'
+import { Plus, Pencil, Trash2, LogOut, Package, Check, X, Link as LinkIcon, ShoppingBag, LayoutGrid, Calendar, ChevronLeft, ChevronRight, Film, Play, Star, Settings } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { Product } from '../../data/products'
 import {
@@ -53,7 +53,9 @@ async function removeStockZapatillas(productName: string) {
   await supabase.from('stock_zapatillas').delete().eq('modelo', productName)
 }
 
-const ADMIN_PASSWORD = 'zapas2024'
+// Cuenta admin única en Supabase Auth. El email no es secreto; la contraseña sí.
+// Creá este usuario en Supabase > Auth > Users.
+const ADMIN_EMAIL = 'admin@tuviejasneakers.com'
 
 const BRANDS = ['Adidas', 'Nike', 'Jordan', 'Travis Scott', 'Puma', 'Topper', 'John Foos',
   'Vicus', 'Jaguar', 'Kioshi', 'Vans', 'Converse', 'Fila', 'DC Shoes', 'New Balance',
@@ -94,8 +96,17 @@ export interface Reserva {
 
 export default function AdminDashboard() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
-  const [loginError, setLoginError] = useState(false)
+  const [loginError, setLoginError] = useState<string | null>(null)
+  const [loggingIn, setLoggingIn] = useState(false)
   const [password, setPassword] = useState('')
+  // Modal de configuración / cambio de contraseña
+  const [settingsOpen, setSettingsOpen] = useState(false)
+  const [currentPwd, setCurrentPwd] = useState('')
+  const [newPwd, setNewPwd] = useState('')
+  const [confirmPwd, setConfirmPwd] = useState('')
+  const [settingsError, setSettingsError] = useState<string | null>(null)
+  const [settingsSuccess, setSettingsSuccess] = useState(false)
+  const [changingPwd, setChangingPwd] = useState(false)
   const [products, setProducts] = useState<Product[]>([])
   const [isEditing, setIsEditing] = useState(false)
   const [currentProduct, setCurrentProduct] = useState<Partial<Product>>(emptyProduct())
@@ -370,14 +381,76 @@ export default function AdminDashboard() {
     return reservationsByDay[day] || []
   }
 
-  const handleLogin = (e: React.FormEvent) => {
+  // Detectar sesión activa al montar y suscribirse a cambios de auth
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => {
+      setIsLoggedIn(!!data.session)
+    })
+    const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
+      setIsLoggedIn(!!session)
+    })
+    return () => sub.subscription.unsubscribe()
+  }, [])
+
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (password === ADMIN_PASSWORD) {
-      setLoginError(false)
-      setIsLoggedIn(true)
+    setLoggingIn(true)
+    setLoginError(null)
+    const { error } = await supabase.auth.signInWithPassword({
+      email: ADMIN_EMAIL,
+      password,
+    })
+    setLoggingIn(false)
+    if (error) {
+      setLoginError('Contraseña incorrecta')
     } else {
-      setLoginError(true)
+      setPassword('')
     }
+  }
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut()
+  }
+
+  const handleChangePassword = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setSettingsError(null)
+    setSettingsSuccess(false)
+
+    if (newPwd.length < 8) {
+      setSettingsError('La nueva contraseña debe tener al menos 8 caracteres.')
+      return
+    }
+    if (newPwd !== confirmPwd) {
+      setSettingsError('Las contraseñas nuevas no coinciden.')
+      return
+    }
+
+    setChangingPwd(true)
+
+    // 1) Verificar contraseña actual reintentando sign-in con la sesión existente
+    const { error: verifyError } = await supabase.auth.signInWithPassword({
+      email: ADMIN_EMAIL,
+      password: currentPwd,
+    })
+    if (verifyError) {
+      setSettingsError('La contraseña actual es incorrecta.')
+      setChangingPwd(false)
+      return
+    }
+
+    // 2) Actualizar contraseña
+    const { error: updateError } = await supabase.auth.updateUser({ password: newPwd })
+    setChangingPwd(false)
+    if (updateError) {
+      setSettingsError('No se pudo cambiar la contraseña: ' + updateError.message)
+      return
+    }
+
+    setSettingsSuccess(true)
+    setCurrentPwd('')
+    setNewPwd('')
+    setConfirmPwd('')
   }
 
   const openNew = () => {
@@ -572,22 +645,24 @@ export default function AdminDashboard() {
                 placeholder="Contraseña"
                 autoComplete="current-password"
                 value={password}
-                onChange={e => { setPassword(e.target.value); setLoginError(false) }}
-                className={`w-full bg-gray-50 h-14 px-6 text-[13px] font-medium tracking-wide focus:outline-none transition-colors rounded-sm border ${
+                onChange={e => { setPassword(e.target.value); setLoginError(null) }}
+                disabled={loggingIn}
+                className={`w-full bg-gray-50 h-14 px-6 text-[13px] font-medium tracking-wide focus:outline-none transition-colors rounded-sm border disabled:opacity-60 ${
                   loginError
                     ? 'border-red-500 bg-red-50 focus:border-red-500'
                     : 'border-gray-200 focus:border-black'
                 }`}
               />
               {loginError && (
-                <p className="mt-2 text-[12px] font-semibold text-red-500">Contraseña incorrecta</p>
+                <p className="mt-2 text-[12px] font-semibold text-red-500">{loginError}</p>
               )}
             </div>
             <button
               type="submit"
-              className="w-full bg-black text-white h-14 text-[11px] font-bold uppercase tracking-[0.2em] hover:bg-gray-900 transition-colors rounded-sm"
+              disabled={loggingIn || !password}
+              className="w-full bg-black text-white h-14 text-[11px] font-bold uppercase tracking-[0.2em] hover:bg-gray-900 transition-colors rounded-sm disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Ingresar
+              {loggingIn ? 'Ingresando...' : 'Ingresar'}
             </button>
           </form>
         </div>
@@ -664,7 +739,21 @@ export default function AdminDashboard() {
                 <Plus size={16} /> Nuevo Video
               </button>
             )}
-            <button onClick={() => setIsLoggedIn(false)} className="p-3 text-gray-400 hover:text-red-500 transition-colors" title="Cerrar Sesión">
+            <button
+              onClick={() => {
+                setSettingsOpen(true)
+                setSettingsError(null)
+                setSettingsSuccess(false)
+                setCurrentPwd('')
+                setNewPwd('')
+                setConfirmPwd('')
+              }}
+              className="p-3 text-gray-400 hover:text-black transition-colors"
+              title="Configuración"
+            >
+              <Settings size={20} />
+            </button>
+            <button onClick={handleLogout} className="p-3 text-gray-400 hover:text-red-500 transition-colors" title="Cerrar Sesión">
               <LogOut size={20} />
             </button>
           </div>
@@ -1579,6 +1668,108 @@ export default function AdminDashboard() {
                     className="w-full bg-black text-white h-16 text-[11px] font-bold uppercase tracking-[0.2em] hover:bg-gray-800 transition-all flex items-center justify-center gap-3 rounded-sm"
                   >
                     <Check size={18} /> {currentVideo.id ? 'Guardar Cambios' : 'Publicar Video Reel'}
+                  </button>
+                </div>
+              </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Modal de Configuración (cambiar contraseña) */}
+      <AnimatePresence>
+        {settingsOpen && (
+          <div className="fixed inset-0 z-[90] flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setSettingsOpen(false)}
+              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 15 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 15 }}
+              transition={{ type: 'spring', duration: 0.4 }}
+              className="bg-white rounded-sm border border-black/5 shadow-2xl p-8 max-w-md w-full relative z-10"
+            >
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-black text-white rounded-full flex items-center justify-center">
+                    <Settings size={18} />
+                  </div>
+                  <div>
+                    <h3 className="font-common text-base font-black uppercase tracking-[0.1em] text-black leading-tight">Configuración</h3>
+                    <p className="text-[10px] text-gray-400 font-medium uppercase tracking-wider mt-0.5">Cambiar contraseña</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setSettingsOpen(false)}
+                  className="p-2 text-gray-400 hover:text-black transition-colors"
+                  aria-label="Cerrar"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+
+              <form onSubmit={handleChangePassword} className="space-y-4">
+                <div>
+                  <label className="block text-[10px] font-bold uppercase tracking-[0.15em] text-gray-500 mb-2">Contraseña actual</label>
+                  <input
+                    type="password"
+                    autoComplete="current-password"
+                    value={currentPwd}
+                    onChange={e => { setCurrentPwd(e.target.value); setSettingsError(null); setSettingsSuccess(false) }}
+                    disabled={changingPwd}
+                    className="w-full bg-gray-50 h-12 px-4 text-[13px] font-medium rounded-sm border border-gray-200 focus:border-black focus:outline-none disabled:opacity-60"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold uppercase tracking-[0.15em] text-gray-500 mb-2">Nueva contraseña</label>
+                  <input
+                    type="password"
+                    autoComplete="new-password"
+                    value={newPwd}
+                    onChange={e => { setNewPwd(e.target.value); setSettingsError(null); setSettingsSuccess(false) }}
+                    disabled={changingPwd}
+                    className="w-full bg-gray-50 h-12 px-4 text-[13px] font-medium rounded-sm border border-gray-200 focus:border-black focus:outline-none disabled:opacity-60"
+                  />
+                  <p className="mt-1.5 text-[11px] text-gray-400">Mínimo 8 caracteres.</p>
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold uppercase tracking-[0.15em] text-gray-500 mb-2">Confirmar nueva contraseña</label>
+                  <input
+                    type="password"
+                    autoComplete="new-password"
+                    value={confirmPwd}
+                    onChange={e => { setConfirmPwd(e.target.value); setSettingsError(null); setSettingsSuccess(false) }}
+                    disabled={changingPwd}
+                    className="w-full bg-gray-50 h-12 px-4 text-[13px] font-medium rounded-sm border border-gray-200 focus:border-black focus:outline-none disabled:opacity-60"
+                  />
+                </div>
+
+                {settingsError && (
+                  <p className="text-[12px] font-semibold text-red-500 bg-red-50 border border-red-100 px-3 py-2 rounded-sm">{settingsError}</p>
+                )}
+                {settingsSuccess && (
+                  <p className="text-[12px] font-semibold text-green-600 bg-green-50 border border-green-100 px-3 py-2 rounded-sm">Contraseña actualizada correctamente.</p>
+                )}
+
+                <div className="flex gap-3 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setSettingsOpen(false)}
+                    className="flex-1 h-12 text-[11px] font-bold uppercase tracking-[0.15em] text-gray-500 hover:text-black border border-gray-200 hover:border-black transition-colors rounded-sm"
+                  >
+                    Cerrar
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={changingPwd || !currentPwd || !newPwd || !confirmPwd}
+                    className="flex-1 h-12 text-[11px] font-bold uppercase tracking-[0.2em] bg-black text-white hover:bg-gray-900 transition-colors rounded-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {changingPwd ? 'Guardando...' : 'Guardar'}
                   </button>
                 </div>
               </form>
