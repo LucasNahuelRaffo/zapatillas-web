@@ -16,6 +16,8 @@ function ProductCard({ product }: { product: Product }) {
     minimumFractionDigits: 0,
   }).format(product.price).replace('ARS', '$');
 
+  const isOutOfStock = product.sizes.length > 0 && product.sizes.every(s => !s.stock);
+
   return (
     <Link to={`/product/${product.id}`} className="group cursor-pointer flex flex-col h-full w-full">
       <div className="relative aspect-[4/3] bg-[#f0f0f0] mb-6 overflow-hidden flex items-center justify-center p-8 transition-colors duration-500 hover:bg-[#ebebeb] rounded-sm">
@@ -23,10 +25,17 @@ function ProductCard({ product }: { product: Product }) {
           src={product.images[0]}
           alt={product.name}
           loading="lazy"
+          decoding="async"
           width={400}
           height={300}
-          className="w-full mix-blend-multiply drop-shadow-2xl group-hover:scale-105 transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"
+          className={`w-full mix-blend-multiply drop-shadow-2xl group-hover:scale-105 transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${isOutOfStock ? 'opacity-50 grayscale' : ''}`}
         />
+
+        {isOutOfStock && (
+          <div className="absolute top-4 left-4 bg-black text-white px-3 py-1.5 text-[10px] font-bold tracking-[0.2em] uppercase">
+            Agotado
+          </div>
+        )}
 
         <div className="absolute top-4 right-4 bg-black text-white px-3 py-1.5 text-[10px] font-bold tracking-[0.2em] uppercase opacity-0 transform translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]">
           Comprar

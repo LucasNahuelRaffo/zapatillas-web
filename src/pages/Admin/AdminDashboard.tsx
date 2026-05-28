@@ -99,6 +99,14 @@ export default function AdminDashboard() {
   const [loginError, setLoginError] = useState<string | null>(null)
   const [loggingIn, setLoggingIn] = useState(false)
   const [password, setPassword] = useState('')
+  // Recuperación de contraseña (flujo email)
+  const [recoveryMode, setRecoveryMode] = useState(false)
+  const [recoverySending, setRecoverySending] = useState(false)
+  const [recoverySent, setRecoverySent] = useState(false)
+  const [recoveryError, setRecoveryError] = useState<string | null>(null)
+  const [recoveryNewPwd, setRecoveryNewPwd] = useState('')
+  const [recoveryConfirmPwd, setRecoveryConfirmPwd] = useState('')
+  const [recoveryResetting, setRecoveryResetting] = useState(false)
   // Modal de configuración / cambio de contraseña
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [currentPwd, setCurrentPwd] = useState('')
@@ -386,11 +394,55 @@ export default function AdminDashboard() {
     supabase.auth.getSession().then(({ data }) => {
       setIsLoggedIn(!!data.session)
     })
-    const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
       setIsLoggedIn(!!session)
+      // Cuando el usuario llega desde el link del email de recuperación,
+      // Supabase dispara este evento — entramos en modo "setear nueva contraseña".
+      if (event === 'PASSWORD_RECOVERY') {
+        setRecoveryMode(true)
+      }
     })
     return () => sub.subscription.unsubscribe()
   }, [])
+
+  const handleSendRecovery = async () => {
+    setRecoveryError(null)
+    setRecoverySending(true)
+    const { error } = await supabase.auth.resetPasswordForEmail(ADMIN_EMAIL, {
+      redirectTo: `${window.location.origin}/admin`,
+    })
+    setRecoverySending(false)
+    if (error) {
+      setRecoveryError('No se pudo enviar el email: ' + error.message)
+    } else {
+      setRecoverySent(true)
+    }
+  }
+
+  const handleResetPassword = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setRecoveryError(null)
+
+    if (recoveryNewPwd.length < 8) {
+      setRecoveryError('La nueva contraseña debe tener al menos 8 caracteres.')
+      return
+    }
+    if (recoveryNewPwd !== recoveryConfirmPwd) {
+      setRecoveryError('Las contraseñas no coinciden.')
+      return
+    }
+
+    setRecoveryResetting(true)
+    const { error } = await supabase.auth.updateUser({ password: recoveryNewPwd })
+    setRecoveryResetting(false)
+    if (error) {
+      setRecoveryError('No se pudo actualizar: ' + error.message)
+      return
+    }
+    setRecoveryMode(false)
+    setRecoveryNewPwd('')
+    setRecoveryConfirmPwd('')
+  }
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -626,6 +678,58 @@ export default function AdminDashboard() {
     } catch (_) {}
   }
 
+  // ─── RECOVERY SCREEN (setear nueva contraseña tras link de email) ─
+  if (recoveryMode) {
+    return (
+      <div className="min-h-[80vh] flex items-center justify-center bg-gray-50 px-6">
+        <div className="max-w-md w-full bg-white p-10 rounded-sm shadow-xl border border-black/5">
+          <div className="flex justify-center mb-8">
+            <div className="w-16 h-16 bg-black text-white rounded-full flex items-center justify-center">
+              <Settings size={32} />
+            </div>
+          </div>
+          <h2 className="font-skylight text-4xl text-center mb-4">Nueva contraseña</h2>
+          <p className="text-center text-gray-500 text-[11px] uppercase tracking-widest mb-8">Recuperación de acceso</p>
+          <form onSubmit={handleResetPassword} className="space-y-4">
+            <div>
+              <label className="block text-[10px] font-bold uppercase tracking-[0.15em] text-gray-500 mb-2">Nueva contraseña</label>
+              <input
+                type="password"
+                autoComplete="new-password"
+                value={recoveryNewPwd}
+                onChange={e => { setRecoveryNewPwd(e.target.value); setRecoveryError(null) }}
+                disabled={recoveryResetting}
+                className="w-full bg-gray-50 h-12 px-4 text-[13px] font-medium rounded-sm border border-gray-200 focus:border-black focus:outline-none disabled:opacity-60"
+              />
+              <p className="mt-1.5 text-[11px] text-gray-400">Mínimo 8 caracteres.</p>
+            </div>
+            <div>
+              <label className="block text-[10px] font-bold uppercase tracking-[0.15em] text-gray-500 mb-2">Confirmar</label>
+              <input
+                type="password"
+                autoComplete="new-password"
+                value={recoveryConfirmPwd}
+                onChange={e => { setRecoveryConfirmPwd(e.target.value); setRecoveryError(null) }}
+                disabled={recoveryResetting}
+                className="w-full bg-gray-50 h-12 px-4 text-[13px] font-medium rounded-sm border border-gray-200 focus:border-black focus:outline-none disabled:opacity-60"
+              />
+            </div>
+            {recoveryError && (
+              <p className="text-[12px] font-semibold text-red-500 bg-red-50 border border-red-100 px-3 py-2 rounded-sm">{recoveryError}</p>
+            )}
+            <button
+              type="submit"
+              disabled={recoveryResetting || !recoveryNewPwd || !recoveryConfirmPwd}
+              className="w-full bg-black text-white h-14 text-[11px] font-bold uppercase tracking-[0.2em] hover:bg-gray-900 transition-colors rounded-sm disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {recoveryResetting ? 'Guardando...' : 'Establecer contraseña'}
+            </button>
+          </form>
+        </div>
+      </div>
+    )
+  }
+
   // ─── LOGIN SCREEN ────────────────────────────────────────────────
   if (!isLoggedIn) {
     return (
@@ -665,6 +769,29 @@ export default function AdminDashboard() {
               {loggingIn ? 'Ingresando...' : 'Ingresar'}
             </button>
           </form>
+
+          {/* Recuperar contraseña */}
+          <div className="mt-6 text-center">
+            {recoverySent ? (
+              <p className="text-[12px] text-green-700 bg-green-50 border border-green-100 px-3 py-2 rounded-sm">
+                Te enviamos un email de recuperación. Revisá la casilla.
+              </p>
+            ) : (
+              <>
+                <button
+                  type="button"
+                  onClick={handleSendRecovery}
+                  disabled={recoverySending}
+                  className="text-[11px] font-bold uppercase tracking-[0.15em] text-gray-400 hover:text-black transition-colors disabled:opacity-50"
+                >
+                  {recoverySending ? 'Enviando...' : '¿Olvidaste tu contraseña?'}
+                </button>
+                {recoveryError && (
+                  <p className="mt-2 text-[11px] text-red-500">{recoveryError}</p>
+                )}
+              </>
+            )}
+          </div>
         </div>
       </div>
     )

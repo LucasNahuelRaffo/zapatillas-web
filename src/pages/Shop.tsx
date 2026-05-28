@@ -150,6 +150,8 @@ function ProductCard({ product, activeColors }: { product: Product, activeColors
     ? (Array.isArray(matchingColor.images) ? matchingColor.images[0] : (matchingColor as any).image)
     : product.images[0];
 
+  const isOutOfStock = product.sizes.length > 0 && product.sizes.every(s => !s.stock);
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -164,10 +166,16 @@ function ProductCard({ product, activeColors }: { product: Product, activeColors
             src={displayImage}
             alt={product.name}
             loading="lazy"
+            decoding="async"
             width={400}
             height={400}
-            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+            className={`w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 ${isOutOfStock ? 'opacity-50 grayscale' : ''}`}
           />
+          {isOutOfStock && (
+            <div className="absolute top-3 left-3 bg-black text-white px-2.5 py-1 text-[9px] font-bold tracking-[0.2em] uppercase">
+              Agotado
+            </div>
+          )}
         </div>
 
         <p className="font-common text-[13px] font-bold text-black leading-tight uppercase tracking-wide">
