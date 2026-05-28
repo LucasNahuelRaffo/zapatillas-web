@@ -55,7 +55,7 @@ async function removeStockZapatillas(productName: string) {
 
 // Cuenta admin única en Supabase Auth. El email no es secreto; la contraseña sí.
 // Creá este usuario en Supabase > Auth > Users.
-const ADMIN_EMAIL = 'admin@tuviejasneakers.com'
+const ADMIN_EMAIL = 'bocaconor32@gmail.com'
 
 const BRANDS = ['Adidas', 'Nike', 'Jordan', 'Travis Scott', 'Puma', 'Topper', 'John Foos',
   'Vicus', 'Jaguar', 'Kioshi', 'Vans', 'Converse', 'Fila', 'DC Shoes', 'New Balance',
