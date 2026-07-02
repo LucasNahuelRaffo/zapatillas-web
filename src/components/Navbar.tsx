@@ -216,7 +216,6 @@ export default function Navbar() {
                 className="mt-12 space-y-4"
               >
                 <div className="text-[10px] font-bold tracking-[0.2em] text-gray-400 uppercase">Contacto</div>
-                <a href="#" className="block text-sm font-medium">soporte@zapass.com</a>
                 <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" className="block text-sm font-medium">WhatsApp: {WHATSAPP_DISPLAY}</a>
               </motion.div>
             </div>
