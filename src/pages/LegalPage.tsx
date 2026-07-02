@@ -1,9 +1,9 @@
 import { Helmet } from 'react-helmet-async'
 import { Link } from 'react-router-dom'
 import { ArrowLeft } from 'lucide-react'
+import { WHATSAPP_URL } from '../lib/contact'
 
 const LAST_UPDATED = '28 de mayo de 2026'
-const WHATSAPP_URL = 'https://wa.me/5491112345678'
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (

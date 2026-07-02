@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useMemo } from 'react'
 import { motion } from 'framer-motion'
 import { ArrowRight, Loader2 } from 'lucide-react'
 import { Link } from 'react-router-dom'
@@ -242,6 +242,15 @@ export default function Shop() {
     getProducts().then(setProducts).catch(() => {})
   }, [])
 
+  // Lista dinámica de marcas visibles en el filtro: solo las que tienen productos reales.
+  // Preserva el orden manual de CATEGORIES para las marcas conocidas y suma nuevas al final.
+  const availableCategories = useMemo(() => {
+    const withProducts = new Set(products.map(p => p.category))
+    const ordered = CATEGORIES.filter(c => c === 'All Sneakers' || withProducts.has(c))
+    const extras = Array.from(withProducts).filter(b => !CATEGORIES.includes(b)).sort()
+    return [...ordered, ...extras]
+  }, [products])
+
   const toggleSize = (s: number) =>
     setActiveSizes(prev => prev.includes(s) ? prev.filter(x => x !== s) : [...prev, s])
 
@@ -323,7 +332,7 @@ export default function Shop() {
           {/* Categories */}
           <SidebarLabel>Categorías</SidebarLabel>
           <ul className="mb-8 space-y-2">
-            {CATEGORIES.map(cat => (
+            {availableCategories.map(cat => (
               <li key={cat}>
                 <button
                   onClick={() => setActiveCategory(cat)}

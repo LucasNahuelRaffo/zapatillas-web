@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { ArrowRight, ShoppingCart, Truck, Check } from 'lucide-react';
+import { ArrowRight, Truck, Check, MessageCircle } from 'lucide-react';
 import { Product } from '../../data/products';
 import { useCart } from '../../context/CartContext';
 import { motion, AnimatePresence } from 'framer-motion';
+import { buildProductMessage, buildWhatsAppLink } from '../../lib/contact';
 
 interface ProductSelectorsProps {
   product: Product;
@@ -23,13 +24,23 @@ export default function ProductSelectors({ product, onColorChange, selectedColor
 
   const handleAddToCart = () => {
     if (!selectedSize) return;
-    
+
     setIsAdding(true);
     addItem(product, selectedSize, selectedColor || '');
-    
+
     setTimeout(() => {
       setIsAdding(false);
     }, 2000);
+  };
+
+  const handleConsultWhatsApp = () => {
+    const message = buildProductMessage({
+      name: product.name,
+      price: product.price,
+      size: selectedSize,
+      color: selectedColor,
+    });
+    window.open(buildWhatsAppLink(message), '_blank');
   };
 
   return (
@@ -88,9 +99,9 @@ export default function ProductSelectors({ product, onColorChange, selectedColor
         </div>
       </div>
 
-      {/* Add to Cart */}
-      <div>
-        <button 
+      {/* Add to Cart + Consultar por WhatsApp */}
+      <div className="space-y-3">
+        <button
           onClick={handleAddToCart}
           disabled={isAdding}
           className={`w-full h-16 flex items-center justify-center gap-3 font-bold uppercase tracking-[0.2em] text-[11px] transition-all duration-300 cursor-pointer ${
@@ -120,6 +131,14 @@ export default function ProductSelectors({ product, onColorChange, selectedColor
               </motion.div>
             )}
           </AnimatePresence>
+        </button>
+
+        <button
+          type="button"
+          onClick={handleConsultWhatsApp}
+          className="w-full h-14 flex items-center justify-center gap-3 font-bold uppercase tracking-[0.2em] text-[11px] transition-all duration-300 cursor-pointer border-2 border-black text-black hover:bg-black hover:text-white"
+        >
+          Consultar por WhatsApp <MessageCircle size={16} />
         </button>
       </div>
 

@@ -1,10 +1,11 @@
 import { motion } from 'framer-motion';
 import { Phone as WhatsApp } from 'lucide-react';
+import { WHATSAPP_URL } from '../../lib/contact';
 
 export default function WhatsAppButton() {
   return (
     <motion.a
-      href="https://wa.me/5491112345678"
+      href={WHATSAPP_URL}
       target="_blank"
       rel="noopener noreferrer"
       initial={{ scale: 0, opacity: 0 }}

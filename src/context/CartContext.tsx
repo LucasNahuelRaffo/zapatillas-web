@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Product } from '../data/products';
+import { buildCartMessage, buildWhatsAppLink } from '../lib/contact';
 
 export interface CartItem {
   id: string; // unique id for product + size + color combination
@@ -72,19 +73,15 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const getTotalPrice = () => cart.reduce((total, item) => total + item.product.price * item.quantity, 0);
 
   const checkoutWhatsApp = () => {
-    const PHONE_NUMBER = '5491112345678';
-    let message = 'Hola Tuviejasneakers! Quiero realizar el siguiente pedido:\n\n';
-    
-    cart.forEach((item) => {
-      message += `• ${item.product.name}\n`;
-      message += `  Talle: ${item.selectedSize} US | Color: ${item.selectedColor}\n`;
-      message += `  Cantidad: ${item.quantity} | Subtotal: $${(item.product.price * item.quantity).toLocaleString('es-AR')}\n\n`;
-    });
-
-    message += `*TOTAL: $${getTotalPrice().toLocaleString('es-AR')}*`;
-    
-    const encodedMessage = encodeURIComponent(message);
-    window.open(`https://wa.me/${PHONE_NUMBER}?text=${encodedMessage}`, '_blank');
+    const items = cart.map(item => ({
+      name: item.product.name,
+      size: item.selectedSize,
+      color: item.selectedColor,
+      qty: item.quantity,
+      subtotal: item.product.price * item.quantity,
+    }));
+    const message = buildCartMessage(items, getTotalPrice());
+    window.open(buildWhatsAppLink(message), '_blank');
   };
 
   return (

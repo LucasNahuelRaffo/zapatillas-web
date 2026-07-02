@@ -5,6 +5,7 @@ import { Link, useLocation } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
 import CartDrawer from './Cart/CartDrawer'
 import logoImg from '../img/LOGO.png'
+import { WHATSAPP_URL, WHATSAPP_DISPLAY } from '../lib/contact'
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
@@ -216,7 +217,7 @@ export default function Navbar() {
               >
                 <div className="text-[10px] font-bold tracking-[0.2em] text-gray-400 uppercase">Contacto</div>
                 <a href="#" className="block text-sm font-medium">soporte@zapass.com</a>
-                <a href="#" className="block text-sm font-medium">WhatsApp: +54 9 11 1234 5678</a>
+                <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" className="block text-sm font-medium">WhatsApp: {WHATSAPP_DISPLAY}</a>
               </motion.div>
             </div>
           </motion.div>
