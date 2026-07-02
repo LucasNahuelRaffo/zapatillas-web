@@ -14,6 +14,19 @@ dist-ssr
 .env
 .env.*
 
+# Scripts sueltos / one-off en la raíz (audits, seeds, tests manuales).
+# El código real vive en src/. Evita colar scripts con datos o keys al repo.
+/*.mjs
+/*.cjs
+/test-*.js
+/seed-*.js
+/dummy.js
+/compress-*.js
+/_audit*.mjs
+/diag*.mjs
+/stdout.txt
+/stderr.txt
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
