@@ -20,7 +20,7 @@ export function buildProductMessage(opts: {
   const details = [opts.size && `Talle ${opts.size} US`, opts.color]
     .filter(Boolean)
     .join(', ')
-  return `Hola! Cómo estás? Vi las ${opts.name} en la web (${price})${details ? ` — ${details}` : ''}. ¿Me confirmás si te quedan en stock?`
+  return `Hola! Cómo estás? Vi las ${opts.name} en la web (${price})${details ? ` — ${details}` : ''}. ¿Me confirmás si te quedan en stock? \u{1F64C}`
 }
 
 // Mensaje predeterminado para el checkout del carrito
@@ -38,6 +38,6 @@ export function buildCartMessage(
   items.forEach(i => {
     msg += `• ${i.name} — Talle ${i.size} US, ${i.color}, x${i.qty} — $${i.subtotal.toLocaleString('es-AR')}\n`
   })
-  msg += `\n*Total: $${total.toLocaleString('es-AR')}*\n\n¿Me confirmás si te quedaron en stock?`
+  msg += `\n*Total: $${total.toLocaleString('es-AR')}*\n\n¿Me confirmás si te quedaron en stock? \u{1F64C}`
   return msg
 }
