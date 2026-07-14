@@ -15,6 +15,7 @@ import {
   toAbsoluteUrl,
 } from '../../lib/productStore'
 import { supabase } from '../../lib/supabase'
+import { thumbUrl } from '../../lib/images'
 import { getVideos, addVideo, updateVideo, deleteVideo, uploadVideoFile, resetVideosToDefault, VideoReel } from '../../lib/videoStore'
 
 // Sincroniza un producto con stock_zapatillas: borra filas viejas y re-inserta
@@ -295,9 +296,20 @@ export default function AdminDashboard() {
           return lowerModelo.includes(lowerName) || lowerName.includes(lowerModelo)
         })
 
+        // El modelo de la reserva suele incluir el colorway ("NIKE AIR JORDAN 4 FIRE RED"):
+        // buscar la variante cuyo nombre aparezca en el texto para mostrar la imagen correcta.
+        // Se prefiere el nombre más largo para que "Hot Punch Rosa" gane sobre "Rosa".
+        let image: string | null = null
+        if (prod) {
+          const colorMatch = (prod.colors || [])
+            .filter(c => c.name && lowerModelo.includes(c.name.toLowerCase()))
+            .sort((a, b) => b.name.length - a.name.length)[0]
+          image = colorMatch?.images?.[0] || (colorMatch as any)?.image || prod.images?.[0] || null
+        }
+
         const res = {
           id: prod?.id || null,
-          image: prod?.images?.[0] || null
+          image: image ? thumbUrl(image) : null
         }
         cache[lowerModelo] = res
         return res

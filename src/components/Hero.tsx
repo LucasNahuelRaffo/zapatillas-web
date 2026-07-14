@@ -1,4 +1,4 @@
-import heroSneaker from '../img/hero_sneaker-removebg-preview.png'
+import heroSneaker from '../img/hero_sneaker.webp'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 

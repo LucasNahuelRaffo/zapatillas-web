@@ -17,7 +17,7 @@ export default function Navbar() {
     const handleScroll = () => {
       setScrolled(window.scrollY > 10)
     }
-    window.addEventListener('scroll', handleScroll)
+    window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
@@ -51,22 +51,22 @@ export default function Navbar() {
         }`}
       >
         <div className="max-w-[1400px] mx-auto px-6 lg:px-12">
-          <motion.div 
-            animate={{ height: scrolled ? 70 : 110 }}
-            transition={{ duration: 0.3, ease: 'easeOut' }}
-            className="flex items-center justify-between"
+          <div
+            className={`flex items-center justify-between transition-[height] duration-300 ease-out ${
+              scrolled ? 'h-[70px]' : 'h-[110px]'
+            }`}
           >
 
-            
+
             {/* Logo */}
-            <motion.a 
-              href="#" 
-              animate={{ scale: scrolled ? 0.85 : 1, y: scrolled ? 1 : 0 }}
-              transition={{ duration: 0.3 }}
-              className="flex-shrink-0 transition-opacity hover:opacity-70 z-50 relative origin-left"
+            <a
+              href="#"
+              className={`flex-shrink-0 transition-[transform,opacity] duration-300 hover:opacity-70 z-50 relative origin-left ${
+                scrolled ? 'scale-[0.85] translate-y-px' : ''
+              }`}
             >
               <img src={logoImg} alt="Tuviejasneakers" className="h-10 md:h-14 object-contain" />
-            </motion.a>
+            </a>
 
             {/* Desktop Nav */}
             <div className="hidden md:flex items-center gap-14 absolute left-1/2 -translate-x-1/2">
@@ -145,7 +145,7 @@ export default function Navbar() {
                 </AnimatePresence>
               </motion.button>
             </div>
-          </motion.div>
+          </div>
         </div>
       </motion.nav>
 
@@ -158,7 +158,7 @@ export default function Navbar() {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.15 }}
             onClick={() => setIsOpen(false)}
-            className="fixed inset-0 bg-black/40 z-40 backdrop-blur-sm md:hidden"
+            className="fixed inset-0 bg-black/50 z-40 md:hidden"
           />
         )}
       </AnimatePresence>
@@ -170,7 +170,7 @@ export default function Navbar() {
             initial={{ x: '100%' }}
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
-            transition={{ type: 'spring', damping: 24, stiffness: 280 }}
+            transition={{ duration: 0.25, ease: 'easeOut' }}
             className="fixed top-0 right-0 h-full w-[85vw] max-w-sm bg-white z-50 p-8 shadow-2xl md:hidden overflow-y-auto"
           >
             <div className="flex flex-col gap-8 mt-20">
@@ -180,7 +180,7 @@ export default function Navbar() {
                     key={link.name}
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: i * 0.04 + 0.04, duration: 0.2 }}
+                    transition={{ duration: 0.2 }}
                   >
                     <Link
                       to={link.href}
@@ -199,7 +199,7 @@ export default function Navbar() {
                     onClick={() => setIsOpen(false)}
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: i * 0.04 + 0.04, duration: 0.2 }}
+                    transition={{ duration: 0.2 }}
                     className="text-lg font-black uppercase tracking-tight border-b border-gray-100 pb-4 flex justify-between items-center group"
                   >
                     {link.name}
@@ -212,7 +212,7 @@ export default function Navbar() {
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ delay: 0.2, duration: 0.2 }}
+                transition={{ duration: 0.2 }}
                 className="mt-12 space-y-4"
               >
                 <div className="text-[10px] font-bold tracking-[0.2em] text-gray-400 uppercase">Contacto</div>

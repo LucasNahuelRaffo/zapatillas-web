@@ -7,6 +7,7 @@ import { supabase, hasSupabaseCredentials } from '../lib/supabase'
 
 import { Product } from '../data/products'
 import { getLocalProducts, getProducts } from '../lib/productStore'
+import { thumbUrl } from '../lib/images'
 import ShopVideoCard from '../components/ShopVideoCard'
 
 /* ───────────────────────────────────────────────
@@ -163,12 +164,19 @@ function ProductCard({ product, activeColors }: { product: Product, activeColors
       <Link to={`/product/${product.id}${matchingColor ? `?color=${matchingColor.name}` : ''}`}>
         <div className="aspect-square bg-gray-100 overflow-hidden mb-3 relative">
           <img
-            src={displayImage}
+            src={thumbUrl(displayImage)}
             alt={product.name}
             loading="lazy"
             decoding="async"
             width={400}
             height={400}
+            onError={(e) => {
+              // Si falta el thumb generado, caer a la imagen original
+              const img = e.currentTarget
+              if (img.src !== new URL(displayImage, window.location.origin).href) {
+                img.src = displayImage
+              }
+            }}
             className={`w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 ${isOutOfStock ? 'opacity-50 grayscale' : ''}`}
           />
           {isOutOfStock && (
@@ -197,7 +205,7 @@ function BrandSection({
   if (items.length === 0) return null
 
   return (
-    <section className="mb-12">
+    <section className="mb-12 [content-visibility:auto] [contain-intrinsic-size:auto_800px]">
       {/* Section header */}
       <div className="flex items-center justify-between mb-5">
         <h2 className="font-common text-xs font-black tracking-[0.2em] text-gray-400">{label}</h2>
@@ -258,7 +266,7 @@ export default function Shop() {
     setActiveColors(prev => prev.includes(c) ? prev.filter(x => x !== c) : [...prev, c])
 
   /* Filter products */
-  const filteredProducts = products.filter(p => {
+  const filteredProducts = useMemo(() => products.filter(p => {
     const catOk = activeCategory === 'All Sneakers' || p.category === activeCategory
     const priceOk = p.price / 1000 >= priceRange[0] && p.price / 1000 <= priceRange[1]
     const sizeOk = activeSizes.length === 0 || activeSizes.some(s => p.sizes.some((ps: any) => ps.size === s.toString() && ps.stock))
@@ -282,7 +290,7 @@ export default function Shop() {
       p.brand.toLowerCase().includes(searchQuery.toLowerCase())
 
     return catOk && priceOk && sizeOk && colorOk && searchMatch
-  })
+  }), [products, activeCategory, priceRange, activeSizes, activeColors, searchQuery])
 
   if (loading) {
     return (
